@@ -44,7 +44,7 @@
     methods: {
       getDetail(id) {
         this.$router.push({
-          path: '/detail/' + id
+          path: '/device/' + id
         })
       }
     }

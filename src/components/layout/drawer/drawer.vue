@@ -14,10 +14,10 @@
         我
       </q-drawer-link>
       <q-drawer-link icon="build">
-        消息
+        设置
       </q-drawer-link>
       <q-drawer-link icon="tab">
-        设置
+        消息
       </q-drawer-link>
       <q-drawer-link icon="compare_arrows">
          反馈

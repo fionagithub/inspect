@@ -22,10 +22,10 @@ export default new VueRouter({
 
   routes: [
     { path: '/', component: load('Index') }, // Default
-    { path: '/device', component: load('views/Device') }, // Default
-
-    { path: '/detail/:id', component: load('views/Detail') }, // Default
-    
+    { path: '/device', component: load('Device/template') }, // Default
+    { path: '/alarm', component: load('Alarm/template') }, // Default
+    { path: '/alarm/:id', component: load('Alarm/detail') }, // Default
+    { path: '/device/:id', component: load('Device/detail') }, // Default
     { path: '*', component: load('Error404') } // Not found
   ]
 })

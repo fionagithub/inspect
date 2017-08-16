@@ -11,6 +11,7 @@
     </q-toolbar-title>
     <button class="right-drawer-opener"><i>more_vert</i></button>
     <slot name='search'></slot>
+    <slot name="tabs"></slot>
   </div>
 </template>
 <script type="text/javascript">
