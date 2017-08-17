@@ -7,7 +7,10 @@
     "clean": "node build/script.clean.js",
     "dev": "node build/script.dev.js",
     "build": "node build/script.build.js",
-    "lint": "eslint --ext .js,.vue src"
+    "build:docker": "npm run build && npm run docker",
+    "lint": "eslint --ext .js,.vue src",
+    "docker:build": "cp ./dockerfile ./dist && cd dist && docker build -t laputa-app .",
+    "docker:run":"docker run --rm -p 18080:80 --name laputa-app laputa-app"
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
