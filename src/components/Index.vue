@@ -23,7 +23,7 @@
   export default {
     data() {
       return {
-        items: [{title:'alarm',uri:'/device'},{title:'device',uri:'/device'}],
+        items: [{title:'alarm',uri:'/alarm'},{title:'device',uri:'/device'}],
         headStyle: {
           'background': 0,
           'z-index': 2

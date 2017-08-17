@@ -1,6 +1,6 @@
 <template>
   <q-drawer ref="leftDrawer" class="drawer" v-show="getLayoutNeeded">
-    <div class="toolbar">
+   <div class="toolbar">
       <div class="user">
         <img src="../img/mountains.jpg">
         <div>
@@ -8,18 +8,18 @@
         </div>
       </div>
     </div>
-
+ 
     <div class="list">
-      <q-drawer-link icon="view_quilt">
+      <q-drawer-link to="" icon="view_quilt">
         我
       </q-drawer-link>
-      <q-drawer-link icon="build">
+      <q-drawer-link to="" icon="build">
         设置
       </q-drawer-link>
-      <q-drawer-link icon="tab">
+      <q-drawer-link to="" icon="tab">
         消息
       </q-drawer-link>
-      <q-drawer-link icon="compare_arrows">
+      <q-drawer-link to="" icon="compare_arrows">
          反馈
       </q-drawer-link>
 
@@ -44,6 +44,9 @@
 
 </script>
 <style scoped>
+  .list .item-link{
+background: 0;
+  }
   .drawer .toolbar {
     display: flex;
     min-height: 150px;
