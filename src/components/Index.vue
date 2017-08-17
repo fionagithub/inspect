@@ -8,7 +8,7 @@
       </div>
       <div class="card-content">
         <router-link :to="item.uri" v-for="item in items">
-          <button class="teal circular">
+          <button class="teal circular big">
             {{item.title}}
           </button>
         </router-link>
@@ -26,10 +26,10 @@
     data() {
       return {
         items: [{
-          title: 'alarm',
+          title: '报警',
           uri: '/alarm'
         }, {
-          title: 'device',
+          title: '设备',
           uri: '/device'
         }]
       }

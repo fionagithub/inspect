@@ -1,7 +1,7 @@
 <template>
   <!-- root node required -->
   <div>
-    <toolbar head-title="device" go-back='true'>
+    <toolbar head-title="设备" go-back='true'>
     </toolbar>
     <div slot="search" class="toolbar">
       <q-search :model.sync="searchModel"></q-search>

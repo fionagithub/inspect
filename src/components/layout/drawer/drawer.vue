@@ -1,14 +1,14 @@
 <template>
-  <q-drawer ref="leftDrawer" class="drawer" v-show="getLayoutNeeded">
-   <div class="toolbar">
+  <q-drawer ref="leftDrawer" class="drawer">
+    <div class="toolbar">
       <div class="user">
         <img src="../img/mountains.jpg">
-        <div>
-          username
+        <div class="name" >
+          {{getUserInfo}}
         </div>
       </div>
     </div>
- 
+
     <div class="list">
       <q-drawer-link to="" icon="view_quilt">
         我
@@ -20,42 +20,59 @@
         消息
       </q-drawer-link>
       <q-drawer-link to="" icon="compare_arrows">
-         反馈
+        反馈
       </q-drawer-link>
 
     </div>
 
     <div class="footer">
-      <button class="red full-width">退出</button>
+      <button class="red full-width" @click="login_out()">退出</button>
     </div>
 
   </q-drawer>
 </template>
 <script>
   import {
+    mapMutations,
     mapGetters
   } from 'vuex'
 
   export default {
     computed: {
-      ...mapGetters(['getLayoutNeeded']),
+      ...mapGetters(['getUserInfo']),
     },
+    methods: {
+      ...mapMutations(['out']),
+      login_out() {
+        this.out()
+        this.$router.push({
+          path: '/login'
+        })
+      }
+    }
+
   }
 
 </script>
 <style scoped>
-  .list .item-link{
-background: 0;
+  .user .name{
+    text-align: center;
+    margin: 10px;
   }
+  .list .item-link {
+    background: 0;
+  }
+
   .drawer .toolbar {
     display: flex;
     min-height: 150px;
     background: gray;
     justify-content: space-around;
   }
-    .drawer .list{
-      border: 0;
-    }
+
+  .drawer .list {
+    border: 0;
+  }
 
   .user img {
     width: 65px;
@@ -99,10 +116,12 @@ background: 0;
   #menu-collapse {
     margin-top: 5%;
   }
-  .footer{
+
+  .footer {
     padding: 10px;
-        bottom: 10px;
+    bottom: 10px;
     position: absolute;
     width: 100%;
   }
+
 </style>

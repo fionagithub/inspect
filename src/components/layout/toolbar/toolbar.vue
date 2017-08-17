@@ -1,5 +1,5 @@
 <template>
-  <div class="toolbar" :class="headStyle">
+  <div class="toolbar">
     <section class="head_goback" v-if="goBack" @click="$router.go(-1)">
       <i>arrow_back</i>
     </section>
@@ -13,14 +13,43 @@
   </div>
 </template>
 <script type="text/javascript">
+  import {
+    mapGetters
+  } from 'vuex'
   export default {
-    name:"toolbar",
+    name: "toolbar",
+    data() {
+      return {
+        userInfo: ''
+
+      }
+    },
+    mounted() {
+      this.$nextTick(function () {
+        this.getUser()
+      })
+    },
+    methods: {
+      getUser() {
+        //  this.getUserInfo()
+        this.userInfo = this.getUserInfo
+        console.log('-=-', this.getUserInfo)
+        if (this.userInfo == '') {
+          this.$router.push({
+            path: '/login'
+          })
+        }
+      }
+    },
     computed: {
+      ...mapGetters([
+        'getUserInfo'
+      ]),
       leftDrawer() {
         return this.$parent.$children[1].$refs.leftDrawer
       }
     },
-    props: ['headTitle','headStyle', 'goBack']
+    props: ['headTitle', 'goBack']
   }
 
 </script>
