@@ -2,10 +2,10 @@
   <!-- root node required -->
   <div>
     <toolbar head-title="alarm" go-back='true' :style="headStyle">
-      <div slot="search" class="device-search">
-        <q-search v-model="searchModel"></q-search>
-      </div>
     </toolbar>
+    <div slot="search" class="toolbar">
+      <q-search :model.sync="searchModel"></q-search>
+    </div>
     <!-- your content -->
     <div class="layout-padding">
       <div class="card">
@@ -30,12 +30,7 @@
   export default {
     data() {
       return {
-        searchModel:'',
-        headStyle: {
-          'display': 'grid',
-          'grid-template-columns': '20px auto 30px',
-          'min-height': '100px'
-        }
+        searchModel:''
       }
     },
     components: {
@@ -52,11 +47,5 @@
 
 </script>
 <style>
-  .device-search {
-    grid-column-start: 1;
-    grid-column-end: 4;
-    grid-row-start: 3;
-    grid-row-end: 4;
-  }
 
 </style>
