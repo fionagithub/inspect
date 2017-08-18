@@ -7,10 +7,13 @@
     "clean": "node build/script.clean.js",
     "dev": "node build/script.dev.js",
     "build": "node build/script.build.js",
-    "build:docker": "npm run build && npm run docker",
+    "build:docker": "npm run build && npm run docker:build && npm run docker:save",
+    "build:deploy": "npm run build:docker && npm run docker:deploy",
     "lint": "eslint --ext .js,.vue src",
-    "docker:build": "cp ./dockerfile ./dist && cd dist && docker build -t laputa-app .",
-    "docker:run":"docker run --rm -p 18080:80 --name laputa-app laputa-app"
+    "docker:build": "cp ./dockerfile ./dist && cd dist && docker build -t laputa-app:$npm_package_version .",
+    "docker:save": "mkdir -p docker-image && docker image save laputa-app:$npm_package_version > docker-image/laputa-app.docker.tar.gz",
+    "docker:run":"docker run --rm -p 18080:80 --name laputa-app laputa-app:$npm_package_version ",
+    "docker:deploy":"build/docker-deploy.sh laputa-app.docker.tar.gz jk@192.168.123.188"
   },
   "dependencies": {
     "babel-runtime": "^6.0.0",
