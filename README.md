@@ -1,6 +1,6 @@
 # Laputa App
 
-## Build & Dev
+## Develop, Build & Deploy
 
 ``` bash
 # install dependencies
@@ -15,12 +15,18 @@ $ npm run build
 # lint code
 $ npm run lint
 
-# build + docker build
+# 应用构建 + 容器镜像构建
 $ npm run build:docker
 
-# 在本地 build docker 镜像
+# 容器镜像构建
 $ npm run docker:build
 
-# 在本机测试运行 build 好的镜像
+# 在本机测试运行构建好的镜像
 $ npm run docker:run
+
+# 构建应用及容器镜像并部署到测试服务器上
+$ npm run build:deploy
+
+# 将之前构建好的镜像部署到测试服务器上
+$ npm run docker:deploy
 ```
