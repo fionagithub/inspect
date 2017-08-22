@@ -9,7 +9,15 @@
     <q-toolbar-title :padding="1" v-if="headTitle">
       <span class="title_text">{{headTitle}}</span>
     </q-toolbar-title>
-    <button class="right-drawer-opener"><i>more_vert</i></button>
+    <button class="right-drawer-opener"><i>more_vert</i>
+      <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
+        <div class="list highlight " >
+          <div class="item">
+            <div class="item-content">Layout</div>
+          </div> 
+        </div>
+      </q-popover></button>
+       
   </div>
 </template>
 <script type="text/javascript">
