@@ -9,6 +9,7 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
  import store from './config/store'
+import './api/feathers-config'
 
 Vue.use(Quasar) // Install Quasar Framework
 
