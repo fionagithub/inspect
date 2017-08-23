@@ -3,37 +3,51 @@
     <toolbar head-title="detail" go-back='true'>
     </toolbar>
     <div class="layout-view">
-    
+
       <div class="layout-padding">
         <span>
-        {{messages}}
+        {{filtersMessage.deviceId}}
+        {{filtersMessage.deviceName}}
+        {{filtersMessage.deviceNo}}
       </span>
-     </div>
+        <ol>
+          <li v-for="(item,i,g) in filtersMessage.monitors">
+            {{item}}
+
+          </li>
+        </ol>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
-import toolbar from 'components/layout/toolbar/toolbar.vue'
+  import {
+    mapGetters,
+    mapActions
+  } from 'vuex'
+  import toolbar from 'components/layout/toolbar/toolbar.vue'
   export default {
     name: "detail",
     components: {
       toolbar
-    }, 
+    },
     computed: {
       ...mapGetters('message', {
         messages: 'list'
+      }),
+      filtersMessage() {
+        return this.messages[0].devices[0]
+      }
+    },
+    created() {
+      const id = this.$route.params.id
+      this.findMessages({
+        query: {
+          id: id
+        }
       })
     },
-      created() {
-        this.findMessages({
-          query: {
-            $limit: 10,
-            //  $select: ['userId' ]
-          }
-        })
-      },
     methods: {
       ...mapActions('message', {
         findMessages: 'find'

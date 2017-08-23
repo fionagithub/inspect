@@ -9,13 +9,11 @@
     <!-- your content -->
     <div class="layout-padding">
       <div class="card">
-        <div class="card-title">
-        </div>
-        <div class="list item-inset-delimiter">
-          <div class="item item-link" @click="getDetail(123)">
+        <div class="list item-inset-delimiter" v-for="item in device.devices " >
+          <div class="item item-link" @click="getDetail(item.deviceId)">
             <i class="item-primary">mail</i>
             <div class="item-content has-secondary">
-              ahu
+                {{item.deviceName}}
             </div>
             <i class="item-secondary">keyboard_arrow_right</i>
           </div>
@@ -26,6 +24,7 @@
 </template>
 <script>
   import toolbar from 'components/layout/toolbar/toolbar.vue'
+import { mapGetters, mapActions } from 'vuex'
 
   export default {
     data() {
@@ -33,10 +32,29 @@
         searchModel:''
       }
     },
+    computed: {
+      ...mapGetters('message', {
+        messages: 'list'
+      }),
+      device(){
+        console.log('=-=',  this.messages )
+          return this.messages[0]
+      }
+    },
     components: {
       toolbar
     },
+    created() {
+      this.findMessages({
+        query: {
+          $limit: 10,
+        }
+      })
+    },
     methods: {
+      ...mapActions('message', {
+        findMessages: 'find'
+      }),
       getDetail(id) {
         this.$router.push({
           path: '/device/' + id
