@@ -3,32 +3,42 @@
     <div class="toolbar">
       <div class="user">
         <img src="../img/mountains.jpg">
-        <div class="name" >
+        <div class="name">
           {{getUserInfo}}
         </div>
       </div>
     </div>
 
     <div class="list">
-      <q-drawer-link to="" icon="view_quilt">
-        我
-      </q-drawer-link>
-      <q-drawer-link to="" icon="build">
+      <div class="item">
+        <button class="full-width"  @click="alert()">
+          <i class="item-primary">view_quilt</i>
+          <span>我</span>
+        </button>
+      </div>
+      <div class="item">
+        <button class="full-width"  @click="alert()">
+          <i class="item-primary">build</i>
         设置
-      </q-drawer-link>
-      <q-drawer-link to="" icon="tab">
+        </button>
+      </div>
+      <div class="item">
+        <button class="full-width"  @click="alert()">
+          <i class="item-primary">tab</i>
         消息
-      </q-drawer-link>
-      <q-drawer-link to="" icon="compare_arrows">
+        </button>
+      </div>
+      <div class="item">
+        <button class="full-width"  @click="alert()">
+          <i class="item-primary">compare_arrows</i>
         反馈
-      </q-drawer-link>
-
+        </button>
+      </div>
     </div>
 
     <div class="footer">
       <button class="red full-width" @click="login_out()">退出</button>
     </div>
-
   </q-drawer>
 </template>
 <script>
@@ -36,14 +46,23 @@
     mapMutations,
     mapGetters
   } from 'vuex'
-
+  import {
+    Dialog
+  } from 'quasar'
   export default {
     computed: {
       ...mapGetters(['getUserInfo']),
-    },
+    }, 
     methods: {
       ...mapMutations(['out']),
-      login_out() {
+      alert() {
+        Dialog.create({
+          buttons: ['了解'],
+          title: '抱歉',
+          message: '目前尚处于原型开发阶段，部分功能有待完善'
+        })
+      },
+       login_out() {
         this.out()
         this.$router.push({
           path: '/login'
@@ -55,10 +74,11 @@
 
 </script>
 <style scoped>
-  .user .name{
+  .user .name {
     text-align: center;
     margin: 10px;
   }
+
   .list .item-link {
     background: 0;
   }
