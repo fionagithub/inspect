@@ -24,6 +24,7 @@ export default new VueRouter({
     { path: '/', component: load('Index') }, // Default
     { path: '/login', component: load('Login') }, // Default
     { path: '/device', component: load('Device/template') }, // Default
+    { path: '/device/new', component: load('Device/new') }, // Default
     { path: '/alarm', component: load('Alarm/template') }, // Default
     { path: '/alarm/:id', component: load('Alarm/detail') }, // Default
     { path: '/device/:id', component: load('Device/detail') }, // Default
