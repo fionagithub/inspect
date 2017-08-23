@@ -22,7 +22,7 @@
 
         </div>
         <div class="login-btn">
-          <button class="circular big green" @click="login()">登录</button>
+          <button class="circular big teal" @click="login()">登录</button>
         </div>
 
       </div>
