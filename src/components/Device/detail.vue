@@ -1,23 +1,23 @@
 <template>
   <div>
-    <toolbar head-title="detail" go-back='true'>
+    <toolbar head-title="报障清单" go-back='true'>
     </toolbar>
-    <div class="layout-view">
-
-      <div class="layout-padding">
-        <span>
-        {{filtersMessage.deviceId}}
-        {{filtersMessage.deviceName}}
-        {{filtersMessage.deviceNo}}
-      </span>
-        <ol>
-          <li v-for="(item,i,g) in filtersMessage.monitors">
-            {{item}}
-
-          </li>
-        </ol>
+    <div class="layout-padding">
+      <div class="card" v-for="items in message.data">
+        <div class="card-title">
+          {{items.deviceName}}
+        </div>
+        <img src="../img/water.jpg" alt="">
+        <div class="card-content">
+          <ol>
+            <li v-for="mon in items.monitors">
+              <span>  {{mon}}</span>
+            </li>
+          </ol>
+        </div>
       </div>
     </div>
+  </div>
   </div>
 </template>
 
@@ -26,7 +26,7 @@
     mapGetters,
     mapActions
   } from 'vuex'
-  import toolbar from 'components/layout/toolbar/toolbar.vue'
+  import toolbar from 'components/layout/toolbar.vue'
   export default {
     name: "detail",
     components: {
@@ -34,25 +34,26 @@
     },
     computed: {
       ...mapGetters('message', {
-        messages: 'list'
-      }),
-      filtersMessage() {
-        return this.messages[0].devices[0]
-      }
-    },
-    created() {
-      const id = this.$route.params.id
-      this.findMessages({
-        query: {
-          id: id
-        }
-      })
-    },
-    methods: {
-      ...mapActions('message', {
         findMessages: 'find'
-      })
-    }
+      }),
+      message() {
+        const id = this.$route.params.id
+        return this.findMessages({
+          query: {
+            id: id
+          }
+        })
+      }
+
+    },
   }
 
 </script>
+<style>
+  .layout-padding,
+  .content {
+    width: 100%;
+    height: 100%;
+  }
+
+</style>

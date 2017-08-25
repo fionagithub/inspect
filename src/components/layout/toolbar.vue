@@ -54,7 +54,6 @@
       getUser() {
         //  this.getUserInfo()
         this.userInfo = this.getUserInfo
-        console.log('-=-', this.getUserInfo)
         if (this.userInfo == '') {
           this.$router.push({
             path: '/login'
