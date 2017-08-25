@@ -7,29 +7,40 @@
         <img src="../assets/laputa.jpg">
       </div>
       <div class="card-content">
-        <router-link :to="item.uri" v-for="item in items">
+          <div class="row gutter wrap justify-stretch content-center text-center">
+        <div class="auto link-btn" v-for="item in items">
+        <router-link :to="item.uri">
           <button class="teal circular big">
             {{item.title}}
           </button>
         </router-link>
+        </div>
+         
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import toolbar from 'components/layout/toolbar/toolbar.vue'
-  import drawer from 'components/layout/drawer/drawer.vue'
+  import toolbar from 'components/layout/toolbar.vue'
+  import drawer from 'components/layout/drawer.vue'
   import 'src/assets/css/index.css'
 
   export default {
     data() {
       return {
         items: [{
-          title: '报警',
-          uri: '/alarm'
+          title:'报障' ,
+          uri: '/device'
         }, {
-          title: '设备',
+          title:'故障' ,
+          uri: '/device'
+        },{
+          title:'设备' ,
+          uri: '/alarm'
+        },{
+          title: '巡检',
           uri: '/device'
         }]
       }
@@ -41,3 +52,8 @@
   }
 
 </script>
+<style>
+.link-btn{
+  margin: 20px;
+}
+</style>
