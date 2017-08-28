@@ -1,60 +1,81 @@
 <template>
+
   <q-drawer ref="leftDrawer" class="drawer">
-    <div class="toolbar">
-      <div class="user">
-        <img src="../img/mountains.jpg">
-        <div class="name">
-          {{getUserInfo}}
+
+    <div>
+      <div class="toolbar">
+        <div class="user">
+          <img src="../img/mountains.jpg">
+          <div class="name">
+            {{loguser}}
+          </div>
         </div>
       </div>
-    </div>
 
-    <div class="list">
-      <div class="item">
-        <button class="full-width"  @click="alert()">
+      <div class="list">
+        <div class="item">
+          <button class="full-width" @click="alert()">
           <i class="item-primary">view_quilt</i>
           <span>我</span>
         </button>
-      </div>
-      <div class="item">
-        <button class="full-width"  @click="alert()">
+        </div>
+        <div class="item">
+          <button class="full-width" @click="alert()">
           <i class="item-primary">build</i>
         设置
         </button>
-      </div>
-      <div class="item">
-        <button class="full-width"  @click="alert()">
+        </div>
+        <div class="item">
+          <button class="full-width" @click="alert()">
           <i class="item-primary">tab</i>
         消息
         </button>
-      </div>
-      <div class="item">
-        <button class="full-width"  @click="alert()">
+        </div>
+        <div class="item">
+          <button class="full-width" @click="alert()">
           <i class="item-primary">compare_arrows</i>
         反馈
         </button>
+        </div>
       </div>
-    </div>
 
-    <div class="footer">
-      <button class="red full-width" @click="login_out()">退出</button>
+      <div class="footer">
+        <button class="red full-width" @click="login_out()">退出</button>
+      </div>
     </div>
   </q-drawer>
 </template>
 <script>
   import {
+    mapState,
     mapMutations,
-    mapGetters
+    mapActions
   } from 'vuex'
   import {
     Dialog
   } from 'quasar'
   export default {
+    name: "drawer", 
     computed: {
-      ...mapGetters(['getUserInfo']),
-    }, 
+      ...mapState({
+        loguser(state) {
+          console.log(state.auth)
+          if (state.auth.user) {
+            return state.auth.user.name
+          } else {
+            this.$router.push({
+              path: '/login'
+            })
+          }
+        }
+      }),
+    },
+    created() {
+    },
     methods: {
-      ...mapMutations(['out']),
+      ...mapActions('auth', [
+        'logout'
+      ]),
       alert() {
         Dialog.create({
           buttons: ['了解'],
@@ -62,14 +83,17 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
-       login_out() {
-        this.out()
-        this.$router.push({
-          path: '/login'
+      login_out() {
+        this.logout().then(() => {
+          this.$router.push({
+            path: '/login'
+          })
+          this.$refs.leftDrawer.close()
+
         })
+
       }
     }
-
   }
 
 </script>

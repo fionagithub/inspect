@@ -10,6 +10,8 @@ import Quasar from 'quasar'
 import router from './router'
  import store from './config/store'
 import './api/feathers-config'
+import Vuelidate from 'vuelidate'
+Vue.use(Vuelidate)
 
 Vue.use(Quasar) // Install Quasar Framework
 

@@ -10,16 +10,15 @@
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">用户名:</div>
-            <input class="auto" placeholder="user name" v-model="user">
+            <input class="auto" placeholder="user name" v-model="users">
           </div>
 
         </div>
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">密码:</div>
-            <input class="auto">
+            <input class="auto" v-model="pwd">
           </div>
-
         </div>
         <div class="login-btn">
           <button class="circular big teal" @click="login()">登录</button>
@@ -30,32 +29,42 @@
   </div>
 </template>
 
+
 <script>
   import {
+    Toast
+  } from 'quasar'
+  import {
     mapGetters,
+    mapState,
+    mapActions,
     mapMutations
   } from 'vuex'
   export default {
     data() {
       return {
-        user: 'root',
-        userInfo: ''
+        users: 'jkr3',
+        pwd: 'laputa',
       }
     },
-    computed: {
-      ...mapGetters([
-        'getUserInfo'
-      ])
-
-    },
     methods: {
-      ...mapMutations(['setUser']),
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
       login() {
-        this.setUser(this.user)
-        this.userInfo = this.getUserInfo || 'root'
-        if (this.userInfo) {
-          this.$router.push('/')
+        let user = {
+          strategy: 'local',
+          userId: this.users,
+          password: this.pwd
         }
+        this.authenticate(user).then(response => {
+         Toast.create('登录成功.')
+          console.log('response:::', response)
+            this.$router.push('/')
+       }).catch(function (error) {
+         Toast.create('登录出错.')
+          console.error('Error authenticating!', error);
+        });
       }
     }
   }

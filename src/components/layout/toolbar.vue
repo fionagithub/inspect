@@ -1,25 +1,31 @@
 <template>
-  <div class="toolbar">
-    <section class="head_goback" v-if="goBack" @click="$router.go(-1)">
-      <i>arrow_back</i>
-    </section>
-    <button class="hide-on-drawer-visible" @click="leftDrawer.open()" v-else>
+  <div>
+    <div class="toolbar">
+      <section class="head_goback" v-if="goBack" @click="$router.go(-1)">
+        <i>arrow_back</i>
+      </section>
+      <button class="hide-on-drawer-visible" @click="leftDrawer.open()" v-else>
       <i>menu</i>
     </button>
 
-    <q-toolbar-title :padding="1" v-if="headTitle">
-      <span class="title_text">{{headTitle}}</span>
-    </q-toolbar-title>
+      <q-toolbar-title :padding="1" v-if="headTitle">
+        <span class="title_text">{{headTitle}}</span>
+      </q-toolbar-title>
 
       <button class="right-drawer-opener"><i>more_vert</i>
-        <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
-          <div class="list highlight ">
-            <div class="item">
-              <button class="defalut" @click="alert()">首页管理 </button>
-            </div>
-          </div>
-        </q-popover>
-     </button>
+          <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
+            <div class="list highlight ">
+              <div class="item">
+                <button class="defalut" @click="alert()">首页管理 </button>
+    </div>
+  </div>
+  </q-popover>
+  </button>
+
+  </div>
+  <div class="toolbar" v-if="search">
+    <q-search v-model="searchModel" @enter='getMessages()'></q-search>
+  </div>
   </div>
 </template>
 <script type="text/javascript">
@@ -28,20 +34,33 @@
   } from 'quasar'
 
   import {
-    mapGetters
+    mapState
   } from 'vuex'
   export default {
     name: "toolbar",
     data() {
       return {
-        userInfo: ''
-
+        searchModel: '',
+      }
+    },
+    computed: {
+      ...mapState({
+        loguser(state) {
+          console.log(state.auth)
+          if (state.auth.user) {
+            return state.auth.user.name
+          } else {
+            this.$router.push({
+              path: '/login'
+            })
+          }
+        }
+      }),
+      leftDrawer() {
+        return this.$parent.$children[1].$refs.leftDrawer
       }
     },
     mounted() {
-      this.$nextTick(function () {
-        this.getUser()
-      })
     },
     methods: {
       alert() {
@@ -50,26 +69,9 @@
           title: '抱歉',
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
-      },
-      getUser() {
-        //  this.getUserInfo()
-        this.userInfo = this.getUserInfo
-        if (this.userInfo == '') {
-          this.$router.push({
-            path: '/login'
-          })
-        }
-      }
+      }, 
     },
-    computed: {
-      ...mapGetters([
-        'getUserInfo'
-      ]),
-      leftDrawer() {
-        return this.$parent.$children[1].$refs.leftDrawer
-      }
-    },
-    props: ['headTitle', 'goBack']
+    props: ['headTitle', 'goBack', 'search']
   }
 
 </script>
@@ -78,4 +80,9 @@
   .right-itens button {
     margin-right: 10px;
   }
+
+  .tran-bar {
+    background: transparent;
+  }
+
 </style>

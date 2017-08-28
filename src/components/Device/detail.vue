@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <toolbar head-title="报障清单" go-back='true'>
-    </toolbar>
+  <div> 
     <div class="layout-padding">
       <div class="card" v-for="items in message.data">
         <div class="card-title">
@@ -24,6 +22,7 @@
 <script>
   import {
     mapGetters,
+    mapMutations,
     mapActions
   } from 'vuex'
   import toolbar from 'components/layout/toolbar.vue'
@@ -31,6 +30,24 @@
     name: "detail",
     components: {
       toolbar
+    },
+    created(){
+      this.setBarInfo()
+    },
+    methods:{
+      ...mapMutations(['setBar'] ),
+      setBarInfo(){
+        let obj={
+          title:'报障清单',
+          search:false,
+          show: {
+            bar:true,
+            drawer:false,
+          },
+          direction:'true'
+        }
+        this.setBar(obj)
+      },
     },
     computed: {
       ...mapGetters('message', {
