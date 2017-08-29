@@ -13,16 +13,14 @@
 
 <script>
     import {
-    mapState,
-    mapMutations,
-    mapActions
+    mapState,  
   } from 'vuex'
   import toolbar from 'components/layout/toolbar.vue'
   import drawer from 'components/layout/drawer.vue'
   export default { 
-    computed:{
+    computed:{ 
       ...mapState(['title','search','show', 'direction'])
-    },
+    }, 
     components: {
       toolbar,
       drawer

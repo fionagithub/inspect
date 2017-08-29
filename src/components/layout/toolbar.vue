@@ -32,10 +32,6 @@
   import {
     Dialog
   } from 'quasar'
-
-  import {
-    mapState
-  } from 'vuex'
   export default {
     name: "toolbar",
     data() {
@@ -44,18 +40,6 @@
       }
     },
     computed: {
-      ...mapState({
-        loguser(state) {
-          console.log(state.auth)
-          if (state.auth.user) {
-            return state.auth.user.name
-          } else {
-            this.$router.push({
-              path: '/login'
-            })
-          }
-        }
-      }),
       leftDrawer() {
         return this.$parent.$children[1].$refs.leftDrawer
       }

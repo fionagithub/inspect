@@ -59,19 +59,12 @@
     computed: {
       ...mapState({
         loguser(state) {
-          console.log(state.auth)
           if (state.auth.user) {
             return state.auth.user.name
-          } else {
-            this.$router.push({
-              path: '/login'
-            })
           }
         }
-      }),
-    },
-    created() {
-    },
+      }), 
+    }, 
     methods: {
       ...mapActions('auth', [
         'logout'
