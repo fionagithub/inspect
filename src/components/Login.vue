@@ -1,7 +1,7 @@
 <template>
   <!-- root node required -->
-  <div class="login">
-    <!-- your content -->
+  <div class="layout-view">
+    <div class="login" >
     <div class="card">
       <div class="card-media">
         <img src="../assets/laputa.jpg">
@@ -26,6 +26,8 @@
 
       </div>
     </div>
+
+    </div>
   </div>
 </template>
 
@@ -35,17 +37,17 @@
     Toast
   } from 'quasar'
   import {
-    mapGetters,
-    mapState,
     mapActions,
-    mapMutations
   } from 'vuex'
   export default {
     data() {
       return {
         users: 'jkr3',
         pwd: 'laputa',
+        
       }
+    },
+    created() {
     },
     methods: {
       ...mapActions('auth', [
@@ -58,11 +60,11 @@
           password: this.pwd
         }
         this.authenticate(user).then(response => {
-         Toast.create('登录成功.')
+         Toast.create( { html: '登录成功.',timeout: 500})
           console.log('response:::', response)
             this.$router.push('/')
        }).catch(function (error) {
-         Toast.create('登录出错.')
+         Toast.create.warning({html: '登录出错.',timeout:500 })
           console.error('Error authenticating!', error);
         });
       }

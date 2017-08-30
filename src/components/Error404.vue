@@ -30,8 +30,8 @@ export default {
     return {
       canGoBack: window.history.length > 1
     }
-  },
-  methods: {
+  }, 
+  methods: { 
     goBack () {
       window.history.go(-1)
     }

@@ -1,5 +1,6 @@
 <template>
   <div class="layout-view">
+  <div class="layout-padding">
     <div class="row gutter wrap justify-stretch content-center text-center">
       <div class="auto">
         <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
@@ -9,7 +10,7 @@
       </div>
     </div>
     <q-infinite-scroll :handler="refresher">
-      <div class="list item-inset-delimiter">
+      <div class="list item-inset-delimiter" v-if="message.length"  >
         <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.id)">
           <i class="item-primary">mail</i>
           <div class="item-content inset">
@@ -21,7 +22,7 @@
         </div>
       </div>
       <div class="row justify-center" style="margin-bottom: 50px;">
-        <spinner name="dots" slot="message" :size="40" v-if="fetching">
+        <spinner name="dots" slot="message" :size="40" v-if="fetched">
         </spinner>
         <div slot="message" :size="40" v-else>
           {{tips}}
@@ -30,6 +31,7 @@
     </q-infinite-scroll>
     <button class="absolute-bottom-right circular teal" style="right: 18px; bottom: 18px;" @click="add()"><i class="q-fab-icon">add</i>
       </button>
+  </div>
   </div>
 </template>
 <script>
@@ -46,39 +48,38 @@ from 'quasar'
     data() {
       return {
         tips: '',
+        fetched:true,
         searchModel: '',
         limit: 10,
         skip: 10,
-        selectType: 'FINISHED',
-        selectTime: 'AM',
+        selectType: 'NONE',
+        selectTime: 'NOW',
         items_time: [{
-          value: 'AM',
-          label: '上午'
+          value: 'NOW',
+          label: '今日'
+        },{
+          value: 'WEEK',
+          label: '本周'
+        },{
+          value: 'ALL',
+          label: '所有'
         }],
         items_type: [{
           value: 'FINISHED',
-          label: '已派'
+          label: '已处理'
+        }, {
+          value: 'NONE',
+          label: '未处理'
         }, {
           value: 'PENDING',
-          label: '未派'
-        }, {
-          value: 'DONE',
-          label: '完成'
+          label: '处理中'
         }]
       }
     },
     computed: {
       ...mapGetters('message', {
         message: 'list',
-      }),
-      fetching() {
-          if (this.message) {
-            return true
-          } else {
-            this.tips = '服务崩溃，稍后再试'
-            return false
-          }
-        }
+      })
     },
     components: {
       toolbar
@@ -89,44 +90,48 @@ from 'quasar'
           $limit: this.limit
         }
       })
+      .catch(err=>{
+          this.fetched=false
+          this.tips = '哦,服务开小差了'
+        Toast.create.warning({html:'服务崩溃，稍后再试',timeout:500})
+      })
     },
     mounted() {
-      this.setBarInfo()
+      this.setNavInfo()
     },
     methods: {
       refresher(index, done) {
-      
+        let _self=this
         setTimeout(() => {
-          if(this.fetching){
+          if(_self.fetched){
               let items =[]
-              this.findMessages({
+              _self.findMessages({
                 query: {
                   $limit: 10,
-                  $skip: this.skip
+                  $skip: _self.skip
                 }
               }).then((res)=>{
-              console.log('-=', this.fetching)
                 items=res.data
-              if(items.length>0){
-              this.message = this.message.concat(items)
-              this.skip += 10;
-              }else{
-                this.fetching=false
-                this.tips='已加载全部数据。'
-              }
+                if(items.length==0){
+                    _self.fetched=false
+                  _self.tips='加载完成.'
+                }else{
+                  _self.message = _self.message.concat(items)
+                  _self.skip += 10;
+                }
+                console.log('-=',   _self.fetched)
               })
               done()
           }
         }, 2500)
       },
-      ...mapMutations(['setBar']),
-      setBarInfo() {
-        this.setBar({
-          title: '报障',
+      ...mapMutations(['setNav']),
+      setNavInfo() {
+        this.setNav({
+          title: '报障清单',
           search: true,
           show: {
-            bar: true,
-            drawer: false,
+            bar: true
           },
           direction: 'true'
         })

@@ -2,8 +2,8 @@
   <!-- Don't drop "q-app" class -->
   <div id="q-app">
     <q-layout>
-    <toolbar slot="header" v-show="show.bar" :head-title="title" :search="search" :go-back='direction'></toolbar>
-    <drawer v-show="show.drawer" ></drawer>
+    <toolbar slot="header" v-show="nav.show.bar" :head-title="nav.title" :search="nav.search" :go-back='nav.direction'></toolbar>
+    <drawer v-show="nav.show.drawer" ></drawer>
       <transition name="fade" mode="out-in">
         <router-view></router-view>
       </transition>
@@ -19,7 +19,7 @@
   import drawer from 'components/layout/drawer.vue'
   export default { 
     computed:{ 
-      ...mapState(['title','search','show', 'direction'])
+      ...mapState([ 'nav'])
     }, 
     components: {
       toolbar,

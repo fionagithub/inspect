@@ -11,7 +11,6 @@ import router from './router'
  import store from './config/store'
 import './api/feathers-config'
 import Vuelidate from 'vuelidate'
- import { Toast } from 'quasar'
 Vue.use(Vuelidate)
 
 Vue.use(Quasar) // Install Quasar Framework
@@ -21,16 +20,22 @@ Quasar.start(() => {
   new Vue({
     el: '#q-app',
     created(){ 
-       this.$store._actions['auth/authenticate'][0]().then(response => {
-         Toast.create('登录成功.')
+      let _self = this
+       _self.$store.dispatch('auth/authenticate').then((response) => {
+            _self.$router.push('/')
           console.log('response:::', response)
-            this.$router.push('/')
-       }).catch(function (error) {
-         Toast.create('登录出错.')
-            this.$router.push('/login')
-          console.error('Error authenticating!', error);
+       }).catch( (error)=> {
+            _self.$router.push('/login')
+          console.log('Error authenticating!', error);
         });
     },
+    watch:{
+      $route(to, from, next) {
+        this.$store.commit('initNav')
+    console.log('-call -mutations=')
+      }
+    },
+    
     router,  //
     store,
     render: h => h(require('./App'))

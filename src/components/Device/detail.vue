@@ -1,21 +1,47 @@
 <template>
-  <div> 
+  <div class="layout-view">
+
     <div class="layout-padding">
-      <div class="card" v-for="items in message.data">
-        <div class="card-title">
-          {{items.deviceName}}
-        </div>
-        <img src="../img/water.jpg" alt="">
-        <div class="card-content">
-          <ol>
-            <li v-for="mon in items.monitors">
-              <span>  {{mon}}</span>
-            </li>
-          </ol>
+    <div class="row justify-center" style="margin-bottom: 50px;" v-if="message.tips">
+      {{message.tips }}
+    </div>
+      <div v-else>
+      <div class="item two-lines">
+        <div class="item-content row items-center wrap">
+          <div class="item-label">系统:</div>
+          <input class="full-width" v-model="message.system" />
         </div>
       </div>
+      <div class="item two-lines">
+        <div class="item-content row items-center wrap">
+          <div class="item-label">优先级:</div>
+          <input class="full-width" v-model="message.priority" />
+        </div>
+      </div>
+      <div class="item two-lines">
+        <div class="item-content row items-center wrap">
+          <div class="item-label">工单状态:</div>
+          <input class="full-width" v-model="message.stateName" />>
+        </div>
+      </div>
+      <div class="item multiple-lines">
+        <div class="item-content row items-center wrap">
+          <div class="item-label">报障时间:</div>
+          <input class="full-width" v-model="message.stateTime">
+        </div>
+      </div>
+      <div class="item multiple-lines">
+        <div class="item-content">
+          <div class="item-label">报障描述:</div>
+          <textarea class="full-width" v-model="message.description"> </textarea>
+        </div>
+      </div>
+      <!--<pre>$v: {{ $v }}</pre>-->
+      <div class="add-btn">
+        <button class="teal full-width" @click="add()">提交</button>
+      </div>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -28,40 +54,55 @@
   import toolbar from 'components/layout/toolbar.vue'
   export default {
     name: "detail",
+    data() {
+      return {
+        message: {
+          tips:'哦,服务开小差了'
+        }
+      }
+    },
     components: {
       toolbar
     },
-    created(){
-      this.setBarInfo()
+    created() {
+      this.setNavInfo()
+      this.getMessage()
     },
-    methods:{
-      ...mapMutations(['setBar'] ),
-      setBarInfo(){
-        let obj={
-          title:'报障清单',
-          search:false,
+    methods: {
+      ...mapMutations(['setNav']),
+      setNavInfo() {
+        let obj = {
+          title: '报障清单',
           show: {
-            bar:true,
-            drawer:false,
+            bar: true,
           },
-          direction:'true'
+          direction: true
         }
-        this.setBar(obj)
+        this.setNav(obj)
       },
-    },
-    computed: {
-      ...mapGetters('message', {
-        findMessages: 'find'
+      ...mapActions('message', {
+        findMessages: 'find',
       }),
-      message() {
+      getMessage() {
+        let _self = this
         const id = this.$route.params.id
-        return this.findMessages({
-          query: {
-            id: id
-          }
-        })
-      }
+        this.findMessages({
+            query: {
+              id: id
+            }
+          }).then(res => {
+            this.message = res.data[0]
+          })
+          .catch(err => {
+            Toast.create.warning({
+              html: '服务崩溃，稍后再试',
+              timeout: 500
+            })
+          })
 
+      }
+    },
+    computed: { 
     },
   }
 

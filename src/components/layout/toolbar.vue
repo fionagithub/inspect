@@ -1,9 +1,9 @@
 <template>
   <div>
     <div class="toolbar">
-      <section class="head_goback" v-if="goBack" @click="$router.go(-1)">
+      <button class="head_goback" v-if="goBack" @click="$router.go(-1)">
         <i>arrow_back</i>
-      </section>
+      </button>
       <button class="hide-on-drawer-visible" @click="leftDrawer.open()" v-else>
       <i>menu</i>
     </button>

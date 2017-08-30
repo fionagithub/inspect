@@ -2,23 +2,32 @@ import Vuex from 'vuex'
 import Vue from 'vue'
 
 Vue.use(Vuex)
-
-let state = {
-  title: '',
-  search: false,
-  show: {
-    bar: false,
-    drawer: false,
-  },
-  direction: ''
+function initNav(){
+  let _nav={
+    title: '',
+    search: false,
+    show: {
+      bar: false,
+      drawer: false,
+    },
+    direction: ''
+  }
+  return _nav
+}
+let state ={
+  nav:new initNav()
 }
 
 let mutations = {
-  setBar(state, value) {
-    state.direction = value.direction
-    state.title = value.title
-    state.show = value.show
-    state.search = value.search
+  setNav(state, value) {
+    state.nav.direction = value.direction
+    state.nav.title = value.title
+    state.nav.show = value.show
+    state.nav.search = value.search
+  },
+  initNav(){
+    console.log('--restore navigation--')
+   state.nav=new initNav()
   }
 }
 
