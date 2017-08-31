@@ -56,7 +56,7 @@
       login() {
         let user = {
           strategy: 'local',
-          userId: this.users,
+          loginId: this.users,
           password: this.pwd
         }
         this.authenticate(user).then(response => {
@@ -64,7 +64,7 @@
           console.log('response:::', response)
             this.$router.push('/')
        }).catch(function (error) {
-         Toast.create.warning({html: '登录出错.',timeout:500 })
+         Toast.create.negative({html: '登录出错.',timeout:500 })
           console.error('Error authenticating!', error);
         });
       }

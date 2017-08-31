@@ -10,25 +10,40 @@ import store from '../config/store'
 /*const socket = io('http://192.168.123.125:3030', {
 transports: ['websocket']
 })*/
-
-const socket = io('http://192.168.123.129:3031', {
+const socket = io('http://192.168.123.240:3031', {
+transports: ['websocket']
+})
+/*const socket = io('http://192.168.123.129:3031', {
   transports: ['websocket']
-}) 
+}) */
 const feathersClient = feathers()
   .configure(hooks())
   .configure(socketio(socket,{timeout:2000}))
   .configure(auth({
-    storage: window.localStorage
+    storage: window.localStorage,
+   // timeout:2500
   }))
   .configure(feathersVuex(store, {
-   /* auth: {
+    auth: {
       userService: '/users'
-    }*/
+    }
   }))
 
-   feathersClient.service('/message')
+   feathersClient.service('/tickets')
+   
+   feathersClient.hooks({
+    before(hook){
+      console.log('My custom before hook ran!');
+    },
+    error(hook){
+      console.log('======hook=======>', hook)
+    },
+  })
  //feathersClient.service('/users')
-  /*app.service('authentication')
+  /*
+  id：loginId
+  /tickets
+  app.service('authentication')
     .hooks({
       before: {
         // You can chain multiple strategies on create method

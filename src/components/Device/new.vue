@@ -59,12 +59,16 @@
   export default {
     name: "new",
     data() {
-      return _data
+      let _stateTime={ stateTime:  moment().format()}
+     return Object.assign(_stateTime,_data)
     },
     created() {
       this.setNavInfo()
     },
     methods: {
+      ...mapActions('tickets', {
+        createMessages: 'create',
+      }),
       ...mapMutations(['setNav']),
       setNavInfo() {
         this.setNav({
@@ -75,13 +79,11 @@
           direction: true
         })
       },
-      ...mapActions('message', {
-        createMessages: 'create',
-      }),
       add() {
         let data = {
-          "stateName": this.stateName,
-          "priority": this.priority,
+          "state": this.stateName,
+          "priority":parseInt(this.priority),
+          "system":this.system,
           "stateTime": this.stateTime,
           "description": this.description,
         }

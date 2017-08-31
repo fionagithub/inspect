@@ -17,15 +17,11 @@
             <div class="list highlight ">
               <div class="item">
                 <button class="defalut" @click="alert()">首页管理 </button>
-    </div>
-  </div>
-  </q-popover>
-  </button>
-
-  </div>
-  <div class="toolbar" v-if="search">
-    <q-search v-model="searchModel" @enter='getMessages()'></q-search>
-  </div>
+              </div>
+            </div>
+        </q-popover>
+      </button>
+  </div> 
   </div>
 </template>
 <script type="text/javascript">

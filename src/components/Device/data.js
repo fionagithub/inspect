@@ -1,17 +1,17 @@
 export default  {
         stateName: "NONE",
         description: "",
-        stateTime:  moment().format(),
+     //   stateTime:  moment().format(),
         system: '',
         priority: '',
         selectstateName: [{
-          value: 'FINISHED',
+          value: '已处理',
           label: '已处理'
         }, {
-          value: 'NONE',
+          value: '未处理',
           label: '未处理'
         }, {
-          value: 'PENDING',
+          value:'处理中' ,
           label: '处理中'
         }],
         selectPriority: [{

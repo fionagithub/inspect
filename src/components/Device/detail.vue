@@ -1,6 +1,5 @@
 <template>
   <div class="layout-view">
-
     <div class="layout-padding">
     <div class="row justify-center" style="margin-bottom: 50px;" v-if="message.tips">
       {{message.tips }}
@@ -21,7 +20,7 @@
       <div class="item two-lines">
         <div class="item-content row items-center wrap">
           <div class="item-label">工单状态:</div>
-          <input class="full-width" v-model="message.stateName" />>
+          <input class="full-width" v-model="message.stateName" />
         </div>
       </div>
       <div class="item multiple-lines">
@@ -72,7 +71,7 @@
       ...mapMutations(['setNav']),
       setNavInfo() {
         let obj = {
-          title: '报障清单',
+          title: '报障详情',
           show: {
             bar: true,
           },
@@ -80,7 +79,7 @@
         }
         this.setNav(obj)
       },
-      ...mapActions('message', {
+      ...mapActions('tickets', {
         findMessages: 'find',
       }),
       getMessage() {
@@ -88,13 +87,13 @@
         const id = this.$route.params.id
         this.findMessages({
             query: {
-              id: id
+              ticketId: id
             }
           }).then(res => {
             this.message = res.data[0]
           })
           .catch(err => {
-            Toast.create.warning({
+            Toast.create.negative({
               html: '服务崩溃，稍后再试',
               timeout: 500
             })
