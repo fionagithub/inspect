@@ -109,7 +109,7 @@
       }),
       refresher(index, done) {
         let _self = this
-        setTimeout(() => {
+        // setTimeout(() => {
           if (_self.fetched) {
             let _query = { 
                 $limit: 10,
@@ -139,7 +139,7 @@
             })
              done()
           }
-        }, 2500)
+        // }, 2500)
       },
       getMessages() {
         this.skip = 0

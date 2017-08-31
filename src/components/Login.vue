@@ -42,8 +42,8 @@
   export default {
     data() {
       return {
-        users: 'jkr3',
-        pwd: 'laputa',
+        users: '',
+        pwd: '',
         
       }
     },
