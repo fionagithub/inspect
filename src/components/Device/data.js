@@ -3,7 +3,7 @@ export default  {
         description: "",
      //   stateTime:  moment().format(),
         system: '',
-        priority: '',
+        priority: -1,
         selectstateName: [{
           value: '已处理',
           label: '已处理'
