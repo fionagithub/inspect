@@ -16,13 +16,13 @@ export default  {
         }],
         selectPriority: [{
           label: '一般',
-          value: '-1',
+          value: -1,
         }, {
           label: '紧急',
-          value: '0',
+          value: 0,
         }, {
           label: '非常紧急',
-          value: '1',
+          value: 1,
         }, ],  
         selectsystem: [{
             label: '弱电',
