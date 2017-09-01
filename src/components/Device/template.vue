@@ -2,7 +2,7 @@
   <div class="layout-view">
     <div class="layout-padding">
       <div class="row gutter wrap justify-stretch content-center text-center">
-        <q-search class="full-width" v-model="searchModel" @enter='getMessages()'></q-search>
+        <q-search class="full-width" v-model="searchModel" @enter='resumeGet()'></q-search>
         <div class="auto">
           <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
         </div>
@@ -10,7 +10,8 @@
           <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
         </div>
       </div>
-      <q-infinite-scroll :handler="refresher">
+
+      <q-infinite-scroll :handler="loadMore" ref="infiniteScroll">
         <div class="list item-inset-delimiter" v-if="message.length">
           <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.ticketId)">
             <i class="item-primary">mail</i>
@@ -20,6 +21,7 @@
             <i class="item-secondary">keyboard_arrow_right</i>
           </div>
         </div>
+
         <div class="row justify-center" style="margin-bottom: 50px;">
           <spinner name="dots" slot="message" :size="40" v-if="fetched">
           </spinner>
@@ -28,6 +30,9 @@
           </div>
         </div>
       </q-infinite-scroll>
+      <!--  <button class="teal" @click="stopLoading()">
+        Stop Loading More
+      </button>-->
       <button class="absolute-bottom-right circular teal" style="right: 18px; bottom: 18px;" @click="add()"><i class="q-fab-icon">add</i>
       </button>
     </div>
@@ -49,13 +54,15 @@
     data() {
       return {
         tips: '',
-        message:[],
+        message: [],
         fetched: true,
         searchModel: '',
         limit: 10,
+        _resumed: false,
         skip: 0,
         selectType: 'NONE',
         selectTime: 'NOW',
+        btnFlag: false,
         items_time: [{
           value: 'NOW',
           label: '今日'
@@ -79,14 +86,15 @@
       }
     },
     computed: {
-     /* ...mapGetters('tickets', {
-        message: 'list',
-      })*/
+      /* ...mapGetters('tickets', {
+         message: 'list',
+       })*/
     },
     components: {
       toolbar
     },
     created() {
+      this.setNavInfo()
       this.findMessages()
         .catch(err => {
           this.fetched = false
@@ -98,7 +106,8 @@
         })
     },
     mounted() {
-      this.setNavInfo()
+      this.clear() // 置空ticket-vuex
+        this.getApi() //请求初始数据
     },
     methods: {
       ...mapMutations('tickets', {
@@ -107,62 +116,60 @@
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
-      refresher(index, done) {
-        let _self = this
-        setTimeout(() => {
-          if (_self.fetched) {
-            let _query = { 
-                $limit: 10,
-                $skip: _self.skip,
-             
-            }
-            if( _self.searchModel !=='' ){
-            _query=  Object.assign(_query ,{     '$or': [{
-                    ticketId: _self.searchModel
-                  }] } )
-
-            }
-            _self.findMessages({query: _query}).then((res) => {
-              if (res.data.length == 0) {
-                console.log('-=1-')
-                _self.tips = '已加载全部数据.'
-                _self.fetched = false
-            if( _self.searchModel !=='' ){
-                _self.tips = '暂无数据.'
-              }
-              } else {
-                console.log('-=2-')
-                _self.skip += 10;
-              }
-                _self.message = _self.message.concat(res.data)
-              console.log('-=', _self.message.length,  _self.fetched)
-            })
-             done()
-          }
-        }, 2500)
-      },
-      getMessages() {
+      resumeGet() {
+        this.fetched = true
+        this._resumed = true
         this.skip = 0
         this.clear()
-        this.message = []  
-        this.refresher({},function(){})
-/*        this.fetched=false
-        let _query ={} 
-        if (this.searchModel) {
-        _query['query'] ={
-          '$or': [{
-          ticketId: this.searchModel
-        }]
-      }
-      }
+        this.message = []
+        this.$refs.infiniteScroll.resume()
+       // this.searchModel="TMqd1504173136754"
+      },
+      getApi(){
 
-      this.findMessages(_query).then((res) => {
-        if (res.data.length == 0) {
-          console.log('-=1-')
-          this.tips = '暂无数据.'
-        }
-          this.message = res.data
-      })*/
+      },
+      loadMore(index, done) {
+          let _self = this
+          let _query = {
+            $limit:  _self.limit,
+            $skip: _self.skip,
+          }
+          if (_self._resumed == true && _self.searchModel !== '') {
+            _query = Object.assign(_query, {
+              '$or': [{
+                ticketId: _self.searchModel
+              }]
+            })
+          }
+          _self.findMessages({
+            query: _query
+          }).then((res) => {
+            if (res.data.length == 0) {
+              _self.tips = '暂无数据.'
+              _self.fetched = false
+              console.log('-==--')
+              if (_self._resumed == true && _self.searchModel !== '') {
+                console.log('-=1-')
+                _self.tips = '没有搜索到相关数据.'
+              }
+            } else {
+              _self.message = _self.message.concat(res.data)
+              _self.skip = _self.message.length
+            }
+            if(res.data.length<_self.limit ){
+              _self.fetched = false
+              _self.stopLoading()
+            }
+            let count = 0
+            count = _self._resumed ? res.data.length : _self.message.length
+            _self.tips = '共计' + count + '条数据'
+            done()
+          })
+          console.log('-=', _self.fetched)
+      },
+      stopLoading() {
+        console.log('-=2-')
+        this.$refs.infiniteScroll.stop()
       },
       ...mapMutations(['setNav']),
       setNavInfo() {
