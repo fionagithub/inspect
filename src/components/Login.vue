@@ -17,7 +17,7 @@
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">密码:</div>
-            <input class="auto" v-model="pwd">
+            <input class="auto" v-model="pwd" type="password">
           </div>
         </div>
         <div class="login-btn">
