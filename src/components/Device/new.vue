@@ -6,7 +6,7 @@
           <div class="item-label">系统:</div>
           <q-select class="full-width" type="list" v-model="system" :options="selectsystem"></q-select>
         </div>
-      </div> 
+      </div>
       <div class="item two-lines">
         <div class="item-content row items-center wrap">
           <div class="item-label">优先级:</div>
@@ -28,7 +28,7 @@
       <div class="item multiple-lines">
         <div class="item-content">
           <div class="item-label">报障描述:</div>
-          <textarea class="full-width" v-model="description"> </textarea>
+          <textarea class="full-width desc" v-model="description"> </textarea>
         </div>
       </div>
       <!--<pre>$v: {{ $v }}</pre>-->
@@ -59,8 +59,10 @@
   export default {
     name: "new",
     data() {
-      let _stateTime={ stateTime:  moment().format()}
-     return Object.assign(_stateTime,_data)
+      let _stateTime = {
+        stateTime: moment().format()
+      }
+      return Object.assign(_stateTime, _data)
     },
     created() {
       this.setNavInfo()
@@ -82,24 +84,28 @@
       add() {
         let data = {
           "state": this.stateName,
-          "priority":parseInt(this.priority),
-          "system":this.system,
+          "priority": parseInt(this.priority),
+          "system": this.system,
           "stateTime": this.stateTime,
           "description": this.description,
         }
         this.createMessages(data)
           .then(res => {
             Toast.create('提交成功.')
+            this.$router.push('/device')
             // console.log('-=-=', res)
           })
           .catch(error => {
-            Toast.create.negative({html:'出错了.',timeout:500})
+            Toast.create.negative({
+              html: '出错了.',
+              timeout: 500
+            })
             let type = error.errorType
             error = Object.assign({}, error)
             error.message = (type === 'uniqueViolated') ?
               'That is unavailable.' :
               'An error prevented sign.'
-              console.log('-=:[]', error)
+            console.log('-=:[]', error)
           })
       }
     },
@@ -123,6 +129,10 @@
 <style>
   .add-btn {
     margin-top: 50px;
+  }
+
+  .desc {
+    height: 80px;
   }
 
   .form-group__message {
