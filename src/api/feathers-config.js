@@ -33,10 +33,10 @@ const feathersClient = feathers()
    
    feathersClient.hooks({
     before(hook){
-      console.log('My custom before hook ran!');
+     // console.log('My custom before hook ran!');
     },
     error(hook){
-      console.log('======hook=======>', hook)
+     // console.log('======hook=======>', hook)
     },
   })
  //feathersClient.service('/users')
