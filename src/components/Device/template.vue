@@ -14,11 +14,15 @@
       </div>
       <div class="list-scroll">
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter" v-if="message.length">
-            <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.ticketId)">
+          <div class="list item-inset-delimiter no-border " v-if="message.length">
+            <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary">mail</i>
               <div class="item-content inset">
-                {{item.ticketId}} {{item.system}} {{item.state.time}}
+                <div>
+                   {{item.system + `(`+ item.state[0].name+`)` }} 
+                <div class="desc" > {{item.description}}
+                  </div>
+                </div>
               </div>
               <i class="item-secondary">keyboard_arrow_right</i>
             </div>
@@ -28,7 +32,7 @@
             <spinner name="dots" slot="message" :size="40" v-if="fetched">
             </spinner>
             <div slot="message" :size="40" v-else>
-              {{tips}}
+              {{tips||"共计"+message.length+"条数据"}}
             </div>
           </div>
         </q-infinite-scroll>
@@ -53,14 +57,15 @@
   export default {
     data() {
       return {
-        tips: '',
-        message: [],
+        tips: null,
+        //   message: [],
         fetched: true,
+        isLoading: true,
         searchModel: '',
         limit: 10,
         _resumed: false,
         skip: 0,
-        selectType: 'NONE',
+        selectType: '未处理',
         selectTime: 'NOW',
         btnFlag: false,
         items_time: [{
@@ -74,39 +79,29 @@
           label: '所有'
         }],
         items_type: [{
-          value: 'FINISHED',
-          label: '已处理'
-        }, {
-          value: 'NONE',
+          value: '未处理',
           label: '未处理'
         }, {
-          value: 'PENDING',
+          value: '处理中',
           label: '处理中'
+        }, {
+          value: '已处理',
+          label: '已处理'
         }]
       }
     },
     computed: {
-      /* ...mapGetters('tickets', {
-         message: 'list',
-       })*/
+      ...mapGetters('tickets', {
+        message: 'list',
+      })
     },
     components: {
       toolbar
     },
     created() {
       this.setNavInfo()
-      this.findMessages()
-        .catch(err => {
-          this.fetched = false
-          this.tips = '哦,服务开小差了'
-          Toast.create.negative({
-            html: '服务崩溃，稍后再试',
-            timeout: 500
-          })
-        })
     },
     mounted() {
-      this.clear() // 置空ticket-vuex
       this.getApi() //请求初始数据
     },
     methods: {
@@ -118,58 +113,75 @@
       }),
       resumeGet() {
         this.fetched = true
-        this._resumed = true
+        this._resumed = this.searchModel !== '' ? true : false
         this.skip = 0
+        console.log('-123=', this._resumed)
         this.clear()
-        this.message = []
+        //  this.message = []
         this.$refs.infiniteScroll.resume()
         // this.searchModel="TMqd1504173136754"
       },
       getApi() {
         let _self = this
-        let _query = {
-          $limit: _self.limit,
-          $skip: _self.skip,
-        }
-        if (_self._resumed == true && _self.searchModel !== '') {
-          _query = Object.assign(_query, {
-            '$or': [{
-              ticketId: _self.searchModel
-            }]
-          })
-        }
-        _self.findMessages({
-          query: _query
-        }).then((res) => {
-          if (res.data.length == 0) {
-            _self.tips = '暂无数据.'
-            _self.fetched = false
-            if (_self._resumed == true && _self.searchModel !== '') {
-              console.log('-search--=1-')
-              _self.tips = '没有搜索到相关数据.'
-            }
-          } else {
-            _self.message = _self.message.concat(res.data)
+        _self.tips = null
+          let _query = {
+            $limit: _self.limit,
+            $skip: _self.skip,
           }
-          _self.skip += _self.message.length
-          if (res.data.length < _self.limit) {
-            _self.fetched = false
-            _self.stopLoading()
+            _self.isLoading =true 
+          console.log('--==-', _query)
+          if (_self._resumed == true) {
+            _query = Object.assign(_query, {
+              '$or': [{
+                description: _self.searchModel
+              }]
+            })
           }
-          let count = 0
-          console.log('-get=2-', res.data)
-          count = _self._resumed ? res.data.length : _self.message.length
-          _self.tips = '共计' + count + '条数据'
-        })
-        console.log('-=skip--', _self.skip)
+
+          _self.findMessages({
+              query: _query
+            }).then((res) => {
+              if (res.data.length == 0) {
+                _self.tips = '暂无数据.'
+                console.log('-=[sdf]')
+                _self.fetched = false
+                if (_self._resumed == true) {
+                  console.log('-search--=1-')
+                  _self.tips = '没有搜索到相关数据.'
+                }
+              }
+              console.log('-=res--', _self.tips, res.data)
+              _self.skip += res.data.length
+              if (res.data.length < _self.limit) {
+                _self.fetched = false
+                _self.stopLoading()
+              }
+              _self.isLoading = false 
+            })
+            .catch(err => {
+              this.fetched = false
+              this.tips = '哦,服务开小差了'
+              Toast.create.negative({
+                html: '服务崩溃，稍后再试',
+                timeout: 500
+              })
+            })
+
       },
       loadMore(index, done) {
-        console.log('-=loadMore=--')
-        this.getApi()
+        //loadmore 数据加载之间的时间间隔
+        /* setTimeout(() => {
+         }, 2500)*/
+         if(this.isLoading==false){
+          console.log('-=loadMore=--')
+          this.getApi()
+
+         }
         done()
+
       },
       stopLoading() {
-        console.log('-stop=2-')// stop  scroll event
+        console.log('-stop=2-') // stop  scroll event
         this.$refs.infiniteScroll.stop()
       },
       ...mapMutations(['setNav']),
@@ -193,7 +205,11 @@
           path: '/device/' + id
         })
       }
-    }
+    },
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
   }
 
   /*
@@ -209,8 +225,9 @@
     width: 100%;
   }
 
-  .item-link {
-    height: 80px;
+ .list-scroll .item-link {
+    height: 50px;
+    margin-top: 12px;
   }
 
   .layout-device {
@@ -226,5 +243,12 @@
   .list-scroll {
     flex: 3;
   }
-
+.desc{
+  color: #999;
+  padding-top: 10px;
+  font-size: 14px;
+}
+.q-popover .item-container{
+  height: 38px;
+}
 </style>

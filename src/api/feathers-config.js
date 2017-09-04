@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-/*const socket = io('http://192.168.123.125:3030', {
+/* const socket = io('http://192.168.123.125:3030', {
 transports: ['websocket']
 }) */
 const socket = io('http://api.laputacloud.com', {
@@ -18,7 +18,7 @@ const socket = io('http://api.laputacloud.com', {
 }) */
 const feathersClient = feathers()
   .configure(hooks())
-  .configure(socketio(socket, {timeout: 2000}))
+  .configure(socketio(socket, {timeout: 5000}))
   .configure(auth({
     storage: window.localStorage
    // timeout:2500
@@ -33,10 +33,10 @@ feathersClient.service('/tickets')
 
 feathersClient.hooks({
      before (hook) {
-      console.log('My custom before hook ran!')
+     // console.log('My custom before hook ran!');
     },
      error (hook) {
-      console.log('======hook=======>', hook)
+     // console.log('======hook=======>', hook)
     }
    })
  // feathersClient.service('/users')
