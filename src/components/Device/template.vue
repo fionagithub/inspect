@@ -131,6 +131,7 @@
           $limit: _self.limit,
           $skip: _self.skip,
         }
+          console.log('--==-', _query)
         if (_self._resumed == true && _self.searchModel !== '') {
           _query = Object.assign(_query, {
             '$or': [{
@@ -151,22 +152,26 @@
           } else {
             _self.message = _self.message.concat(res.data)
           }
-          _self.skip += _self.message.length
+          _self.skip = _self.message.length
+        console.log('-=res--', res.data)
           if (res.data.length < _self.limit) {
             _self.fetched = false
             _self.stopLoading()
           }
           let count = 0
-          console.log('-get=2-', res.data)
-          count = _self._resumed ? res.data.length : _self.message.length
+          count =_self.message.length
+        console.log('-=count=--',count )
           _self.tips = '共计' + count + '条数据'
         })
-        console.log('-=skip--', _self.skip)
       },
       loadMore(index, done) {
+        //loadmore 数据加载之间的时间间隔
+        setTimeout(()=> {
         console.log('-=loadMore=--')
         this.getApi()
-        done()
+          done()
+
+        }, 2500);
       },
       stopLoading() {
         console.log('-stop=2-')// stop  scroll event
