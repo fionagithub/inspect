@@ -93,7 +93,7 @@
 <style scoped>
   .user .name {
     text-align: center;
-    margin: 10px;
+    margin: 10px 0;
   }
 
   .list .item-link {
