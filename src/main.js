@@ -14,7 +14,7 @@ import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
 Vue.use(Quasar) // Install Quasar Framework
-
+// window.screen.lockOrientation('portrait')
 Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
