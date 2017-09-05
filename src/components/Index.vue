@@ -21,8 +21,8 @@
       <img src="../assets/laputa.jpg">
     </div>
     <div class="card-content">
-      <div class="row large-gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0" >
+      <div class="row gutter">
+        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
           <router-link :to="item.uri">
             <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -30,8 +30,8 @@
           </router-link>
         </div>
       </div>
-      <div class="row large-gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0" >
+      <div class="row gutter">
+        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
           <router-link :to="item.uri">
             <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -96,7 +96,8 @@
         let obj = {
           show: {
             drawer: true,
-          }
+          },
+          popover: '首页管理'
         }
         this.setNav(obj)
       },

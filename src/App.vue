@@ -2,7 +2,7 @@
   <!-- Don't drop "q-app" class -->
   <div id="q-app">
     <q-layout>
-    <toolbar slot="header" v-show="nav.show.bar" :head-title="nav.title" :search="nav.search" :go-back='nav.direction'></toolbar>
+    <toolbar slot="header" v-show="nav.show.bar" :head-title="nav.title" :popover-title="nav.popover" :go-back='nav.direction'></toolbar>
     <drawer v-show="nav.show.drawer" ></drawer>
       <transition name="fade" mode="out-in">
         <router-view></router-view>

@@ -3,7 +3,7 @@
     <div class="layout-padding layout-device">
       <div class="list-bar">
         <div class="row gutter wrap justify-stretch content-center text-center">
-          <q-search class="full-width" v-model="searchModel" @enter='resumeGet()'></q-search>
+          <q-search class="full-width" v-model="searchModel" @enter='resumeGet()' placeholder="搜索..."></q-search>
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
           </div>
@@ -17,14 +17,18 @@
           <div class="list item-inset-delimiter no-border " v-if="message.length">
             <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary">mail</i>
-              <div class="item-content inset">
+              <div class="item-content has-secondary">
                 <div>
-                   {{item.system + `(`+ item.state[0].name+`)` }} 
-                <div class="desc" > {{item.description}}
-                  </div>
+                  {{item.system + `(`+ item.state[0].name+`)` }}
+                </div>
+                <div class="desc">
+                  {{item.description}}
                 </div>
               </div>
-              <i class="item-secondary">keyboard_arrow_right</i>
+              <div class='list-time'>
+                {{item._createTime | moment}}
+              </div>
+              <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
           </div>
 
@@ -38,11 +42,12 @@
         </q-infinite-scroll>
       </div>
     </div>
-    <button class="absolute-bottom-right circular teal" style="right: 18px; bottom: 18px;" @click="add()"><i class="q-fab-icon">add</i>
+    <button class="absolute-bottom-right raised circular teal" style="right: 18px; bottom: 18px;" @click="add()"><i class="q-fab-icon">add</i>
       </button>
   </div>
 </template>
 <script>
+  import moment from 'moment'
   import toolbar from 'components/layout/toolbar.vue'
   import {
     mapGetters,
@@ -58,25 +63,27 @@
     data() {
       return {
         tips: null,
-        //   message: [],
         fetched: true,
         isLoading: true,
         searchModel: '',
         limit: 10,
         _resumed: false,
         skip: 0,
-        selectType: '未处理',
-        selectTime: 'NOW',
-        btnFlag: false,
+        selectType: '全部',
+        selectTime: 'ALL',
+        SearchLabel: '搜索...',
         items_time: [{
           value: 'NOW',
-          label: '今日'
+          label: '今天'
         }, {
           value: 'WEEK',
           label: '本周'
         }, {
+          value: 'MONTH',
+          label: '本月'
+        }, {
           value: 'ALL',
-          label: '所有'
+          label: '全部'
         }],
         items_type: [{
           value: '未处理',
@@ -87,7 +94,26 @@
         }, {
           value: '已处理',
           label: '已处理'
+        }, {
+          value: '全部',
+          label: '全部'
         }]
+      }
+    },
+    filters: {
+      moment: function (date) {
+        var _format;
+        var _days = moment().diff(date, 'days')
+        if (_days == 0) {
+          _format = '[今天] HH:mm'
+        } else {
+          if (_days < 365) {
+            _format = 'M月D日'
+          } else {
+            _format = 'Y年M月D日'
+          }
+        }
+        return moment(date).format(_format);
       }
     },
     computed: {
@@ -101,6 +127,25 @@
     created() {
       this.setNavInfo()
     },
+    watch: {
+      selectType(c, p) {
+        this.clear()
+        this.skip = 0
+        this.fetched = true
+        var _query ={}
+        if(c=='全部'){
+        }else{
+          _query.state= c
+        }
+         if( this.searchModel !== '' )  {
+          _query['$or']= [{
+            description: this.searchModel
+          }]
+        }  
+        console.log(_query, c,'[]')
+        this.getApi(_query)
+      }
+    },
     mounted() {
       this.getApi() //请求初始数据
     },
@@ -112,86 +157,80 @@
         findMessages: 'find',
       }),
       resumeGet() {
+        this.clear()
+        this.skip = 0
         this.fetched = true
         this._resumed = this.searchModel !== '' ? true : false
-        this.skip = 0
+        var _query ={}
+        if(this.selectType !== '全部' ){
+          _query['state']=this.selectType
+        }
+          if( this.searchModel !== '' )  {
+          _query['$or']= [{
+            description: this.searchModel
+          }]
+        }  
         console.log('-123=', this._resumed)
-        this.clear()
-        //  this.message = []
-        this.$refs.infiniteScroll.resume()
-        // this.searchModel="TMqd1504173136754"
+        this.getApi(_query)
       },
-      getApi() {
+      getApi(obj) {
         let _self = this
+        _self.isLoading = true
         _self.tips = null
-          let _query = {
-            $limit: _self.limit,
-            $skip: _self.skip,
-          }
-            _self.isLoading =true 
-          console.log('--==-', _query)
-          if (_self._resumed == true) {
-            _query = Object.assign(_query, {
-              '$or': [{
-                description: _self.searchModel
-              }]
-            })
-          }
+        let _query = {
+          $limit: _self.limit,
+          $skip: _self.skip,
+        }
+        if (obj) {
+          _query = Object.assign(_query, obj)
+        }
+        console.log('--==-', _query)
 
-          _self.findMessages({
-              query: _query
-            }).then((res) => {
-              if (res.data.length == 0) {
-                _self.tips = '暂无数据.'
-                console.log('-=[sdf]')
-                _self.fetched = false
-                if (_self._resumed == true) {
-                  console.log('-search--=1-')
-                  _self.tips = '没有搜索到相关数据.'
-                }
+        _self.findMessages({
+            query: _query
+          }).then((res) => {
+            if (res.data.length == 0) {
+              _self.tips = '暂无数据.'
+              console.log('-=[sdf]')
+              _self.fetched = false
+              if (obj) {
+                console.log('-search--=1-')
+                _self.tips = '没有搜索到相关数据.'
               }
-              console.log('-=res--', _self.tips, res.data)
-              _self.skip += res.data.length
-              if (res.data.length < _self.limit) {
-                _self.fetched = false
-                _self.stopLoading()
-              }
-              _self.isLoading = false 
+            }
+            _self.skip += res.data.length
+            if (res.data.length < _self.limit) {
+              _self.fetched = false
+            } else {
+              _self.isLoading = false
+            }
+            console.log('-=res--', _self.tips, res.data)
+          })
+          .catch(err => {
+            this.fetched = false
+            this.tips = '哦,服务开小差了'
+            Toast.create.negative({
+              html: '服务崩溃，稍后再试',
+              timeout: 500
             })
-            .catch(err => {
-              this.fetched = false
-              this.tips = '哦,服务开小差了'
-              Toast.create.negative({
-                html: '服务崩溃，稍后再试',
-                timeout: 500
-              })
-            })
+          })
 
       },
       loadMore(index, done) {
-        //loadmore 数据加载之间的时间间隔
-        /* setTimeout(() => {
-         }, 2500)*/
-         if(this.isLoading==false){
+        if (this.isLoading == false) {
           console.log('-=loadMore=--')
           this.getApi()
-
-         }
+        }
         done()
-
-      },
-      stopLoading() {
-        console.log('-stop=2-') // stop  scroll event
-        this.$refs.infiniteScroll.stop()
       },
       ...mapMutations(['setNav']),
       setNavInfo() {
         this.setNav({
           title: '报障清单',
-          search: true,
           show: {
             bar: true
           },
+          popover: '开发中',
           direction: 'true'
         })
       },
@@ -225,7 +264,7 @@
     width: 100%;
   }
 
- .list-scroll .item-link {
+  .list-scroll .item-link {
     height: 50px;
     margin-top: 12px;
   }
@@ -243,12 +282,31 @@
   .list-scroll {
     flex: 3;
   }
-.desc{
-  color: #999;
-  padding-top: 10px;
-  font-size: 14px;
-}
-.q-popover .item-container{
-  height: 38px;
-}
+
+  .desc {
+    color: #999;
+    padding-top: 10px;
+    font-size: 14px;
+  }
+
+  .q-popover .item-container {
+    height: 38px;
+  }
+
+  .list-time {
+    position: absolute;
+    top: 0;
+    width: 150px;
+    color: #666;
+    margin: 12px 35px;
+    right: 4px;
+    line-height: 24px;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  .icon {
+    margin: 16px 12px!important;
+  }
+
 </style>

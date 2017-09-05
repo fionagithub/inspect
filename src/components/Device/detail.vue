@@ -4,20 +4,45 @@
       <div v-if="message[0]">
         <div class="card">
           <div class="card-content">
-            系统: {{ message[0].system }}
-            <div class="item-content">
-              优先级: {{ message[0].priortity }}
+            <!-- <div>
+              <div class="item-content">
+              </div>
+            </div> -->
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 系统 </div>
+              <div class="d-val">
+                {{ message[0].system }}</div>
             </div>
-            <div class="item-title">
-              报障描述:
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 优先级 </div>
+              <div class="d-val">
+                {{ message[0].priortity|priortity }}</div>
             </div>
-            <div class="item-content">
-              {{message[0].description }}
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 报障描述 </div>
+              <div class="d-val">
+                {{ message[0].description }}</div>
             </div>
           </div>
         </div>
         <div class="card">
-          <div class="card-content"> 
+          <div class="card-content">
+            <div class="item multiple-lines">
+              <div class="item-content">
+                <div class="item-label">当前状态:</div>
+                <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
+              </div>
+
+            </div>
+            <div class="item multiple-lines">
+              <div class="item-content">
+                <div class="item-label">状态描述:</div>
+                <textarea class="full-width desc" v-model="stateDesc"> </textarea>
+              </div>
+
+            </div>
+            <button class="add-btn teal full-width" :disabled='this.state==""' @click="updateDB(message[0].id)">提交</button>
+
             <div class="timeline">
               <div class="timeline-item" v-for="n in message[0].state">
                 <div class="timeline-badge">
@@ -27,13 +52,12 @@
                   {{n.name}}
                 </div>
                 <div class="timeline-date text-italic">
-                  <div> {{n.time}} </div>
-                </div> 
+                  <div>
+                    <!-- {{n.staff+n.stateDesc}}-->
+                    {{n.time|moment }} </div>
+                </div>
               </div>
             </div>
-            <div class="item-label">当前状态:</div>
-            <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
-            <button class="add-btn teal full-width" @click="updateDB(message[0].id)">提交</button>
           </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
@@ -47,6 +71,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
@@ -58,7 +83,7 @@
     data() {
       return {
         ready: false,
-        stepperBtn: '',
+        stateDesc: '',
         state: '',
         selectState: [{
           value: '未处理',
@@ -69,16 +94,6 @@
         }, {
           value: '已处理',
           label: '已处理'
-        }],
-        selectPriority: [{
-          label: '一般',
-          value: 0,
-        }, {
-          label: '紧急',
-          value: 1,
-        }, {
-          label: '非常紧急',
-          value: 2,
         }],
         tips: null,
       }
@@ -97,6 +112,30 @@
     mounted() {
       this.getMessage()
     },
+    filters: {
+      priortity(data) {
+        var _map = {
+          0: '一般',
+          1: '紧急',
+          2: '非常紧急',
+        };
+        return _map[data]
+      },
+      moment(date) {
+        var _format;
+        var _days = moment().diff(date, 'days')
+        if (_days == 0) {
+          _format = 'HH:mm'
+        } else {
+          if (_days < 365) {
+            _format = 'M月D日 HH:mm'
+          } else {
+            _format = 'Y年M月D日 HH:mm'
+          }
+        }
+        return moment(date).format(_format);
+      }
+    },
     methods: {
       ...mapMutations(['setNav']),
       ...mapMutations('tickets', {
@@ -111,6 +150,7 @@
       setNavInfo() {
         let obj = {
           title: '报障详情',
+          popover: '开发中',
           show: {
             bar: true,
           },
@@ -119,6 +159,7 @@
         this.setNav(obj)
       },
       updateDB(id) {
+        //  console.log(this.stateDesc)
         this.patchMessages([id, {
           state: this.state
         }]).then(res => {
@@ -150,11 +191,26 @@
 
 </script>
 <style>
-  .add-btn {
-    margin: 10px 0;
+  .d-base {
+    display: flex;
+    padding: 10px 0;
   }
-  .timeline{
-    margin-bottom: 20px;
+
+  .add-btn {
+    margin: 20px 0;
+  }
+
+  .d-val {
+    font-size: 14px;
+    color: #606060;
+    line-height: 20px;
+    flex: 3;
+  }
+
+  .d-label {
+    color: #A6A6A6;
+    font-size: 12px;
+    flex: 1;
   }
 
 </style>
