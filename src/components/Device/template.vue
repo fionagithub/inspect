@@ -19,8 +19,8 @@
               <i class="item-primary">mail</i>
               <div class="item-content inset">
                 <div>
-                   {{item.system + `(`+ item.state[0].name+`)` }} 
-                <div class="desc" > {{item.description}}
+                  {{item.system + `(`+ item.state[0].name+`)` }}
+                  <div class="desc"> {{item.description}}
                   </div>
                 </div>
               </div>
@@ -117,81 +117,69 @@
         this.skip = 0
         console.log('-123=', this._resumed)
         this.clear()
-        //  this.message = []
-        this.$refs.infiniteScroll.resume()
-        // this.searchModel="TMqd1504173136754"
       },
       getApi() {
         let _self = this
         _self.tips = null
-          let _query = {
-            $limit: _self.limit,
-            $skip: _self.skip,
-          }
-            _self.isLoading =true 
-          console.log('--==-', _query)
-          if (_self._resumed == true) {
-            _query = Object.assign(_query, {
-              '$or': [{
-                description: _self.searchModel
-              }]
-            })
-          }
+        let _query = {
+          $limit: _self.limit,
+          $skip: _self.skip,
+        }
+        _self.isLoading = true
+        console.log('--==-', _query)
+        if (_self._resumed == true) {
+          _query = Object.assign(_query, {
+            '$or': [{
+              description: _self.searchModel
+            }]
+          })
+        }
 
-          _self.findMessages({
-              query: _query
-            }).then((res) => {
-              if (res.data.length == 0) {
-                _self.tips = '暂无数据.'
-                console.log('-=[sdf]')
-                _self.fetched = false
-                if (_self._resumed == true) {
-                  console.log('-search--=1-')
-                  _self.tips = '没有搜索到相关数据.'
-                }
+        _self.findMessages({
+            query: _query
+          }).then((res) => {
+            if (res.data.length == 0) {
+              _self.tips = '暂无数据.'
+              console.log('-=[sdf]')
+              _self.fetched = false
+              if (_self._resumed == true) {
+                console.log('-search--=1-')
+                _self.tips = '没有搜索到相关数据.'
               }
-              console.log('-=res--', _self.tips, res.data)
-              _self.skip += res.data.length
-              if (res.data.length < _self.limit) {
-                _self.fetched = false
-                _self.stopLoading()
-              }
-              _self.isLoading = false 
+            }
+            _self.skip += res.data.length
+            if (res.data.length < _self.limit) {
+              _self.fetched = false
+            }else{
+             _self.isLoading = false
+            }
+            console.log('-=res--', _self.tips, res.data)
+          })
+          .catch(err => {
+            this.fetched = false
+            this.tips = '哦,服务开小差了'
+            Toast.create.negative({
+              html: '服务崩溃，稍后再试',
+              timeout: 500
             })
-            .catch(err => {
-              this.fetched = false
-              this.tips = '哦,服务开小差了'
-              Toast.create.negative({
-                html: '服务崩溃，稍后再试',
-                timeout: 500
-              })
-            })
+          })
 
       },
       loadMore(index, done) {
-        //loadmore 数据加载之间的时间间隔
-        /* setTimeout(() => {
-         }, 2500)*/
-         if(this.isLoading==false){
+        if (this.isLoading == false) {
           console.log('-=loadMore=--')
           this.getApi()
-
-         }
+        }
         done()
-
-      },
-      stopLoading() {
-        console.log('-stop=2-') // stop  scroll event
-        this.$refs.infiniteScroll.stop()
       },
       ...mapMutations(['setNav']),
       setNavInfo() {
         this.setNav({
           title: '报障清单',
-          search: true,
           show: {
             bar: true
           },
+          popover: '开发中',
           direction: 'true'
         })
       },
@@ -225,7 +213,7 @@
     width: 100%;
   }
 
- .list-scroll .item-link {
+  .list-scroll .item-link {
     height: 50px;
     margin-top: 12px;
   }
@@ -243,12 +231,15 @@
   .list-scroll {
     flex: 3;
   }
-.desc{
-  color: #999;
-  padding-top: 10px;
-  font-size: 14px;
-}
-.q-popover .item-container{
-  height: 38px;
-}
+
+  .desc {
+    color: #999;
+    padding-top: 10px;
+    font-size: 14px;
+  }
+
+  .q-popover .item-container {
+    height: 38px;
+  }
+
 </style>
