@@ -7,10 +7,10 @@
           <q-select class="full-width" type="list" v-model="system" :options="selectsystem"></q-select>
         </div>
       </div>
-      <div class="item two-lines">
+      <div class="item">
         <div class="item-content row items-center wrap">
           <div class="item-label">优先级:</div>
-          <q-select class="full-width" type="radio" v-model="priority" :options="selectPriority"></q-select>
+          <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
         </div>
       </div>
       <div class="item two-lines">
@@ -22,7 +22,7 @@
       <div class="item multiple-lines">
         <div class="item-content row items-center wrap">
           <div class="item-label">报障时间:</div>
-          <q-datetime class="full-width" v-model="stateTime" type="datetime"></q-datetime>
+          <q-datetime class="full-width red" v-model="stateTime" type="datetime" :ok-label='okLabel' :cancel-label='cclLabel' :clear-label='clrLabel'></q-datetime>
         </div>
       </div>
       <div class="item multiple-lines">
@@ -59,10 +59,15 @@
   export default {
     name: "new",
     data() {
-      let _stateTime = {
+      let _dt = {
+        priority:'',
+        priorityMax:3,
+        clrLabel: '清空',
+        cclLabel: '取消',
+        okLabel: '设置',
         stateTime: moment().format()
       }
-      return Object.assign(_stateTime, _data)
+      return Object.assign(_dt, _data)
     },
     created() {
       this.setNavInfo()
@@ -74,8 +79,8 @@
       ...mapMutations(['setNav']),
       setNavInfo() {
         this.setNav({
-                          popover:'开发中',
-   title: '新增报障',
+          popover: '开发中',
+          title: '新增报障',
           show: {
             bar: true,
           },
@@ -148,5 +153,8 @@
     display: block;
     color: #CC3333;
   }
-
+.n-rating{
+  font-size: 2rem;
+  margin: 0 10px;
+}
 </style>
