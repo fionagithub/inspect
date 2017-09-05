@@ -17,7 +17,9 @@
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">密码:</div>
-            <input class="auto" v-model="pwd" type="password">
+            <input class="auto" v-model="pwd" type="password" v-if="showPsd" >
+            <input class="auto" v-model="pwd" type="text" v-if="!showPsd" >
+            <i class="item-primary" @click="changePwd" >visibility</i>
           </div>
         </div>
         <div class="login-btn">
@@ -44,6 +46,7 @@
       return {
         users: 'jkr3',
         pwd: 'laputa',
+        showPsd:true
         
       }
     },
@@ -53,6 +56,9 @@
       ...mapActions('auth', [
         'authenticate'
       ]),
+      changePwd(){
+        this.showPsd=!this.showPsd
+      },
       login() {
         let user = {
           strategy: 'local',

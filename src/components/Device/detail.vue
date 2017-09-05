@@ -111,7 +111,8 @@
       setNavInfo() {
         let obj = {
           title: '报障详情',
-          show: {
+                           popover:'开发中',
+  show: {
             bar: true,
           },
           direction: true

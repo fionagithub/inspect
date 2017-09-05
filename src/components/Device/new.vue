@@ -74,7 +74,8 @@
       ...mapMutations(['setNav']),
       setNavInfo() {
         this.setNav({
-          title: '新增报障',
+                          popover:'开发中',
+   title: '新增报障',
           show: {
             bar: true,
           },

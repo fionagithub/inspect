@@ -5,7 +5,7 @@ Vue.use(Vuex)
 function initNav(){
   let _nav={
     title: '',
-    search: false,
+    popover: '',
     show: {
       bar: false,
       drawer: false,
@@ -23,7 +23,7 @@ let mutations = {
     state.nav.direction = value.direction
     state.nav.title = value.title
     state.nav.show = value.show
-    state.nav.search = value.search
+    state.nav.popover = value.popover
   },
   initNav(){
     console.log('--restore navigation--')
