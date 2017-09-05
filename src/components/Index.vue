@@ -22,7 +22,7 @@
     </div>
     <div class="card-content">
       <div class="row gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0" >
+        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
           <router-link :to="item.uri">
             <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -31,7 +31,7 @@
         </div>
       </div>
       <div class="row gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0" >
+        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
           <router-link :to="item.uri">
             <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -97,7 +97,7 @@
           show: {
             drawer: true,
           },
-          popover:'首页管理'
+          popover: '首页管理'
         }
         this.setNav(obj)
       },
