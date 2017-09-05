@@ -133,7 +133,15 @@
         this.skip = 0
         this.fetched = true
         var _query ={}
-         c !== '全部' ? _query.state= c  :_query= {};
+        if(c=='全部'){
+        }else{
+          _query.state= c
+        }
+         if( this.searchModel !== '' )  {
+          _query['$or']= [{
+            description: this.searchModel
+          }]
+        }  
         console.log(_query, c,'[]')
         this.getApi(_query)
       }
@@ -153,11 +161,15 @@
         this.skip = 0
         this.fetched = true
         this._resumed = this.searchModel !== '' ? true : false
-        var _query = this.searchModel !== '' ? {
-          '$or': [{
+        var _query ={}
+        if(this.selectType !== '全部' ){
+          _query['state']=this.selectType
+        }
+          if( this.searchModel !== '' )  {
+          _query['$or']= [{
             description: this.searchModel
           }]
-        } : {}
+        }  
         console.log('-123=', this._resumed)
         this.getApi(_query)
       },
