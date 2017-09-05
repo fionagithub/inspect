@@ -10,7 +10,8 @@ import store from '../config/store'
 /* const socket = io('http://192.168.123.125:3030', {
 transports: ['websocket']
 }) */
-const socket = io('http://api.laputacloud.com', {
+const apiUrl = window.location.origin.replace(/:\/\/m\./g, '://api.')
+const socket = io(apiUrl, {
   transports: ['websocket']
 })
 /* const socket = io('http://192.168.123.129:3031', {
@@ -32,13 +33,13 @@ const feathersClient = feathers()
 feathersClient.service('/tickets')
 
 feathersClient.hooks({
-     before (hook) {
+  before (hook) {
      // console.log('My custom before hook ran!');
-    },
-     error (hook) {
+  },
+  error (hook) {
      // console.log('======hook=======>', hook)
-    }
-   })
+  }
+})
  // feathersClient.service('/users')
   /*
   id：loginId
