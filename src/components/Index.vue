@@ -18,7 +18,7 @@
 
   <div class="index-card card">
     <div class="card-media">
-      <img src="../assets/laputa.jpg">
+      <img src="../assets/bj_logo.png">
     </div>
     <div class="card-content">
       <div class="row gutter">
