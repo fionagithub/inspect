@@ -1,29 +1,18 @@
 export default  {
-        stateName: "NONE",
+        stateName: "未处理",
         description: "",
-     //   stateTime:  moment().format(),
-        system: '',
-        priority: -1,
+        system: '弱电',
+        priority: 0,
         selectstateName: [{
-          value: '已处理',
-          label: '已处理'
-        }, {
           value: '未处理',
           label: '未处理'
         }, {
           value:'处理中' ,
           label: '处理中'
+        }, {
+          value: '已处理',
+          label: '已处理'
         }],
-        selectPriority: [{
-          label: '一般',
-          value: -1,
-        }, {
-          label: '紧急',
-          value: 0,
-        }, {
-          label: '非常紧急',
-          value: 1,
-        }, ],  
         selectsystem: [{
             label: '弱电',
             value: '弱电',

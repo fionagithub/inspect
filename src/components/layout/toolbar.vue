@@ -16,7 +16,7 @@
           <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
             <div class="list highlight ">
               <div class="item">
-                <button class="defalut" @click="alert()">首页管理 </button>
+                <button class="defalut" @click="alert()">{{popoverTitle}} </button>
               </div>
             </div>
         </q-popover>
@@ -32,7 +32,6 @@
     name: "toolbar",
     data() {
       return {
-        searchModel: '',
       }
     },
     computed: {
@@ -51,7 +50,7 @@
         })
       }, 
     },
-    props: ['headTitle', 'goBack', 'search']
+    props: ['headTitle', 'goBack', 'popoverTitle']
   }
 
 </script>

@@ -18,7 +18,7 @@ transports: ['websocket']
 }) */
 const feathersClient = feathers()
   .configure(hooks())
-  .configure(socketio(socket,{timeout:2000}))
+  .configure(socketio(socket,{timeout:5000}))
   .configure(auth({
     storage: window.localStorage,
    // timeout:2500
@@ -33,10 +33,10 @@ const feathersClient = feathers()
    
    feathersClient.hooks({
     before(hook){
-      console.log('My custom before hook ran!');
+     // console.log('My custom before hook ran!');
     },
     error(hook){
-      console.log('======hook=======>', hook)
+     // console.log('======hook=======>', hook)
     },
   })
  //feathersClient.service('/users')

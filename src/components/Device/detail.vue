@@ -1,56 +1,77 @@
 <template>
   <div class="layout-view">
     <div class="layout-padding">
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="message.tips">
-        {{message.tips }}
-      </div>
-      <div v-else>
-        <div class="item two-lines">
-          <div class="item-content row items-center wrap">
-            <div class="item-label">系统:</div>
-            <input class="full-width" v-model="message.system" />
+      <div v-if="message[0]">
+        <div class="card">
+          <div class="card-content">
+            <!-- <div>
+              <div class="item-content">
+              </div>
+            </div> -->
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 系统 </div>
+              <div class="d-val">
+                {{ message[0].system }}</div>
+            </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 优先级 </div>
+              <div class="d-val">
+                {{ message[0].priortity|priortity }}</div>
+            </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 报障描述 </div>
+              <div class="d-val">
+                {{ message[0].description }}</div>
+            </div>
           </div>
         </div>
-        <div class="item two-lines">
-          <div class="item-content row items-center wrap">
-            <div class="item-label">报障来源:</div>
-            <input class="full-width" v-model="message.source.type" />
-          </div>
-        </div>
-        <div class="item two-lines">
-          <div class="item-content row items-center wrap">
-            <div class="item-label">优先级:</div>
-            <q-select class="full-width" v-model="message.priortity" :options="selectPriority"></q-select>
-          </div>
-        </div>
-        <div class="item two-lines">
-          <div class="item-content row items-center wrap">
-            <div class="item-label">工单状态:</div>
-            <input class="full-width" v-model="message.stateName" />
-          </div>
-        </div>
-        <div class="item multiple-lines">
-          <div class="item-content row items-center wrap">
-            <div class="item-label">报障时间:</div>
-            <input class="full-width" v-model="message.stateTime">
-          </div>
-        </div>
-        <div class="item multiple-lines">
-          <div class="item-content">
-            <div class="item-label">报障描述:</div>
-            <textarea class="full-width" v-model="message.description"> </textarea>
+        <div class="card">
+          <div class="card-content">
+            <div class="item multiple-lines">
+              <div class="item-content">
+                <div class="item-label">当前状态:</div>
+                <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
+              </div>
+
+            </div>
+            <div class="item multiple-lines">
+              <div class="item-content">
+                <div class="item-label">状态描述:</div>
+                <textarea class="full-width desc" v-model="stateDesc"> </textarea>
+              </div>
+
+            </div>
+            <button class="add-btn teal full-width" :disabled='this.state==""' @click="updateDB(message[0].id)">提交</button>
+
+            <div class="timeline">
+              <div class="timeline-item" v-for="n in message[0].state">
+                <div class="timeline-badge">
+                  <i>alarm</i>
+                </div>
+                <div class="timeline-title">
+                  {{n.name}}
+                </div>
+                <div class="timeline-date text-italic">
+                  <div>
+                    <!-- {{n.staff+n.stateDesc}}-->
+                    {{n.time|moment }} </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
-        <div class="add-btn">
-          <button class="teal full-width" @click="add()">提交</button>
-        </div>
+
+      </div>
+      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
+        {{tips }}
       </div>
     </div>
   </div>
 </template>
 
 <script>
+  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
@@ -61,33 +82,75 @@
     name: "detail",
     data() {
       return {
-        selectPriority: [{
-          label: '一般',
-          value: -1,
+        ready: false,
+        stateDesc: '',
+        state: '',
+        selectState: [{
+          value: '未处理',
+          label: '未处理'
         }, {
-          label: '紧急',
-          value: 0,
+          value: '处理中',
+          label: '处理中'
         }, {
-          label: '非常紧急',
-          value: 1,
-        }, ],
-        message: {
-          tips: '哦,服务开小差了'
-        }
+          value: '已处理',
+          label: '已处理'
+        }],
+        tips: null,
       }
+    },
+    computed: {
+      ...mapGetters('tickets', {
+        message: 'list',
+      })
     },
     components: {
       toolbar
     },
     created() {
       this.setNavInfo()
+    },
+    mounted() {
       this.getMessage()
+    },
+    filters: {
+      priortity(data) {
+        var _map = {
+          0: '一般',
+          1: '紧急',
+          2: '非常紧急',
+        };
+        return _map[data]
+      },
+      moment(date) {
+        var _format;
+        var _days = moment().diff(date, 'days')
+        if (_days == 0) {
+          _format = 'HH:mm'
+        } else {
+          if (_days < 365) {
+            _format = 'M月D日 HH:mm'
+          } else {
+            _format = 'Y年M月D日 HH:mm'
+          }
+        }
+        return moment(date).format(_format);
+      }
     },
     methods: {
       ...mapMutations(['setNav']),
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
+      ...mapActions('tickets', {
+        findMessages: 'find',
+      }),
+      ...mapActions('tickets', {
+        patchMessages: 'patch',
+      }),
       setNavInfo() {
         let obj = {
           title: '报障详情',
+          popover: '开发中',
           show: {
             bar: true,
           },
@@ -95,37 +158,59 @@
         }
         this.setNav(obj)
       },
-      ...mapActions('tickets', {
-        findMessages: 'find',
-      }),
+      updateDB(id) {
+        //  console.log(this.stateDesc)
+        this.patchMessages([id, {
+          state: this.state
+        }]).then(res => {
+          console.log('-patch-success-')
+        })
+      },
       getMessage() {
         let _self = this
-        const id = this.$route.params.id
-        this.findMessages({
-            query: {
-              ticketId: id
-            }
-          }).then(res => {
-            this.message = res.data[0]
+        const id = _self.$route.params.id
+        _self.findMessages({
+          query: {
+            id: id
+          }
+        }).catch(err => {
+          _self.fetched = false
+          _self.tips = '哦,服务开小差了'
+          Toast.create.negative({
+            html: '服务崩溃，稍后再试',
+            timeout: 500
           })
-          .catch(err => {
-            Toast.create.negative({
-              html: '服务崩溃，稍后再试',
-              timeout: 500
-            })
-          })
-
+        })
       }
     },
-    computed: {},
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
   }
 
 </script>
 <style>
-  .layout-padding,
-  .content {
-    width: 100%;
-    height: 100%;
+  .d-base {
+    display: flex;
+    padding: 10px 0;
+  }
+
+  .add-btn {
+    margin: 20px 0;
+  }
+
+  .d-val {
+    font-size: 14px;
+    color: #606060;
+    line-height: 20px;
+    flex: 3;
+  }
+
+  .d-label {
+    color: #A6A6A6;
+    font-size: 12px;
+    flex: 1;
   }
 
 </style>

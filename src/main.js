@@ -14,7 +14,7 @@ import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
 Vue.use(Quasar) // Install Quasar Framework
-
+// window.screen.lockOrientation('portrait')
 Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
@@ -22,7 +22,7 @@ Quasar.start(() => {
     created(){ 
       let _self = this
        _self.$store.dispatch('auth/authenticate').then((response) => {
-            _self.$router.push('/')
+          //  _self.$router.push('/')
           console.log('response:::', response)
        }).catch( (error)=> {
             _self.$router.push('/login')
