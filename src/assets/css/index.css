@@ -1,19 +1,4 @@
 .layout-header{
   background: transparent;
   box-shadow:0;
-}
-.index-toolbar {
-  background: transparent;
-}
-
-.index-card {
-  position: absolute;
-  height: 100%;
-  top: 0;
-}
-
-.index-card .card-content {
-  display: flex;
-  flex-wrap: wrap; 
-  justify-content: space-around;
-}
+} 

@@ -4,7 +4,7 @@
     <div class="login" >
     <div class="card">
       <div class="card-media">
-        <img src="../assets/laputa.jpg">
+        <img src="../assets/bj_logo.png">
       </div>
       <div class="card-content">
         <div class="item two-lines">
@@ -81,11 +81,11 @@
 
 <style>
   .login {
-    height: 100%;
+    height: 100vh;
   }
 
   .login .card {
-    height: 100%;
+    height: 100vh;
     margin: 0;
   }
 
