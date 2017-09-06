@@ -36,13 +36,13 @@
             </div>
             <div class="item multiple-lines">
               <div class="item-content">
-                <div class="item-label">状态描述:</div>
+                <div class="item-label">补充说明:</div>
                 <textarea class="full-width desc" v-model="stateDesc"> </textarea>
               </div>
 
             </div>
             <button class="add-btn teal full-width" :disabled='this.state==""' @click="updateDB(message[0].id)">提交</button>
-
+            <p class="caption">处理记录:</p>
             <div class="timeline">
               <div class="timeline-item" v-for="n in message[0].state">
                 <div class="timeline-badge">
@@ -82,7 +82,6 @@
     name: "detail",
     data() {
       return {
-        ready: false,
         stateDesc: '',
         state: '',
         selectState: [{
@@ -195,13 +194,10 @@
     display: flex;
     padding: 10px 0;
   }
-
-  .add-btn {
-    margin: 20px 0;
-  }
-
+  
   .d-val {
     font-size: 14px;
+    font-weight: 300;
     color: #606060;
     line-height: 20px;
     flex: 3;

@@ -1,53 +1,52 @@
 <template>
   <div class="layout-view">
-    <div class="layout-padding layout-device">
-      <div class="list-bar">
-        <div class="row gutter wrap justify-stretch content-center text-center">
-          <q-search class="full-width" v-model="searchModel" @enter='resumeGet()' placeholder="搜索..."></q-search>
-          <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
-          </div>
-          <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
-          </div>
+    <div class="layout-padding">
+      <div class="row gutter wrap justify-stretch content-center text-center">
+        <q-search class="full-width" v-model="searchModel" @enter='resumeGet()' placeholder="搜索..."></q-search>
+        <div class="auto">
+          <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
+        </div>
+        <div class="auto">
+          <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
         </div>
       </div>
-      <div class="list-scroll">
-        <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter no-border " v-if="message.length">
-            <div class="item item-link" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i class="item-primary">mail</i>
-              <div class="item-content has-secondary">
-                <div>
-                  {{item.system + `(`+ item.state[0].name+`)` }}
-                </div>
-                <div class="desc">
-                  {{item.description}}
-                </div>
+      <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
+        <div class="list item-inset-delimiter no-border " v-if="message.length">
+          <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+            <i class="item-primary">mail</i>
+            <div class="item-content has-secondary">
+              <div>
+                {{item.system + `(`+ item.state[0].name+`)` }}
               </div>
-              <div class='list-time'>
-                {{item._createTime | moment}}
+              <div class="list-desc">
+                {{item.description}}
               </div>
-              <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
+            <div class='list-time'>
+              {{item._createTime | moment}}
+            </div>
+            <i class="item-secondary icon">keyboard_arrow_right</i>
           </div>
+        </div>
 
-          <div class="row justify-center" style="margin-bottom: 50px;">
-            <spinner name="dots" slot="message" :size="40" v-if="fetched">
-            </spinner>
-            <div slot="message" :size="40" v-else>
-              {{tips||"共计"+message.length+"条数据"}}
-            </div>
+        <div class="row justify-center" style="margin-bottom: 50px;">
+          <spinner name="dots" slot="message" :size="40" v-if="fetched">
+          </spinner>
+          <div slot="message" :size="40" v-else>
+            {{tips||"共计"+message.length+"条数据"}}
           </div>
-        </q-infinite-scroll>
-      </div>
+        </div>
+      </q-infinite-scroll>
     </div>
-    <button class="absolute-bottom-right raised circular teal" style="right: 18px; bottom: 18px;" @click="add()"><i class="q-fab-icon">add</i>
+    <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
       </button>
   </div>
 </template>
 <script>
   import moment from 'moment'
+  import {
+    _list
+  } from './data'
   import toolbar from 'components/layout/toolbar.vue'
   import {
     mapGetters,
@@ -60,45 +59,9 @@
   }
   from 'quasar'
   export default {
-    data() {
-      return {
-        tips: null,
-        fetched: true,
-        isLoading: true,
-        searchModel: '',
-        limit: 10,
-        _resumed: false,
-        skip: 0,
-        selectType: '全部',
-        selectTime: 'ALL',
-        SearchLabel: '搜索...',
-        items_time: [{
-          value: 'NOW',
-          label: '今天'
-        }, {
-          value: 'WEEK',
-          label: '本周'
-        }, {
-          value: 'MONTH',
-          label: '本月'
-        }, {
-          value: 'ALL',
-          label: '全部'
-        }],
-        items_type: [{
-          value: '未处理',
-          label: '未处理'
-        }, {
-          value: '处理中',
-          label: '处理中'
-        }, {
-          value: '已处理',
-          label: '已处理'
-        }, {
-          value: '全部',
-          label: '全部'
-        }]
-      }
+    data() { 
+      let _dt = {}
+      return Object.assign(_dt, _list)
     },
     filters: {
       moment: function (date) {
@@ -132,17 +95,16 @@
         this.clear()
         this.skip = 0
         this.fetched = true
-        var _query ={}
-        if(c=='全部'){
-        }else{
-          _query.state= c
+        var _query = {}
+        if (c !== 'ALL') {
+          _query.state = c
         }
-         if( this.searchModel !== '' )  {
-          _query['$or']= [{
+        if (this.searchModel !== '') {
+          _query['$or'] = [{
             description: this.searchModel
           }]
-        }  
-        console.log(_query, c,'[]')
+        }
+        console.log(_query, c, '[]')
         this.getApi(_query)
       }
     },
@@ -160,17 +122,15 @@
         this.clear()
         this.skip = 0
         this.fetched = true
-        this._resumed = this.searchModel !== '' ? true : false
-        var _query ={}
-        if(this.selectType !== '全部' ){
-          _query['state']=this.selectType
+        var _query = {}
+        if (this.selectType !== 'ALL') {
+          _query['state'] = this.selectType
         }
-          if( this.searchModel !== '' )  {
-          _query['$or']= [{
+        if (this.searchModel !== '') {
+          _query['$or'] = [{
             description: this.searchModel
           }]
-        }  
-        console.log('-123=', this._resumed)
+        }
         this.getApi(_query)
       },
       getApi(obj) {
@@ -264,29 +224,13 @@
     width: 100%;
   }
 
-  .list-scroll .item-link {
-    height: 50px;
-    margin-top: 12px;
-  }
-
-  .layout-device {
-    display: flex;
-    height: 100%;
-    flex-direction: column;
-  }
-
-  .list-bar {
-    flex: 1;
-  }
-
-  .list-scroll {
-    flex: 3;
-  }
-
-  .desc {
+  .list-desc {
     color: #999;
     padding-top: 10px;
     font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .q-popover .item-container {
@@ -307,6 +251,12 @@
 
   .icon {
     margin: 16px 12px!important;
+  }
+
+  .fix-add {
+    right: 18px;
+    bottom: 18px;
+    z-index: 99;
   }
 
 </style>

@@ -28,7 +28,7 @@
       <div class="item multiple-lines">
         <div class="item-content">
           <div class="item-label">报障描述:</div>
-          <textarea class="full-width desc" v-model="description"> </textarea>
+          <textarea class="full-width new-desc" v-model="description"> </textarea>
         </div>
       </div>
       <!--<pre>$v: {{ $v }}</pre>-->
@@ -55,19 +55,14 @@
   import {
     Toast
   } from 'quasar'
-  import _data from './data'
+  import {_new} from './data'
   export default {
     name: "new",
     data() {
       let _dt = {
-        priority:'',
-        priorityMax:3,
-        clrLabel: '清空',
-        cclLabel: '取消',
-        okLabel: '设置',
         stateTime: moment().format()
       }
-      return Object.assign(_dt, _data)
+      return Object.assign(_dt, _new)
     },
     created() {
       this.setNavInfo()
@@ -137,7 +132,7 @@
     margin-top: 50px;
   }
 
-  .desc {
+  .new-desc {
     height: 80px;
   }
 
