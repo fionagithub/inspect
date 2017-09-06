@@ -8,35 +8,26 @@ require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
- import store from './config/store'
+import store from './config/store'
 import './api/feathers-config'
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
 
 Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
+// setInterval authenticate
+
 Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
     el: '#q-app',
-    created(){ 
-      let _self = this
-       _self.$store.dispatch('auth/authenticate').then((response) => {
-          //  _self.$router.push('/')
-          console.log('response:::', response)
-       }).catch( (error)=> {
-            _self.$router.push('/login')
-          console.log('Error authenticating!', error);
-        });
-    },
-    watch:{
+    watch: {
       $route(to, from, next) {
         this.$store.commit('initNav')
-    console.log('-call -mutations=')
+        console.log('-call -mutations=')
       }
     },
-    
-    router,  //
+    router, //
     store,
     render: h => h(require('./App'))
   })
