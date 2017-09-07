@@ -82,7 +82,11 @@ import {mapMutations,
     },
     created() {
       this.setNavInfo()
-      this.setAuth()
+      if(this.payload){
+        this.getAuth()
+      }else{
+       this.setAuth()
+      }
     }, 
     methods: {
       ...mapActions('auth', [
@@ -91,19 +95,18 @@ import {mapMutations,
       setAuth() {
         let _self = this
         _self.authenticate().then((response) => {
-          let Exp_Date = _self.payload.exp;
-          _self.getAuth(Exp_Date)
-          console.log('--exp--date:::',Exp_Date)
+          _self.getAuth()
         }).catch((error) => {
           _self.$router.push('/login')
           console.log('Error authenticating!', error);
         });
       },
-      getAuth(time) {
+      getAuth() {
         let _self = this
-         const Exp_DAY =moment(parseInt(time+'000')).subtract('minutes', 5)
-       // const Exp_DAY = moment().add('seconds', 5)
-        time = Exp_DAY - moment()
+        let Exp_Date = _self.payload.exp;
+        let Exp_DAY =moment(parseInt(Exp_Date +'000')).subtract('minutes', 5)
+       // let Exp_DAY = moment().add('seconds', 5)
+       let time = Exp_DAY - moment()
         console.log('--set--', time)
         setTimeout(() => {
           console.log('--setAuth--')
