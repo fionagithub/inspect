@@ -32,8 +32,8 @@
         <div class="row justify-center" style="margin-bottom: 50px;">
           <spinner name="dots" slot="message" :size="40" v-if="fetched">
           </spinner>
-          <div slot="message" :size="40" v-else>
-            {{tips||"共计"+message.length+"条数据"}}
+          <div slot="message" :size="40" v-else> 
+              {{tips||"共计"+message.length+"条数据" }}
           </div>
         </div>
       </q-infinite-scroll>
@@ -60,17 +60,27 @@
   from 'quasar'
   export default {
     data() { 
-      let _dt = {}
+      let _dt = {
+
+      }
       return Object.assign(_dt, _list)
+    },
+    computed: {
+      ...mapGetters('tickets', {
+        message: 'list',
+      }), 
     },
     filters: {
       moment: function (date) {
-        var _format;
-        var _days = moment().diff(date, 'days')
-        if (_days == 0) {
+        let _format
+        let fmt = 'YYYYMMDD'
+        let _Now = moment().format(fmt)
+        let _date = moment(date).format(fmt)
+        if (parseInt(_Now) == parseInt(_date)) {
           _format = '[今天] HH:mm'
         } else {
-          if (_days < 365) {
+          let num = Math.pow(10, 4)
+          if (parseInt(_Now / num) == parseInt(_date / num)) {
             _format = 'M月D日'
           } else {
             _format = 'Y年M月D日'
@@ -78,11 +88,6 @@
         }
         return moment(date).format(_format);
       }
-    },
-    computed: {
-      ...mapGetters('tickets', {
-        message: 'list',
-      })
     },
     components: {
       toolbar
@@ -95,7 +100,7 @@
         this.clear()
         this.skip = 0
         this.fetched = true
-        var _query = {}
+        let _query = {}
         if (c !== 'ALL') {
           _query.state = c
         }
@@ -122,7 +127,7 @@
         this.clear()
         this.skip = 0
         this.fetched = true
-        var _query = {}
+        let _query = {}
         if (this.selectType !== 'ALL') {
           _query['state'] = this.selectType
         }
@@ -149,7 +154,7 @@
         _self.findMessages({
             query: _query
           }).then((res) => {
-            if (res.data.length == 0) {
+            if (res.data.length == 0 &&  _self.message.length==0 ) {
               _self.tips = '暂无数据.'
               console.log('-=[sdf]')
               _self.fetched = false
