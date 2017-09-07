@@ -132,9 +132,7 @@
           _query['state'] = this.selectType
         }
         if (this.searchModel !== '') {
-          _query['$or'] = [{
-            description: this.searchModel
-          }]
+          _query['$search'] = this.searchModel
         }
         this.getApi(_query)
       },
