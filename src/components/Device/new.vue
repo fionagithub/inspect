@@ -72,6 +72,9 @@
      // this.getSystem()
     },
     methods: { 
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
       ...mapActions('mate', {
         GetSystemItems: 'find',
       }),
@@ -126,6 +129,10 @@
     plugins: ['vuelidate'],
     components: {
       toolbar
+    },
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
     },
     validations: {
       description: {
