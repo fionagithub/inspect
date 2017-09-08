@@ -55,12 +55,19 @@
                 <div class="timeline-title">
                   {{n.name}}
                 </div>
-                <div class="timeline-date text-italic">
+                <div class="timeline-date text-italic d-date">
                   <div>
-                    {{n.stateComment }}
+                     {{n.time|date }} 
                   </div>
-                  <div>
-                     {{ n.recorder }} {{n.time|date }} 
+                </div>
+                  <div class="card-content timeline-content" v-if="n.stateComment" >
+                    <p>
+                    {{n.stateComment }}
+                    </p>
+                  </div>
+                <div class="timeline-date text-italic timeline-footer">
+                  <div class="d-recorder" >
+                     {{ n.recorder }}
                   </div>
                 </div>
               </div>
@@ -214,11 +221,23 @@
     line-height: 20px;
     flex: 3;
   }
-
+  .d-recorder{
+    align-self: flex-end;
+    font-size: .2rem;
+    color: #999;
+  }
+  .timeline-content{
+    padding: 8px 16px;
+  }
+  .timeline-footer{
+    min-height: .1rem;
+  }
   .d-label {
     color: #A6A6A6;
     font-size: 12px;
     flex: 1;
   }
-
+.d-state{
+  font-size: 14px;
+}
 </style>

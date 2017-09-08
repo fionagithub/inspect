@@ -40,6 +40,7 @@
 </template>
 
 <script>
+  import moment from 'moment'
   import {
     required,
     sameAs,
