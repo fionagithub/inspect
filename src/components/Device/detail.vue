@@ -1,7 +1,7 @@
 <template>
   <div class="layout-view">
     <div class="layout-padding">
-      <div v-if="message[0]">
+       <div v-if="message">
         <div class="card">
           <div class="card-content">
             <!-- <div>
@@ -11,22 +11,22 @@
             <div class="item multiple-lines d-base">
               <div class="d-label"> 系统 </div>
               <div class="d-val">
-                {{ message[0].system }}</div>
+                {{ message.system }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label"> 优先级 </div>
               <div class="d-val">
-                {{ message[0].priortity|priortity }}</div>
+                {{ message.priortity|priortity }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label"> 报障描述 </div>
               <div class="d-val">
-                {{ message[0].description }}</div>
+                {{ message.description }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label">报障时间:</div>
               <div class="d-val">
-                {{ message[0]._createTime |date}}
+                {{ message._createTime |date}}
               </div>
             </div>
           </div>
@@ -45,10 +45,10 @@
                 <textarea class="full-width desc" v-model="stateDesc"> </textarea>
               </div>
             </div>
-            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message[0].id)">提交</button>
+            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message.id)">提交</button>
             <p class="caption">处理记录:</p>
             <div class="timeline">
-              <div class="timeline-item" v-for="n in message[0].state">
+              <div class="timeline-item" v-for="n in message.state">
                 <div class="timeline-badge">
                   <i>alarm</i>
                 </div>
@@ -114,7 +114,7 @@
     },
     computed: {
       ...mapGetters('tickets', {
-        message: 'list',
+        message: 'current',
       }),
     },
     watch:{
@@ -153,10 +153,10 @@
     methods: {
       ...mapMutations(['setNav']),
       ...mapMutations('tickets', {
-        clear: 'clearAll'
+        clear: 'clearCurrent'
       }),
       ...mapActions('tickets', {
-        findMessages: 'find',
+        findMessages: 'get',
       }),
       ...mapActions('tickets', {
         patchMessages: 'patch',
@@ -189,11 +189,7 @@
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages({
-          query: {
-            id: id
-          }
-        }).catch(err => {
+        _self.findMessages(id).catch(err => {
           _self.fetched = false
           _self.tips = '哦,服务开小差了'
           Toast.create.negative({
