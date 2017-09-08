@@ -38,17 +38,14 @@
                 <div class="item-label">当前状态:</div>
                 <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
               </div>
-
             </div>
             <div class="item multiple-lines">
               <div class="item-content">
                 <div class="item-label">补充说明:</div>
                 <textarea class="full-width desc" v-model="stateDesc"> </textarea>
               </div>
-
             </div>
-          
-            <button class="add-btn teal full-width" :disabled=' btnFlag ' @click="updateDB(message[0].id)">提交</button>
+            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message[0].id)">提交</button>
             <p class="caption">处理记录:</p>
             <div class="timeline">
               <div class="timeline-item" v-for="n in message[0].state">
@@ -60,15 +57,17 @@
                 </div>
                 <div class="timeline-date text-italic">
                   <div>
-                     {{n.stateComment }}
-                    {{n.time|date }} </div>
+                    {{n.stateComment }}
+                  </div>
+                  <div>
+                     {{ n.recorder }} {{n.time|date }} 
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
-
       </div>
       <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
         {{tips }}
@@ -108,7 +107,7 @@
     computed: {
       ...mapGetters('tickets', {
         message: 'list',
-      }), 
+      }),
     },
     watch:{
       state(n,o){
@@ -136,9 +135,9 @@
     filters: {
       priortity(data) {
         var _map = {
-          0: '一般',
-          1: '紧急',
-          2: '非常紧急',
+          1: '一般',
+          2: '紧急',
+          3: '非常紧急',
         };
         return _map[data]
       }
