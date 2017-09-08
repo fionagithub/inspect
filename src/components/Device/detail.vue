@@ -55,7 +55,7 @@
                 <div class="timeline-date text-italic">
                   <div>
                      {{n.stateComment }}
-                    {{n.time|moment }} </div>
+                    {{n.time|date }} </div>
                 </div>
               </div>
             </div>
@@ -72,7 +72,6 @@
 </template>
 
 <script>
-  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
@@ -136,20 +135,6 @@
           2: '非常紧急',
         };
         return _map[data]
-      },
-      moment(date) {
-        var _format;
-        var _days = moment().diff(date, 'days')
-        if (_days == 0) {
-          _format = 'HH:mm'
-        } else {
-          if (_days < 365) {
-            _format = 'M月D日 HH:mm'
-          } else {
-            _format = 'Y年M月D日 HH:mm'
-          }
-        }
-        return moment(date).format(_format);
       }
     },
     methods: {

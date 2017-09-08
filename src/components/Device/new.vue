@@ -33,14 +33,13 @@
       </div>
       <!--<pre>$v: {{ $v }}</pre>-->
       <div class="add-btn">
-        <button class="teal full-width" @click="add()" :disabled="$v.$dirty&&$v.$error">提交</button>
+        <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import moment from 'moment'
   import {
     required,
     sameAs,
@@ -130,11 +129,7 @@
     validations: {
       description: {
         required,
-        minLength: minLength(2)
-      },
-      stateName: {
-        required,
-        minLength: minLength(2)
+        minLength: minLength(4)
       }
     }
   }
