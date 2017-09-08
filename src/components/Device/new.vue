@@ -49,8 +49,9 @@
   } from 'vuelidate/lib/validators'
   import toolbar from 'components/layout/toolbar.vue'
   import {
+    mapMutations,
     mapActions,
-    mapMutations
+    mapGetters
   } from 'vuex'
   import {
     Toast
@@ -67,7 +68,19 @@
     created() {
       this.setNavInfo()
     },
-    methods: {
+    mounted(){
+     // this.getSystem()
+    },
+    methods: { 
+      ...mapActions('mate', {
+        GetSystemItems: 'find',
+      }),
+      getSystem(){
+        let _query={query:{ 'type': 'system'} }
+        this.GetSystemItems(_query ).then(res =>{
+          console.log(res)
+        } )
+      },
       ...mapActions('tickets', {
         createMessages: 'create',
       }),

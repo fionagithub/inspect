@@ -41,7 +41,8 @@
               </div>
 
             </div>
-            <button class="add-btn teal full-width" :disabled='this.state==""' @click="updateDB(message[0].id)">提交</button>
+          
+            <button class="add-btn teal full-width" :disabled=' btnFlag ' @click="updateDB(message[0].id)">提交</button>
             <p class="caption">处理记录:</p>
             <div class="timeline">
               <div class="timeline-item" v-for="n in message[0].state">
@@ -53,7 +54,7 @@
                 </div>
                 <div class="timeline-date text-italic">
                   <div>
-                    <!-- {{n.staff+n.stateDesc}}-->
+                     {{n.stateComment }}
                     {{n.time|moment }} </div>
                 </div>
               </div>
@@ -83,6 +84,8 @@
     data() {
       return {
         stateDesc: '',
+        flag:false,
+        btnFlag:true,
         state: '',
         selectState: [{
           value: '未处理',
@@ -100,7 +103,21 @@
     computed: {
       ...mapGetters('tickets', {
         message: 'list',
-      })
+      }), 
+    },
+    watch:{
+      state(n,o){
+        if(n!==''){
+         this.btnFlag=false
+        }else{
+          this.btnFlag=true
+        }
+        if(this.flag){
+          this.btnFlag=true
+        }
+        console.log('[]', n,  this.btnFlag)
+      }
+
     },
     components: {
       toolbar
@@ -158,10 +175,15 @@
         this.setNav(obj)
       },
       updateDB(id) {
+        this.flag=true
         //  console.log(this.stateDesc)
         this.patchMessages([id, {
-          state: this.state
+          state: this.state,
+          stateComment:this.stateDesc
         }]).then(res => {
+        this.flag=false
+          this.state=''
+          this.stateDesc=''
           console.log('-patch-success-')
         })
       },

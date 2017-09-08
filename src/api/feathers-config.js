@@ -32,23 +32,15 @@ const feathersClient = feathers()
 
 feathersClient.service('/tickets')
 
+feathersClient.service('/mate')
+
 feathersClient.hooks({
-  before (hook) {
+     before (hook) {
      // console.log('My custom before hook ran!');
-  },
-  error (hook) {
+    },
+     error (hook) {
      // console.log('======hook=======>', hook)
   }
-})
- // feathersClient.service('/users')
-  /*
-  id：loginId
-  /tickets
-  app.service('authentication')
-    .hooks({
-      before: {
-        // You can chain multiple strategies on create method
-        create: auth.hooks.authenticate(['jwt', 'local'])
-      }
-    }); */
+   })
+
 export default feathersClient

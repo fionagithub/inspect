@@ -47,11 +47,9 @@
   import {
     Dialog
   } from 'quasar' 
-import moment from 'moment'
-import {mapMutations,
-  mapActions,
-  mapState
-} from 'vuex'
+  import {
+    mapMutations,
+  } from 'vuex'
   export default {
     name: "index",
     data() {
@@ -75,41 +73,14 @@ import {mapMutations,
       }
     },
     computed: {
-      ...mapState('auth', [ 'payload']),
       leftDrawer() {
         return this.$parent.$children[1].$refs.leftDrawer
       }
     },
     created() {
       this.setNavInfo()
-      this.setAuth()
     }, 
     methods: {
-      ...mapActions('auth', [
-        'authenticate'
-      ]),
-      setAuth() {
-        let _self = this
-        _self.authenticate().then((response) => {
-          let Exp_Date = _self.payload.exp;
-          _self.getAuth(Exp_Date)
-          console.log('--exp--date:::',Exp_Date)
-        }).catch((error) => {
-          _self.$router.push('/login')
-          console.log('Error authenticating!', error);
-        });
-      },
-      getAuth(time) {
-        let _self = this
-         const Exp_DAY =moment(parseInt(time+'000')).subtract('minutes', 5)
-       // const Exp_DAY = moment().add('seconds', 5)
-        time = Exp_DAY - moment()
-        console.log('--set--', time)
-        setTimeout(() => {
-          console.log('--setAuth--')
-          this.setAuth()
-        }, time);
-      },
       ...mapMutations(['setNav']),
       alert() {
         Dialog.create({
