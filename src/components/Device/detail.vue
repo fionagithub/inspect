@@ -89,6 +89,7 @@
     mapMutations,
     mapActions
   } from 'vuex'
+  import {Toast} from 'quasar'
   import toolbar from 'components/layout/toolbar.vue'
   export default {
     name: "detail",
@@ -172,15 +173,16 @@
         this.setNav(obj)
       },
       updateDB(id) {
-        this.flag=true
+        this.flag = true
         //  console.log(this.stateDesc)
         this.patchMessages([id, {
           state: this.state,
-          stateComment:this.stateDesc
+          stateComment: this.stateDesc
         }]).then(res => {
-        this.flag=false
-          this.state=''
-          this.stateDesc=''
+          this.flag = false
+          this.state = ''
+          this.stateDesc = ''
+          Toast.create('提交成功.')
           console.log('-patch-success-')
         })
       },
