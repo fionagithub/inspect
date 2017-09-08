@@ -23,7 +23,7 @@
               </div>
             </div>
             <div class='list-time'>
-              {{item._createTime | moment}}
+              {{item._createTime | date}}
             </div>
             <i class="item-secondary icon">keyboard_arrow_right</i>
           </div>
@@ -43,7 +43,6 @@
   </div>
 </template>
 <script>
-  import moment from 'moment'
   import {
     _list
   } from './data'
@@ -69,25 +68,6 @@
       ...mapGetters('tickets', {
         message: 'list',
       }), 
-    },
-    filters: {
-      moment: function (date) {
-        let _format
-        let fmt = 'YYYYMMDD'
-        let _Now = moment().format(fmt)
-        let _date = moment(date).format(fmt)
-        if (parseInt(_Now) == parseInt(_date)) {
-          _format = '[今天] HH:mm'
-        } else {
-          let num = Math.pow(10, 4)
-          if (parseInt(_Now / num) == parseInt(_date / num)) {
-            _format = 'M月D日'
-          } else {
-            _format = 'Y年M月D日'
-          }
-        }
-        return moment(date).format(_format);
-      }
     },
     components: {
       toolbar

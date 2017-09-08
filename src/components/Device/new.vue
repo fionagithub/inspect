@@ -33,7 +33,7 @@
       </div>
       <!--<pre>$v: {{ $v }}</pre>-->
       <div class="add-btn">
-        <button class="teal full-width" @click="add()" :disabled="$v.$dirty&&$v.$error">提交</button>
+        <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
       </div>
     </div>
   </div>
@@ -72,6 +72,9 @@
      // this.getSystem()
     },
     methods: { 
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
       ...mapActions('mate', {
         GetSystemItems: 'find',
       }),
@@ -127,14 +130,14 @@
     components: {
       toolbar
     },
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
     validations: {
       description: {
         required,
-        minLength: minLength(2)
-      },
-      stateName: {
-        required,
-        minLength: minLength(2)
+        minLength: minLength(4)
       }
     }
   }

@@ -73,7 +73,7 @@ export const _new = {
   stateName: "未处理",
   description: "",
   system: '弱电',
-  priority: 0,
+  priority: 1,
   priorityMax: 3,
   clrLabel: '清空',
   cclLabel: '取消',
