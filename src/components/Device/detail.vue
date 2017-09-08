@@ -23,6 +23,12 @@
               <div class="d-val">
                 {{ message[0].description }}</div>
             </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label">报障时间:</div>
+              <div class="d-val">
+                {{ message[0]._createTime |date}}
+              </div>
+            </div>
           </div>
         </div>
         <div class="card">
