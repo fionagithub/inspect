@@ -179,12 +179,12 @@
       },
       add() {
         this.$router.push({
-          path: '/device/new'
+          path: '/ticket/new'
         })
       },
       getDetail(id) {
         this.$router.push({
-          path: '/device/' + id
+          path: '/ticket/' + id
         })
       }
     },

@@ -56,7 +56,7 @@
       return {
         items: [{
           title: '报障',
-          uri: '/device'
+          uri: '/ticket'
         }, {
           title: '故障',
           disabled: true,

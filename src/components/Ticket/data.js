@@ -1,6 +1,6 @@
 const l_state = [{
-    value: '未处理',
-    label: '未处理'
+    value: '待处理',
+    label: '待处理'
   }, {
     value: '处理中',
     label: '处理中'
@@ -10,17 +10,7 @@ const l_state = [{
   }, {
     value: 'ALL',
     label: '全部状态'
-  }],
-  n_state = [{
-    value: '未处理',
-    label: '未处理'
-  }, {
-    value: '处理中',
-    label: '处理中'
-  }, {
-    value: '已处理',
-    label: '已处理'
-  }],
+  }], 
   _system = [{
       label: '弱电',
       value: '弱电',
@@ -63,14 +53,13 @@ export const _list = {
   searchModel: '',
   limit: 10,
   skip: 0,
-  selectType: 'ALL',
-  selectTime: 'ALL',
+  selectType: '待处理',
+  selectTime: 'NOW',
   SearchLabel: '搜索...',
   items_time: _time,
   items_type: l_state
 }
 export const _new = {
-  stateName: "未处理",
   description: "",
   system: '弱电',
   priority: 1,
@@ -78,6 +67,5 @@ export const _new = {
   clrLabel: '清空',
   cclLabel: '取消',
   okLabel: '设置',
-  selectstateName:n_state,
   selectsystem: _system
 }
