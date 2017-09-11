@@ -1,6 +1,6 @@
 const l_state = [{
     value: '未处理',
-    label: '未处理'
+    label: '待处理'
   }, {
     value: '处理中',
     label: '处理中'

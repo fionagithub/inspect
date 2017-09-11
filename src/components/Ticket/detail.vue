@@ -101,7 +101,7 @@
         btnFlag:true,
         state: '',
         selectState: [{
-          value: '待处理',
+          value: '未处理',
           label: '待处理'
         }, {
           value: '处理中',
