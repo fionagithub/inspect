@@ -2,12 +2,12 @@
   <div class="layout-view">
     <div class="layout-padding">
       <div class="row gutter wrap justify-stretch content-center text-center">
-        <q-search class="full-width" v-model="searchModel" @enter='resumeGet()' placeholder="搜索..."></q-search>
+        <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
         <div class="auto">
           <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
         </div>
-        <div class="auto">
-          <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
+        <div class="auto ">
+          <q-select class=" list-btn" disable type="list" v-model="selectTime" :options="items_time"></q-select>
         </div>
       </div>
       <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
@@ -32,8 +32,11 @@
         <div class="row justify-center" style="margin-bottom: 50px;">
           <spinner name="dots" slot="message" :size="40" v-if="fetched">
           </spinner>
-          <div slot="message" :size="40" v-else> 
-              {{tips||"共计"+message.length+"条数据" }}
+          <div slot="message" :size="40" v-if="fetched==false"> 
+            <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
+            <div v-else>
+              {{"共计"+message.length+"条数据"  }}
+            </div>
           </div>
         </div>
       </q-infinite-scroll>
@@ -60,6 +63,7 @@
   export default {
     data() { 
       let _dt = {
+        _search:null
 
       }
       return Object.assign(_dt, _list)
@@ -79,18 +83,14 @@
       selectType(c, p) {
         this.clear()
         this.skip = 0
-        this.fetched = true
-        let _query = {}
-        if (c !== 'ALL') {
-          _query.state = c
+        this.getApi()
+      },
+      searchModel(c, o){
+        if (c==''){
+          this.clear()
+          this.skip = 0
+          this.getApi()
         }
-        if (this.searchModel !== '') {
-          _query['$or'] = [{
-            description: this.searchModel
-          }]
-        }
-        console.log(_query, c, '[]')
-        this.getApi(_query)
       }
     },
     mounted() {
@@ -103,29 +103,26 @@
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
-      resumeGet() {
+      searchKey() {
         this.clear()
         this.skip = 0
-        this.fetched = true
-        let _query = {}
-        if (this.selectType !== 'ALL') {
-          _query['state'] = this.selectType
-        }
-        if (this.searchModel !== '') {
-          _query['$search'] = this.searchModel
-        }
-        this.getApi(_query)
+        this.getApi()
       },
       getApi(obj) {
         let _self = this
         _self.isLoading = true
+        _self.fetched = true
         _self.tips = null
         let _query = {
           $limit: _self.limit,
-          $skip: _self.skip,
+          $select: [ '_createTime', 'system', 'state', 'description', 'id']
         }
-        if (obj) {
-          _query = Object.assign(_query, obj)
+        if (_self.searchModel!== '' ) {
+          _query['$search'] = _self.searchModel
+        } 
+          _query['$skip'] = _self.skip
+        if (_self.selectType !== 'ALL') {
+          _query['state'] = _self.selectType
         }
         console.log('--==-', _query)
 
@@ -150,11 +147,17 @@
             console.log('-=res--', _self.tips, res.data)
           })
           .catch(err => {
+            let type = error.errorType
+            error = Object.assign({}, error)
+            error.message = (type === 'uniqueViolated') ?
+              'That is unavailable.' :
+              'An error prevented sign.'
+            console.log('-=:[]', error)
             this.fetched = false
-            this.tips = '哦,服务开小差了'
+            this.tips = '哦,服务开小差了，请重新登录'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
-              timeout: 500
+              timeout: 1000
             })
           })
 
@@ -179,12 +182,12 @@
       },
       add() {
         this.$router.push({
-          path: '/device/new'
+          path: '/ticket/new'
         })
       },
       getDetail(id) {
         this.$router.push({
-          path: '/device/' + id
+          path: '/ticket/' + id
         })
       }
     },

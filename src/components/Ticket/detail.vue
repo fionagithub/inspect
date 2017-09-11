@@ -1,17 +1,18 @@
 <template>
   <div class="layout-view">
     <div class="layout-padding">
-       <div v-if="message">
+      <div v-if="message">
         <div class="card">
           <div class="card-content">
-            <!-- <div>
-              <div class="item-content">
-              </div>
-            </div> -->
-            <div class="item multiple-lines d-base">
+          <div class="item multiple-lines d-base">
               <div class="d-label"> 系统 </div>
               <div class="d-val">
                 {{ message.system }}</div>
+            </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 报障来源 </div>
+              <div class="d-val">
+                {{ message.source.type|typed }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label"> 优先级 </div>
@@ -26,7 +27,7 @@
             <div class="item multiple-lines d-base">
               <div class="d-label">报障时间:</div>
               <div class="d-val">
-                {{ message._createTime |date}}
+                {{ message._createTime |date('HH:mm')  }}
               </div>
             </div>
           </div>
@@ -57,7 +58,7 @@
                 </div>
                 <div class="timeline-date text-italic d-date">
                   <div>
-                     {{n.time|date }} 
+                     {{n.time|date('HH:mm') }} 
                   </div>
                 </div>
                   <div class="card-content timeline-content" v-if="n.stateComment" >
@@ -77,7 +78,7 @@
         <!--<pre>$v: {{ $v }}</pre>-->
       </div>
       <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        {{tips }}
+         <router-link to='/login'>   {{tips }} </router-link> 
       </div>
     </div>
   </div>
@@ -101,7 +102,7 @@
         state: '',
         selectState: [{
           value: '未处理',
-          label: '未处理'
+          label: '待处理'
         }, {
           value: '处理中',
           label: '处理中'
@@ -148,12 +149,19 @@
           3: '非常紧急',
         };
         return _map[data]
+      },
+      typed(obj){
+        let _map={
+          manual:'人工填报',
+          system:'系统填报'
+        }
+        return _map[obj]
       }
     },
     methods: {
       ...mapMutations(['setNav']),
       ...mapMutations('tickets', {
-        clear: 'clearCurrent'
+        clear: 'clearAll'
       }),
       ...mapActions('tickets', {
         findMessages: 'get',
@@ -190,11 +198,17 @@
         let _self = this
         const id = _self.$route.params.id
         _self.findMessages(id).catch(err => {
+          let type = error.errorType
+          error = Object.assign({}, error)
+          error.message = (type === 'uniqueViolated') ?
+            'That is unavailable.' :
+            'An error prevented sign.'
+          console.log('-=:[]', error)
           _self.fetched = false
-          _self.tips = '哦,服务开小差了'
+          _self.tips = '哦,服务开小差了，请重新登录'
           Toast.create.negative({
             html: '服务崩溃，稍后再试',
-            timeout: 500
+            timeout: 1000
           })
         })
       }
@@ -221,7 +235,7 @@
   }
   .d-recorder{
     align-self: flex-end;
-    font-size: .2rem;
+    font-size: .9rem;
     color: #999;
   }
   .timeline-content{

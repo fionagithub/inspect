@@ -13,12 +13,6 @@
           <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
         </div>
       </div>
-      <div class="item two-lines">
-        <div class="item-content row items-center wrap">
-          <div class="item-label">工单状态:</div>
-          <q-select class="full-width" type="list" v-model="stateName" :options="selectstateName"></q-select>
-        </div>
-      </div>
       <div class="item multiple-lines">
         <div class="item-content row items-center wrap">
           <div class="item-label">报障时间:</div>
@@ -100,7 +94,7 @@
       },
       add() {
         let data = {
-          "state": this.stateName,
+          'state':'未处理',
           "priority": parseInt(this.priority),
           "system": this.system,
           "stateTime": this.stateTime,
@@ -109,13 +103,13 @@
         this.createMessages(data)
           .then(res => {
             Toast.create('提交成功.')
-            this.$router.push('/device')
+            this.$router.push('/ticket')
             // console.log('-=-=', res)
           })
           .catch(error => {
             Toast.create.negative({
               html: '出错了.',
-              timeout: 500
+              timeout: 1000
             })
             let type = error.errorType
             error = Object.assign({}, error)
