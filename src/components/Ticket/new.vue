@@ -94,6 +94,7 @@
       },
       add() {
         let data = {
+          'state':'未处理',
           "priority": parseInt(this.priority),
           "system": this.system,
           "stateTime": this.stateTime,
@@ -108,7 +109,7 @@
           .catch(error => {
             Toast.create.negative({
               html: '出错了.',
-              timeout: 500
+              timeout: 1000
             })
             let type = error.errorType
             error = Object.assign({}, error)

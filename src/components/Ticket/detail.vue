@@ -1,14 +1,10 @@
 <template>
   <div class="layout-view">
     <div class="layout-padding">
-       <div v-if="message">
+      <div v-if="message">
         <div class="card">
           <div class="card-content">
-            <!-- <div>
-              <div class="item-content">
-              </div>
-            </div> -->
-            <div class="item multiple-lines d-base">
+          <div class="item multiple-lines d-base">
               <div class="d-label"> 系统 </div>
               <div class="d-val">
                 {{ message.system }}</div>
@@ -82,7 +78,7 @@
         <!--<pre>$v: {{ $v }}</pre>-->
       </div>
       <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        {{tips }}
+         <router-link to='/login'>   {{tips }} </router-link> 
       </div>
     </div>
   </div>
@@ -165,7 +161,7 @@
     methods: {
       ...mapMutations(['setNav']),
       ...mapMutations('tickets', {
-        clear: 'clearCurrent'
+        clear: 'clearAll'
       }),
       ...mapActions('tickets', {
         findMessages: 'get',
@@ -202,11 +198,17 @@
         let _self = this
         const id = _self.$route.params.id
         _self.findMessages(id).catch(err => {
+          let type = error.errorType
+          error = Object.assign({}, error)
+          error.message = (type === 'uniqueViolated') ?
+            'That is unavailable.' :
+            'An error prevented sign.'
+          console.log('-=:[]', error)
           _self.fetched = false
-          _self.tips = '哦,服务开小差了'
+          _self.tips = '哦,服务开小差了，请重新登录'
           Toast.create.negative({
             html: '服务崩溃，稍后再试',
-            timeout: 500
+            timeout: 1000
           })
         })
       }

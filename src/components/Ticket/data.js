@@ -1,6 +1,6 @@
 const l_state = [{
-    value: '待处理',
-    label: '待处理'
+    value: '未处理',
+    label: '未处理'
   }, {
     value: '处理中',
     label: '处理中'
@@ -53,7 +53,7 @@ export const _list = {
   searchModel: '',
   limit: 10,
   skip: 0,
-  selectType: '待处理',
+  selectType: '未处理',
   selectTime: 'NOW',
   SearchLabel: '搜索...',
   items_time: _time,
