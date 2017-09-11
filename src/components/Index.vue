@@ -24,6 +24,7 @@
             <router-link :to="item.uri">
               <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
+            <span class="floating label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
           </button>
             </router-link>
           </div>
@@ -56,7 +57,8 @@
       return {
         items: [{
           title: '报障',
-          uri: '/ticket'
+          uri: '/ticket',
+          count:22
         }, {
           title: '故障',
           disabled: true,
@@ -122,6 +124,9 @@
   .index-img {
     margin-top: -50px;
     width: 100vw;
+  }
+  .bg-count{
+    top:0
   }
 
 </style>
