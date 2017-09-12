@@ -103,7 +103,7 @@
         this.createMessages(data)
           .then(res => {
             Toast.create('提交成功.')
-            this.$router.push('/ticket')
+            this.$router.go(-1)
             // console.log('-=-=', res)
           })
           .catch(error => {
