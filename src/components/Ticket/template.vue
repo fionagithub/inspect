@@ -115,6 +115,7 @@
         _self.tips = null
         let _query = {
           $limit: _self.limit,
+          $sort:{_createTime:-1 },
           $select: [ '_createTime', 'system', 'state', 'description', 'id']
         }
         if (_self.searchModel!== '' ) {
