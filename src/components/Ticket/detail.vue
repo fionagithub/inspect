@@ -1,97 +1,108 @@
 <template>
-  <div class="layout-view">
-    <div class="layout-padding">
-      <div v-if="message">
-        <div class="card">
-          <div class="card-content">
-          <div class="item multiple-lines d-base">
-              <div class="d-label"> 系统 </div>
-              <div class="d-val">
-                {{ message.system }}</div>
-            </div>
+  <q-layout>
+    <div slot="header" class="toolbar">
+      <button class="head_goback" @click="$router.go(-1)">
+        <i>arrow_back</i>
+      </button> 
+      <q-toolbar-title :padding="1">
+        报障详情 
+      </q-toolbar-title>
+      <popover></popover>
+    </div>
+    <div class="layout-view" >
+      <div class="layout-padding">
+        <div v-if="message">
+          <div class="card">
+            <div class="card-content">
             <div class="item multiple-lines d-base">
-              <div class="d-label"> 报障来源 </div>
-              <div class="d-val">
-                {{ message.source.type|typed }}</div>
-            </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label"> 优先级 </div>
-              <div class="d-val">
-                {{ message.priortity|priortity }}</div>
-            </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label"> 报障描述 </div>
-              <div class="d-val">
-                {{ message.description }}</div>
-            </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label">报障时间:</div>
-              <div class="d-val">
-                {{ message._createTime |date('HH:mm')  }}
+                <div class="d-label"> 系统 </div>
+                <div class="d-val">
+                  {{ message.system }}</div>
               </div>
-            </div>
-          </div>
-        </div>
-        <div class="card">
-          <div class="card-content">
-            <div class="item multiple-lines">
-              <div class="item-content">
-                <div class="item-label">当前状态:</div>
-                <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
+              <div class="item multiple-lines d-base">
+                <div class="d-label"> 报障来源 </div>
+                <div class="d-val">
+                  {{ message.source.type|typed }}</div>
               </div>
-            </div>
-            <div class="item multiple-lines">
-              <div class="item-content">
-                <div class="item-label">补充说明:</div>
-                <textarea class="full-width desc" v-model="stateDesc"> </textarea>
+              <div class="item multiple-lines d-base">
+                <div class="d-label"> 优先级 </div>
+                <div class="d-val">
+                  {{ message.priortity|priortity }}</div>
               </div>
-            </div>
-            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message.id)">提交</button>
-            <p class="caption">处理记录:</p>
-            <div class="timeline">
-              <div class="timeline-item" v-for="n in message.state">
-                <div class="timeline-badge">
-                  <i>alarm</i>
-                </div>
-                <div class="timeline-title">
-                  {{n.name}}
-                </div>
-                <div class="timeline-date text-italic d-date">
-                  <div>
-                     {{n.time|date('HH:mm') }} 
-                  </div>
-                </div>
-                  <div class="card-content timeline-content" v-if="n.stateComment" >
-                    <p>
-                    {{n.stateComment }}
-                    </p>
-                  </div>
-                <div class="timeline-date text-italic timeline-footer">
-                  <div class="d-recorder" >
-                     {{ n.recorder }}
-                  </div>
+              <div class="item multiple-lines d-base">
+                <div class="d-label"> 报障描述 </div>
+                <div class="d-val">
+                  {{ message.description }}</div>
+              </div>
+              <div class="item multiple-lines d-base">
+                <div class="d-label">报障时间:</div>
+                <div class="d-val">
+                  {{ message._createTime |date('HH:mm')  }}
                 </div>
               </div>
             </div>
           </div>
+          <div class="card">
+            <div class="card-content">
+              <div class="item multiple-lines">
+                <div class="item-content">
+                  <div class="item-label">当前状态:</div>
+                  <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
+                </div>
+              </div>
+              <div class="item multiple-lines">
+                <div class="item-content">
+                  <div class="item-label">补充说明:</div>
+                  <textarea class="full-width desc" v-model="stateDesc"> </textarea>
+                </div>
+              </div>
+              <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message.id)">提交</button>
+              <p class="caption">处理记录:</p>
+              <div class="timeline">
+                <div class="timeline-item" v-for="n in message.state">
+                  <div class="timeline-badge">
+                    <i>alarm</i>
+                  </div>
+                  <div class="timeline-title">
+                    {{n.name}}
+                  </div>
+                  <div class="timeline-date text-italic d-date">
+                    <div>
+                      {{n.time|date('HH:mm') }} 
+                    </div>
+                  </div>
+                    <div class="card-content timeline-content" v-if="n.stateComment" >
+                      <p>
+                      {{n.stateComment }}
+                      </p>
+                    </div>
+                  <div class="timeline-date text-italic timeline-footer">
+                    <div class="d-recorder" >
+                      {{ n.recorder }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--<pre>$v: {{ $v }}</pre>-->
         </div>
-        <!--<pre>$v: {{ $v }}</pre>-->
-      </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-         <router-link to='/login'>   {{tips }} </router-link> 
+        <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
+          <router-link to='/login'>   {{tips }} </router-link> 
+        </div>
       </div>
     </div>
-  </div>
+  </q-layout>
 </template>
 
 <script>
-  import {
+    import popover from '../layout/popover'
+ import {
     mapGetters,
     mapMutations,
     mapActions
   } from 'vuex'
   import {Toast} from 'quasar'
-  import toolbar from 'components/layout/toolbar.vue'
   export default {
     name: "detail",
     data() {
@@ -133,10 +144,9 @@
 
     },
     components: {
-      toolbar
+      popover
     },
     created() {
-      this.setNavInfo()
     },
     mounted() {
       this.getMessage()
@@ -159,7 +169,6 @@
       }
     },
     methods: {
-      ...mapMutations(['setNav']),
       ...mapMutations('tickets', {
         clear: 'clearAll'
       }),
@@ -169,17 +178,6 @@
       ...mapActions('tickets', {
         patchMessages: 'patch',
       }),
-      setNavInfo() {
-        let obj = {
-          title: '报障详情',
-          popover: '开发中',
-          show: {
-            bar: true,
-          },
-          direction: true
-        }
-        this.setNav(obj)
-      },
       updateDB(id) {
         this.flag = true
         //  console.log(this.stateDesc)

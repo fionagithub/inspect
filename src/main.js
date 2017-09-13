@@ -18,6 +18,63 @@ Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
 
+
+import {
+  mapActions,
+  mapState
+} from 'vuex'
+Quasar.start(() => {
+  /* eslint-disable no-new */
+  new Vue({
+    el: '#q-app',
+    watch: {
+      $route(to, from, next) {
+        console.log('-call -mutations=')
+      }
+    }, 
+    computed:{ 
+      ...mapState('auth', ['payload']),
+    }, 
+    created(){
+      if(this.payload){
+        this.getAuth()
+      }else{
+       this.setAuth()
+      }
+      console.log('-=cc')
+    },
+    methods:{
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
+      setAuth() {
+        let _self = this
+        _self.authenticate().then((response) => {
+          _self.getAuth()
+        }).catch((error) => {
+          _self.$router.push('/login')
+          console.log('Error authenticating!', error);
+        });
+      },
+      getAuth() {
+        let _self = this
+        let Exp_Date = _self.payload.exp;
+        let Exp_DAY =moment(parseInt(Exp_Date +'000')).subtract('minutes', 5)
+       // let Exp_DAY = moment().add('seconds', 5)
+       let time = Exp_DAY - moment()
+        console.log('--!!!import:::exp--', time)
+        setTimeout(() => {
+          console.log('--!!!import:::setAuth--')
+          this.setAuth()
+        }, time);
+      },
+    },
+    router, //
+    store,
+    render: h => h(require('./App'))
+  })
+})
+
 Vue.filter('date', function(date,type) {
     let _format
     let fmt = 'YYYYMMDD'
@@ -38,19 +95,4 @@ Vue.filter('date', function(date,type) {
       }
     }
     return moment(date).format(_format);
-})
-Quasar.start(() => {
-  /* eslint-disable no-new */
-  new Vue({
-    el: '#q-app',
-    watch: {
-      $route(to, from, next) {
-        this.$store.commit('initNav')
-        console.log('-call -mutations=')
-      }
-    }, 
-    router, //
-    store,
-    render: h => h(require('./App'))
-  })
 })

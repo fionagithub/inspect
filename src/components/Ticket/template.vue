@@ -1,55 +1,67 @@
 <template>
-  <div class="layout-view">
-    <div class="layout-padding">
-      <div class="row gutter wrap justify-stretch content-center text-center">
-        <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
-        <div class="auto">
-          <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
-        </div>
-        <div class="auto ">
-          <q-select class=" list-btn" disable type="list" v-model="selectTime" :options="items_time"></q-select>
-        </div>
-      </div>
-      <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-        <div class="list item-inset-delimiter no-border " v-if="message.length">
-          <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-            <i class="item-primary">mail</i>
-            <div class="item-content has-secondary">
-              <div>
-                {{item.system + `(`+ item.state[0].name+`)` }}
-              </div>
-              <div class="list-desc">
-                {{item.description}}
-              </div>
-            </div>
-            <div class='list-time'>
-              {{item._createTime | date}}
-            </div>
-            <i class="item-secondary icon">keyboard_arrow_right</i>
+  <q-layout>
+    <div slot="header" class="toolbar">
+      <button class="head_goback" @click="$router.go(-1)">
+        <i>arrow_back</i>
+      </button> 
+      <q-toolbar-title :padding="1">
+        报障清单 
+      </q-toolbar-title>
+      <popover></popover>
+    </div> 
+    <div slot="header" class="toolbar">
+      <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
+    </div>
+    <div class="layout-view">
+      <div class=" layout-padding">
+        <div class="row gutter wrap justify-stretch content-center text-center">
+          <div class="auto">
+            <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
+          </div>
+          <div class="auto ">
+            <q-select class=" list-btn" disable type="list" v-model="selectTime" :options="items_time"></q-select>
           </div>
         </div>
+        <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
+          <div class="list item-inset-delimiter no-border " v-if="message.length">
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+              <i class="item-primary">mail</i>
+              <div class="item-content has-secondary">
+                <div>
+                  {{item.system + `(`+ item.state[0].name+`)` }}
+                </div>
+                <div class="list-desc">
+                  {{item.description}}
+                </div>
+              </div>
+              <div class='list-time'>
+                {{item._createTime | date}}
+              </div>
+              <i class="item-secondary icon">keyboard_arrow_right</i>
+            </div>
+          </div>
 
-        <div class="row justify-center" style="margin-bottom: 50px;">
-          <spinner name="dots" slot="message" :size="40" v-if="fetched">
-          </spinner>
-          <div slot="message" :size="40" v-if="fetched==false"> 
-            <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
-            <div v-else>
-              {{"共计"+message.length+"条数据"  }}
+          <div class="row justify-center" style="margin-bottom: 50px;">
+            <spinner name="dots" slot="message" :size="40" v-if="fetched">
+            </spinner>
+            <div slot="message" :size="40" v-if="fetched==false"> 
+              <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
+              <div v-else>
+                {{"共计"+message.length+"条数据"  }}
+              </div>
             </div>
           </div>
-        </div>
-      </q-infinite-scroll>
+        </q-infinite-scroll>
+      </div>
     </div>
     <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
-      </button>
-  </div>
+    </button>
+  </q-layout>
 </template>
 <script>
   import {
     _list
   } from './data'
-  import toolbar from 'components/layout/toolbar.vue'
   import {
     mapGetters,
     mapMutations,
@@ -60,6 +72,7 @@
     Toast
   }
   from 'quasar'
+  import popover from '../layout/popover'
   export default {
     data() { 
       let _dt = {
@@ -74,10 +87,9 @@
       }), 
     },
     components: {
-      toolbar
+      popover
     },
     created() {
-      this.setNavInfo()
     },
     watch: {
       selectType(c, p) {
@@ -170,17 +182,7 @@
         }
         done()
       },
-      ...mapMutations(['setNav']),
-      setNavInfo() {
-        this.setNav({
-          title: '报障清单',
-          show: {
-            bar: true
-          },
-          popover: '开发中',
-          direction: 'true'
-        })
-      },
+
       add() {
         this.$router.push({
           path: '/ticket/new'
