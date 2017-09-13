@@ -13,12 +13,6 @@
           <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
         </div>
       </div>
-      <div class="item two-lines">
-        <div class="item-content row items-center wrap">
-          <div class="item-label">工单状态:</div>
-          <q-select class="full-width" type="list" v-model="stateName" :options="selectstateName"></q-select>
-        </div>
-      </div>
       <div class="item multiple-lines">
         <div class="item-content row items-center wrap">
           <div class="item-label">报障时间:</div>
@@ -28,12 +22,12 @@
       <div class="item multiple-lines">
         <div class="item-content">
           <div class="item-label">报障描述:</div>
-          <textarea class="full-width desc" v-model="description"> </textarea>
+          <textarea class="full-width new-desc" v-model="description"> </textarea>
         </div>
       </div>
       <!--<pre>$v: {{ $v }}</pre>-->
       <div class="add-btn">
-        <button class="teal full-width" @click="add()" :disabled="$v.$dirty&&$v.$error">提交</button>
+        <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
       </div>
     </div>
   </div>
@@ -49,30 +43,41 @@
   } from 'vuelidate/lib/validators'
   import toolbar from 'components/layout/toolbar.vue'
   import {
+    mapMutations,
     mapActions,
-    mapMutations
+    mapGetters
   } from 'vuex'
   import {
     Toast
   } from 'quasar'
-  import _data from './data'
+  import {_new} from './data'
   export default {
     name: "new",
     data() {
       let _dt = {
-        priority:'',
-        priorityMax:3,
-        clrLabel: '清空',
-        cclLabel: '取消',
-        okLabel: '设置',
         stateTime: moment().format()
       }
-      return Object.assign(_dt, _data)
+      return Object.assign(_dt, _new)
     },
     created() {
       this.setNavInfo()
     },
-    methods: {
+    mounted(){
+     // this.getSystem()
+    },
+    methods: { 
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
+      ...mapActions('mate', {
+        GetSystemItems: 'find',
+      }),
+      getSystem(){
+        let _query={query:{ 'type': 'system'} }
+        this.GetSystemItems(_query ).then(res =>{
+          console.log(res)
+        } )
+      },
       ...mapActions('tickets', {
         createMessages: 'create',
       }),
@@ -89,7 +94,7 @@
       },
       add() {
         let data = {
-          "state": this.stateName,
+          'state':'未处理',
           "priority": parseInt(this.priority),
           "system": this.system,
           "stateTime": this.stateTime,
@@ -98,13 +103,13 @@
         this.createMessages(data)
           .then(res => {
             Toast.create('提交成功.')
-            this.$router.push('/device')
+            this.$router.go(-1)
             // console.log('-=-=', res)
           })
           .catch(error => {
             Toast.create.negative({
               html: '出错了.',
-              timeout: 500
+              timeout: 1000
             })
             let type = error.errorType
             error = Object.assign({}, error)
@@ -119,14 +124,14 @@
     components: {
       toolbar
     },
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
     validations: {
       description: {
         required,
-        minLength: minLength(2)
-      },
-      stateName: {
-        required,
-        minLength: minLength(2)
+        minLength: minLength(4)
       }
     }
   }
@@ -137,7 +142,7 @@
     margin-top: 50px;
   }
 
-  .desc {
+  .new-desc {
     height: 80px;
   }
 

@@ -1,27 +1,34 @@
 <template>
   <div class="layout-view">
     <div class="layout-padding">
-      <div v-if="message[0]">
+      <div v-if="message">
         <div class="card">
           <div class="card-content">
-            <!-- <div>
-              <div class="item-content">
-              </div>
-            </div> -->
-            <div class="item multiple-lines d-base">
+          <div class="item multiple-lines d-base">
               <div class="d-label"> 系统 </div>
               <div class="d-val">
-                {{ message[0].system }}</div>
+                {{ message.system }}</div>
+            </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label"> 报障来源 </div>
+              <div class="d-val">
+                {{ message.source.type|typed }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label"> 优先级 </div>
               <div class="d-val">
-                {{ message[0].priortity|priortity }}</div>
+                {{ message.priortity|priortity }}</div>
             </div>
             <div class="item multiple-lines d-base">
               <div class="d-label"> 报障描述 </div>
               <div class="d-val">
-                {{ message[0].description }}</div>
+                {{ message.description }}</div>
+            </div>
+            <div class="item multiple-lines d-base">
+              <div class="d-label">报障时间:</div>
+              <div class="d-val">
+                {{ message._createTime |date('HH:mm')  }}
+              </div>
             </div>
           </div>
         </div>
@@ -32,62 +39,70 @@
                 <div class="item-label">当前状态:</div>
                 <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
               </div>
-
             </div>
             <div class="item multiple-lines">
               <div class="item-content">
-                <div class="item-label">状态描述:</div>
+                <div class="item-label">补充说明:</div>
                 <textarea class="full-width desc" v-model="stateDesc"> </textarea>
               </div>
-
             </div>
-            <button class="add-btn teal full-width" :disabled='this.state==""' @click="updateDB(message[0].id)">提交</button>
-
+            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message.id)">提交</button>
+            <p class="caption">处理记录:</p>
             <div class="timeline">
-              <div class="timeline-item" v-for="n in message[0].state">
+              <div class="timeline-item" v-for="n in message.state">
                 <div class="timeline-badge">
                   <i>alarm</i>
                 </div>
                 <div class="timeline-title">
                   {{n.name}}
                 </div>
-                <div class="timeline-date text-italic">
+                <div class="timeline-date text-italic d-date">
                   <div>
-                    <!-- {{n.staff+n.stateDesc}}-->
-                    {{n.time|moment }} </div>
+                     {{n.time|date('HH:mm') }} 
+                  </div>
+                </div>
+                  <div class="card-content timeline-content" v-if="n.stateComment" >
+                    <p>
+                    {{n.stateComment }}
+                    </p>
+                  </div>
+                <div class="timeline-date text-italic timeline-footer">
+                  <div class="d-recorder" >
+                     {{ n.recorder }}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
-
       </div>
       <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        {{tips }}
+         <router-link to='/login'>   {{tips }} </router-link> 
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
     mapActions
   } from 'vuex'
+  import {Toast} from 'quasar'
   import toolbar from 'components/layout/toolbar.vue'
   export default {
     name: "detail",
     data() {
       return {
-        ready: false,
         stateDesc: '',
+        flag:false,
+        btnFlag:true,
         state: '',
         selectState: [{
           value: '未处理',
-          label: '未处理'
+          label: '待处理'
         }, {
           value: '处理中',
           label: '处理中'
@@ -100,8 +115,22 @@
     },
     computed: {
       ...mapGetters('tickets', {
-        message: 'list',
-      })
+        message: 'current',
+      }),
+    },
+    watch:{
+      state(n,o){
+        if(n!==''){
+         this.btnFlag=false
+        }else{
+          this.btnFlag=true
+        }
+        if(this.flag){
+          this.btnFlag=true
+        }
+        console.log('[]', n,  this.btnFlag)
+      }
+
     },
     components: {
       toolbar
@@ -115,25 +144,18 @@
     filters: {
       priortity(data) {
         var _map = {
-          0: '一般',
-          1: '紧急',
-          2: '非常紧急',
+          1: '一般',
+          2: '紧急',
+          3: '非常紧急',
         };
         return _map[data]
       },
-      moment(date) {
-        var _format;
-        var _days = moment().diff(date, 'days')
-        if (_days == 0) {
-          _format = 'HH:mm'
-        } else {
-          if (_days < 365) {
-            _format = 'M月D日 HH:mm'
-          } else {
-            _format = 'Y年M月D日 HH:mm'
-          }
+      typed(obj){
+        let _map={
+          manual:'人工填报',
+          system:'系统填报'
         }
-        return moment(date).format(_format);
+        return _map[obj]
       }
     },
     methods: {
@@ -142,7 +164,7 @@
         clear: 'clearAll'
       }),
       ...mapActions('tickets', {
-        findMessages: 'find',
+        findMessages: 'get',
       }),
       ...mapActions('tickets', {
         patchMessages: 'patch',
@@ -159,26 +181,34 @@
         this.setNav(obj)
       },
       updateDB(id) {
+        this.flag = true
         //  console.log(this.stateDesc)
         this.patchMessages([id, {
-          state: this.state
+          state: this.state,
+          stateComment: this.stateDesc
         }]).then(res => {
+          this.flag = false
+          this.state = ''
+          this.stateDesc = ''
+          Toast.create('提交成功.')
           console.log('-patch-success-')
         })
       },
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages({
-          query: {
-            id: id
-          }
-        }).catch(err => {
+        _self.findMessages(id).catch(err => {
+          let type = error.errorType
+          error = Object.assign({}, error)
+          error.message = (type === 'uniqueViolated') ?
+            'That is unavailable.' :
+            'An error prevented sign.'
+          console.log('-=:[]', error)
           _self.fetched = false
-          _self.tips = '哦,服务开小差了'
+          _self.tips = '哦,服务开小差了，请重新登录'
           Toast.create.negative({
             html: '服务崩溃，稍后再试',
-            timeout: 500
+            timeout: 1000
           })
         })
       }
@@ -195,22 +225,31 @@
     display: flex;
     padding: 10px 0;
   }
-
-  .add-btn {
-    margin: 20px 0;
-  }
-
+  
   .d-val {
     font-size: 14px;
+    font-weight: 300;
     color: #606060;
     line-height: 20px;
     flex: 3;
   }
-
+  .d-recorder{
+    align-self: flex-end;
+    font-size: .9rem;
+    color: #999;
+  }
+  .timeline-content{
+    padding: 8px 16px;
+  }
+  .timeline-footer{
+    min-height: .1rem;
+  }
   .d-label {
     color: #A6A6A6;
     font-size: 12px;
     flex: 1;
   }
-
+.d-state{
+  font-size: 14px;
+}
 </style>

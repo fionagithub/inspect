@@ -8,35 +8,48 @@ require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
- import store from './config/store'
+import store from './config/store'
 import './api/feathers-config'
+  import moment from 'moment'
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
-
+moment.locale('zh-cn');
 Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
+// setInterval authenticate
+
+Vue.filter('date', function(date,type) {
+    let _format
+    let fmt = 'YYYYMMDD'
+    let _Now = moment().format(fmt)
+    let _date = moment(date).format(fmt)
+    if (parseInt(_Now) == parseInt(_date)) {
+      _format = '[今天] HH:mm'
+    } else {
+      let num = Math.pow(10, 4)
+      if (parseInt(_Now / num) == parseInt(_date / num)) {
+        _format = 'M月D日'
+      } else {
+        _format = 'Y年M月D日'
+      }
+      if(type){
+          _format+=' ' + type
+          console.log('[]', _format)
+      }
+    }
+    return moment(date).format(_format);
+})
 Quasar.start(() => {
   /* eslint-disable no-new */
   new Vue({
     el: '#q-app',
-    created(){ 
-      let _self = this
-       _self.$store.dispatch('auth/authenticate').then((response) => {
-          //  _self.$router.push('/')
-          console.log('response:::', response)
-       }).catch( (error)=> {
-            _self.$router.push('/login')
-          console.log('Error authenticating!', error);
-        });
-    },
-    watch:{
+    watch: {
       $route(to, from, next) {
         this.$store.commit('initNav')
-    console.log('-call -mutations=')
+        console.log('-call -mutations=')
       }
-    },
-    
-    router,  //
+    }, 
+    router, //
     store,
     render: h => h(require('./App'))
   })

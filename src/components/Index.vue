@@ -1,47 +1,45 @@
 <template>
-  <div class="layout-view index">
-    <div class="toolbar">
-      <button class="hide-on-drawer-visible" @click="leftDrawer.open()">
-      <i>menu</i>
-    </button>
-      <button class="right-drawer-opener"><i>more_vert</i>
+  <div class="index-page window-height window-width column items-center no-wrap">
+    <div class="banner">
+      <div class="toolbar tb-btn">
+        <button @click="leftDrawer.open()">
+          <i>menu</i>
+        </button>
+         <button>
+          <i>more_vert</i>
           <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
             <div class="list highlight ">
               <div class="item">
                 <button class="defalut" @click="alert()">首页管理 </button>
-    </div>
-  </div>
-  </q-popover>
-  </button>
-  </div>
-
-
-  <div class="index-card card">
-    <div class="card-media">
-      <img src="../assets/laputa.jpg">
-    </div>
-    <div class="card-content">
-      <div class="row gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
-          <router-link :to="item.uri">
-            <button class="teal circular big " :disabled="item.disabled">
-            {{item.title}}
-          </button>
-          </router-link>
-        </div>
-      </div>
-      <div class="row gutter">
-        <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
-          <router-link :to="item.uri">
-            <button class="teal circular big " :disabled="item.disabled">
-            {{item.title}}
-          </button>
-          </router-link>
-        </div>
+              </div>
+            </div>
+          </q-popover>
+        </button>
       </div>
     </div>
-  </div>
+      <img class="index-img" src="../assets/bj_logo.png">
+      <div class="index-menu  text-center" >
+        <div class="row content-center text-center">
+          <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
+            <router-link :to="item.uri">
+              <button class="teal circular big " :disabled="item.disabled">
+            {{item.title}}
+            <span class="floating circular label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
+          </button>
+            </router-link>
+          </div>
+        </div>
+        <div class="row content-center text-center">
+          <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
+            <router-link :to="item.uri">
+              <button class="teal circular big " :disabled="item.disabled">
+            {{item.title}}
+          </button>
+            </router-link>
+          </div>
+        </div>
 
+      </div>
   </div>
 </template>
 
@@ -49,9 +47,9 @@
   import 'src/assets/css/index.css'
   import {
     Dialog
-  } from 'quasar'
+  } from 'quasar' 
   import {
-    mapMutations
+    mapMutations,
   } from 'vuex'
   export default {
     name: "index",
@@ -59,7 +57,8 @@
       return {
         items: [{
           title: '报障',
-          uri: '/device'
+          uri: '/ticket',
+          count:22
         }, {
           title: '故障',
           disabled: true,
@@ -82,7 +81,7 @@
     },
     created() {
       this.setNavInfo()
-    },
+    }, 
     methods: {
       ...mapMutations(['setNav']),
       alert() {
@@ -106,14 +105,37 @@
 
 </script>
 <style>
+  .index-menu{
+    margin: 30px;
+    width: 80vw;
+  }  
   .link-btn {
-    margin: 20px;
+    margin: 20px 0;
   }
 
-  .index .toolbar {
-    color: white;
+  .index-page .banner {
+    width: 100vw;
+  }
+  .tb-btn{
     z-index: 9;
+    color: white;
     background: transparent;
+  }
+  .index-img {
+    margin-top: -50px;
+    width: 100vw;
+  }
+  .bg-count{
+    top:0!important;
+    width: 28px;
+    height: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-content: center;
+    overflow: hidden;
+    color: black;
+    background: #FDB617!important ;
+    padding: .3rem!important;
   }
 
 </style>
