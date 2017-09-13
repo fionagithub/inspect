@@ -37,7 +37,7 @@
               <div class="item multiple-lines d-base">
                 <div class="d-label">报障时间:</div>
                 <div class="d-val">
-                  {{ message._createTime |date('HH:mm')  }}
+                  {{ message.reportTime |date('HH:mm')  }}
                 </div>
               </div>
             </div>
