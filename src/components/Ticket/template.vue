@@ -147,7 +147,7 @@
             }
             console.log('-=res--', _self.tips, res.data)
           })
-          .catch(err => {
+          .catch(error => {
             let type = error.errorType
             error = Object.assign({}, error)
             error.message = (type === 'uniqueViolated') ?

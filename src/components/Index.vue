@@ -24,7 +24,7 @@
             <router-link :to="item.uri">
               <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
-            <span class="floating label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
+            <span class="floating circular label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
           </button>
             </router-link>
           </div>
@@ -126,7 +126,16 @@
     width: 100vw;
   }
   .bg-count{
-    top:0
+    top:0!important;
+    width: 28px;
+    height: 28px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    justify-content: center;
+    overflow: hidden;
+    color: black;
+    background: #FDB617!important ;
+    padding: .3rem!important;
   }
 
 </style>
