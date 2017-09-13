@@ -25,8 +25,8 @@ export default new VueRouter({
     { path: '/login', component: load('Login') }, // Default
     { path: '/ticket', component: load('Ticket/template') }, // Default
     { path: '/ticket/new', component: load('Ticket/new') }, // Default
-    { path: '/alarm', component: load('Alarm/template') }, // Default
-    { path: '/alarm/:id', component: load('Alarm/detail') }, // Default
+    { path: '/device', component: load('Device/template') }, // Default
+    { path: '/device/:id', component: load('Device/detail') }, // Default
     { path: '/ticket/:id', component: load('Ticket/detail') }, // Default
     { path: '*', component: load('Error404') } // Not found
   ]
