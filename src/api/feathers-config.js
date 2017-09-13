@@ -7,15 +7,9 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-/*const socket = io('http://192.168.123.125:3030', {
-transports: ['websocket']
-})*/
-const socket = io('http://192.168.123.240:3031', {
+const socket = io('http://192.168.123.240:3032', {
 transports: ['websocket']
 })
-/*const socket = io('http://192.168.123.129:3031', {
-  transports: ['websocket']
-}) */
 const feathersClient = feathers()
   .configure(hooks())
   .configure(socketio(socket,{timeout:5000}))
@@ -31,7 +25,7 @@ const feathersClient = feathers()
 
    feathersClient.service('/tickets')
 
-   feathersClient.service('/mate')
+   //feathersClient.service('/metadata') 
 
    feathersClient.hooks({
     before(hook){

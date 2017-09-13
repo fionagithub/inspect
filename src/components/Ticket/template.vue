@@ -82,6 +82,9 @@
       return Object.assign(_dt, _list)
     },
     computed: {
+     /* ...mapGetters('metadata', {
+        stateItems: 'list',
+      }), */
       ...mapGetters('tickets', {
         message: 'list',
       }), 
@@ -107,6 +110,7 @@
     },
     mounted() {
       this.getApi() //请求初始数据
+      this.getState()
     },
     methods: {
       ...mapMutations('tickets', {
@@ -115,10 +119,17 @@
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
+      /*...mapActions('metadata', {
+        FindstateItems: 'find',
+      }),*/
       searchKey() {
         this.clear()
         this.skip = 0
         this.getApi()
+      },
+      getState(){
+        let _self=this
+      //  _self.FindstateItems()
       },
       getApi(obj) {
         let _self = this
