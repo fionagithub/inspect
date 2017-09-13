@@ -1,73 +1,149 @@
 <template>
-  <!-- root node required default-tab="1" -->
-  <div>
-    <toolbar :head-title="items.deviceName" go-back='true'>
-    </toolbar>
-    <div slot="tabs" class="tabs-container">
-      <q-tabs :refs="$refs" default-tab="tab-1">
-        <q-tab name="tab-1" icon="message">
-          Tab 1
-        </q-tab>
-        <q-tab name="tab-2" icon="fingerprint">
-          Tab 2
-        </q-tab>
-        <q-tab name="tab-3" icon="alarm">
-          Tab 3
-        </q-tab>
-      </q-tabs>
+  <q-layout>
+
+    <div slot="header" class="toolbar">
+      <button class="head_goback" @click="$router.go(-1)">
+        <i>arrow_back</i>
+      </button>
+      <q-toolbar-title :padding="1">
+        设备详情
+      </q-toolbar-title>
+      <popover></popover>
     </div>
-    <div class="layout-padding">
-      <!-- Targets -->
-      <div ref="tab-1">
-        <div v-for="(item, key, index)  in items.monitors">
-          {{item.monitorType.description}} {{item.status.statusValue }}
+    <q-tabs slot="navigation" :refs="$refs" default-tab="tab-1">
+      <q-tab name="tab-1">概览
+      </q-tab>
+      <q-tab name="tab-2">台帐
+      </q-tab>
+      <q-tab name="tab-3">维修记录
+      </q-tab>
+    </q-tabs>
+    <div class="layout-view">
+      <div class="layout-padding">
+        <div class="card" ref="tab-1">
+          <div class="card-media">
+            <img src="../img/water.jpg">
+            <button class="primary circular"><i>place</i></button>
+          </div>
+          <div class="card-content list no-border highlight">
+            <div class="item two-lines">
+              <i class="item-primary">local_bar</i>
+              <div class="item-content">
+                <div class="item-title">Bar XYZ</div>
+                <div>Have a drink.</div>
+              </div>
+            </div>
+            <div class="item two-lines">
+              <i class="item-primary">local_gas_station</i>
+              <div class="item-content">
+                <div class="item-title">Gas Station</div>
+                <div>Fill your gas tank.</div>
+              </div>
+            </div>
+            <div class="item two-lines">
+              <i class="item-primary">local_movies</i>
+              <div class="item-content">
+                <div class="item-title">Cinema XYZ</div>
+                <div>Watch a movie.</div>
+              </div>
+            </div>
+          </div>
+          <div class="card-actions card-no-top-padding">
+            <div class="text-lime">
+              13 minutes
+            </div>
+            <div>
+              (1 mile)
+            </div>
+            <div class="auto"></div>
+            <button class="primary clear small"><i class="on-left">directions</i> Start</button>
+          </div>
         </div>
+        <div class="card" ref="tab-2">
+          <div v-for="(item, key, index)  in message">
+            {{item}} {{item }}
+          </div>
+        </div>
+        <div class="card" ref="tab-3">.33..</div>
       </div>
-      <div ref="tab-2">.22..</div>
-      <div ref="tab-3">.33..</div>
     </div>
-  </div>
+  </q-layout>
 </template>
 
 <script>
-  import toolbar from 'components/layout/toolbar.vue'
+  import popover from '../layout/popover'
+  import {
+    mapGetters,
+    mapMutations,
+    mapActions
+  } from 'vuex'
+  import {
+    Toast
+  } from 'quasar'
   export default {
-    components: {
-      toolbar
+    name: "detail",
+    data() {
+      return {}
     },
+    computed: {
+      ...mapGetters('tickets', {
+        message: 'current',
+      }),
+    },
+    components: {
+      popover
+    },
+    created() {},
     mounted() {
-      this.$nextTick(() => {
-        this.getDetail()
-      })
+      this.getMessage()
+    },
+    filters: {
+      priortity(data) {
+        var _map = {
+          1: '一般',
+          2: '紧急',
+          3: '非常紧急',
+        };
+        return _map[data]
+      },
+      typed(obj) {
+        let _map = {
+          manual: '人工填报',
+          system: '系统填报'
+        }
+        return _map[obj]
+      }
     },
     methods: {
-      getDetail() {
-        const id = this.$route.params.id
-        console.log('--detail--', id)
-        this.uri += id
-        fetch(this.uri).then(res => {
-          if (res.ok) {
-            res.json().then(data => {
-              this.items = data.devices[0]
-              console.log('----', this.items)
-            })
-          } else {
-            this.items = []
-            console.log("Looks like the response wasn't perfect, got status", res.status);
-          }
-        }).then(data => {
-          this.items = []
-          console.error(data)
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
+      ...mapActions('tickets', {
+        findMessages: 'get',
+      }),
+      getMessage() {
+        let _self = this
+        const id = _self.$route.params.id
+        _self.findMessages(id).catch(err => {
+          let type = error.errorType
+          error = Object.assign({}, error)
+          error.message = (type === 'uniqueViolated') ?
+            'That is unavailable.' :
+            'An error prevented sign.'
+          console.log('-=:[]', error)
+          _self.fetched = false
+          _self.tips = '哦,服务开小差了，请重新登录'
+          Toast.create.negative({
+            html: '服务崩溃，稍后再试',
+            timeout: 1000
+          })
         })
       }
-
     },
-    data() {
-      return {
-        uri: 'http://192.168.123.125:3030/message/',
-        items: {},
-      }
-    }
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
   }
 
 </script>

@@ -1,75 +1,229 @@
 <template>
-  <!-- root node required -->
-  <div>
-    <toolbar head-title="报警" go-back='true'>
-    </toolbar>
-    <div slot="search" class="toolbar">
-      <q-search :model.sync="searchModel"></q-search>
+  <q-layout>
+    <div slot="header" class="toolbar">
+      <button class="head_goback" @click="$router.go(-1)">
+        <i>arrow_back</i>
+      </button> 
+      <q-toolbar-title :padding="1">
+        设备清单 
+      </q-toolbar-title>
+      <popover></popover>
+    </div> 
+    <div slot="header" class="toolbar">
+      <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
     </div>
-    <!-- your content -->
-    <div class="layout-padding">
-      <div class="card">
-        <div class="card-title">
-        </div>
-        <div class="list item-inset-delimiter">
-          <div class="item item-link" v-for="(item, index) in items" @click="getDetail(item.deviceId)">
-            <i class="item-primary">mail</i>
-            <div class="item-content has-secondary device-desc ">
-              {{item.deviceName}}
+    <div class="layout-view">
+      <div class=" layout-padding">
+        <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
+          <div class="list item-inset-delimiter no-border " v-if="message.length">
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+              <i class="item-primary">mail</i>
+              <div class="item-content has-secondary">
+                <div>
+                  {{item.system + `(`+ item.state[0].name+`)` }}
+                </div>
+                <div class="list-desc">
+                  {{item.description}}
+                </div>
+              </div>
+              <div class='list-time'>
+                {{item._createTime | date}}
+              </div>
+              <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
-            <i class="item-secondary">keyboard_arrow_right</i>
           </div>
-        </div>
+
+          <div class="row justify-center" style="margin-bottom: 50px;">
+            <spinner name="dots" slot="message" :size="40" v-if="fetched">
+            </spinner>
+            <div slot="message" :size="40" v-if="fetched==false"> 
+              <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
+              <div v-else>
+                {{"共计"+message.length+"条数据"  }}
+              </div>
+            </div>
+          </div>
+        </q-infinite-scroll>
       </div>
     </div>
-  </div>
+  </q-layout>
 </template>
 <script>
-  import toolbar from 'components/layout/toolbar.vue'
-
+  import {
+    _list
+  } from './data'
+  import {
+    mapGetters,
+    mapMutations,
+    mapState,
+    mapActions
+  } from 'vuex'
+  import {
+    Toast
+  }
+  from 'quasar'
+  import popover from '../layout/popover'
   export default {
-    data() {
-      return {
-        uri: 'http://192.168.123.125:3030/message',
-        searchModel: '',
-        items: []
+    name:'device',
+    data() { 
+      let _dt = {
+        _search:null
+
+      }
+      return Object.assign(_dt, _list)
+    },
+    computed: {
+      ...mapGetters('tickets', {
+        message: 'list',
+      }), 
+    },
+    components: {
+      popover
+    },
+    created() {
+    },
+    watch: {
+      selectType(c, p) {
+        this.clear()
+        this.skip = 0
+        this.getApi()
+      },
+      searchModel(c, o){
+        if (c==''){
+          this.clear()
+          this.skip = 0
+          this.getApi()
+        }
       }
     },
     mounted() {
-      this.$nextTick(function () {
-        this.getApi()
-      })
-    },
-    components: {
-      toolbar
+      this.getApi() //请求初始数据
     },
     methods: {
+      ...mapMutations('tickets', {
+        clear: 'clearAll'
+      }),
+      ...mapActions('tickets', {
+        findMessages: 'find',
+      }),
+      searchKey() {
+        this.clear()
+        this.skip = 0
+        this.getApi()
+      },
+      getApi(obj) {
+        let _self = this
+        _self.isLoading = true
+        _self.fetched = true
+        _self.tips = null
+        let _query = {
+          $limit: _self.limit,
+          $sort:{_createTime:-1 },
+          $select: [ '_createTime', 'system', 'state', 'description', 'id']
+        }
+        if (_self.searchModel!== '' ) {
+          _query['$search'] = _self.searchModel
+        } 
+          _query['$skip'] = _self.skip
+        if (_self.selectType !== 'ALL') {
+          _query['state'] = _self.selectType
+        }
+        console.log('--==-', _query)
+
+        _self.findMessages({
+            query: _query
+          }).then((res) => {
+            if (res.data.length == 0 &&  _self.message.length==0 ) {
+              _self.tips = '暂无数据.'
+              console.log('-=[sdf]')
+              _self.fetched = false
+              if (obj) {
+                console.log('-search--=1-')
+                _self.tips = '没有搜索到相关数据.'
+              }
+            }
+            _self.skip += res.data.length
+            if (res.data.length < _self.limit) {
+              _self.fetched = false
+            } else {
+              _self.isLoading = false
+            }
+            console.log('-=res--', _self.tips, res.data)
+          })
+          .catch(error => {
+            let type = error.errorType
+            error = Object.assign({}, error)
+            error.message = (type === 'uniqueViolated') ?
+              'That is unavailable.' :
+              'An error prevented sign.'
+            console.log('-=:[]', error)
+            this.fetched = false
+            this.tips = '哦,服务开小差了，请重新登录'
+            Toast.create.negative({
+              html: '服务崩溃，稍后再试',
+              timeout: 1000
+            })
+          })
+
+      },
+      loadMore(index, done) {
+        if (this.isLoading == false) {
+          console.log('-=loadMore=--')
+          this.getApi()
+        }
+        done()
+      },
       getDetail(id) {
         this.$router.push({
-          path: '/alarm/' + id
-        })
-      },
-      getApi() {
-        let uri = this.uri
-        fetch(uri).then(res => {
-          if (res.ok) {
-            res.json().then(data => {
-              this.items = data.data[0].devices
-              console.log('----', this.items)
-            })
-          } else {
-            this.items = []
-            console.log("Looks like the response wasn't perfect, got status", res.status);
-          }
+          path: '/device/' + id
         })
       }
-    }
+    },
+    destroyed: function () {
+      this.clear() // 置空ticket-vuex      
+      console.log("已销毁");
+    },
   }
 
 </script>
 <style>
-  .card  .device-desc{
-    padding: 10px 0;
+  .list-btn {
+    width: 100%;
+  }
+
+  .list-desc {
+    color: #999;
+    padding-top: 10px;
+    font-size: 14px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .q-popover .item-container {
+    height: 38px;
+  }
+
+  .list-time {
+    position: absolute;
+    top: 0;
+    width: 150px;
+    color: #666;
+    margin: 12px 35px;
+    right: 4px;
+    line-height: 24px;
+    font-size: 10px;
+    text-align: right;
+  }
+
+  .icon {
+    margin: 16px 12px!important;
+  }
+
+  .fix-add {
+    right: 18px;
+    bottom: 18px;
+    z-index: 99;
   }
 
 </style>
