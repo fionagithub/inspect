@@ -24,6 +24,7 @@ const feathersClient = feathers()
   }))
 
    feathersClient.service('/tickets').on('created',console.log)
+   feathersClient.service('/devices').on('created',console.log)
    
    feathersClient.service('/metadata') 
 

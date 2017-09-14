@@ -25,38 +25,32 @@
             <img src="../img/water.jpg">
             <button class="primary circular"><i>place</i></button>
           </div>
+          <div class="card-title">
+            <div>{{message.name}} </div>
+          </div>
           <div class="card-content list no-border highlight">
-            <div class="item two-lines">
-              <i class="item-primary">local_bar</i>
-              <div class="item-content">
-                <div class="item-title">Bar XYZ</div>
-                <div>Have a drink.</div>
+            <div class="item multiple-lines">
+              <div class="item-content row items-center wrap">
+                <div class="item-label">安装位置:</div>
+                <div class="item-title">
+                  {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
+
+                </div>
               </div>
-            </div>
-            <div class="item two-lines">
-              <i class="item-primary">local_gas_station</i>
-              <div class="item-content">
-                <div class="item-title">Gas Station</div>
-                <div>Fill your gas tank.</div>
-              </div>
-            </div>
-            <div class="item two-lines">
-              <i class="item-primary">local_movies</i>
-              <div class="item-content">
-                <div class="item-title">Cinema XYZ</div>
-                <div>Watch a movie.</div>
+              <div class="item-content row items-center wrap">
+                <div class="item-label">更新时间:</div>
+                <div class="item-title">
+                  {{message._modifyTime |date('HH:mm:ss') }}
+                </div>
               </div>
             </div>
           </div>
           <div class="card-actions card-no-top-padding">
-            <div class="text-lime">
-              13 minutes
-            </div>
-            <div>
-              (1 mile)
+            <div class="text-lime" v-for='item in message.tags'>
+              {{item}}
             </div>
             <div class="auto"></div>
-            <button class="primary clear small"><i class="on-left">directions</i> Start</button>
+            <button class="primary clear small"><i class="on-left">directions</i> 我要报障</button>
           </div>
         </div>
         <div class="card" ref="tab-2">
@@ -86,7 +80,7 @@
       return {}
     },
     computed: {
-      ...mapGetters('tickets', {
+      ...mapGetters('devices', {
         message: 'current',
       }),
     },
@@ -97,28 +91,11 @@
     mounted() {
       this.getMessage()
     },
-    filters: {
-      priortity(data) {
-        var _map = {
-          1: '一般',
-          2: '紧急',
-          3: '非常紧急',
-        };
-        return _map[data]
-      },
-      typed(obj) {
-        let _map = {
-          manual: '人工填报',
-          system: '系统填报'
-        }
-        return _map[obj]
-      }
-    },
     methods: {
-      ...mapMutations('tickets', {
-        clear: 'clearAll'
+      ...mapMutations('devices', {
+        clear: 'clearCurrent'
       }),
-      ...mapActions('tickets', {
+      ...mapActions('devices', {
         findMessages: 'get',
       }),
       getMessage() {

@@ -20,15 +20,12 @@
               <i class="item-primary">mail</i>
               <div class="item-content has-secondary">
                 <div>
-                  {{item.system + `(`+ item.state[0].name+`)` }}
+                  {{item.name }}
                 </div>
                 <div class="list-desc">
-                  {{item.description}}
+                  {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
-              </div>
-              <div class='list-time'>
-                {{item._createTime | date}}
-              </div>
+              </div> 
               <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
           </div>
@@ -73,7 +70,7 @@
       return Object.assign(_dt, _list)
     },
     computed: {
-      ...mapGetters('tickets', {
+      ...mapGetters('devices', {
         message: 'list',
       }), 
     },
@@ -83,11 +80,6 @@
     created() {
     },
     watch: {
-      selectType(c, p) {
-        this.clear()
-        this.skip = 0
-        this.getApi()
-      },
       searchModel(c, o){
         if (c==''){
           this.clear()
@@ -100,10 +92,7 @@
       this.getApi() //请求初始数据
     },
     methods: {
-      ...mapMutations('tickets', {
-        clear: 'clearAll'
-      }),
-      ...mapActions('tickets', {
+      ...mapActions('devices', {
         findMessages: 'find',
       }),
       searchKey() {
@@ -118,16 +107,12 @@
         _self.tips = null
         let _query = {
           $limit: _self.limit,
-          $sort:{_createTime:-1 },
-          $select: [ '_createTime', 'system', 'state', 'description', 'id']
+          $select: ['location', 'name', 'id']
         }
         if (_self.searchModel!== '' ) {
           _query['$search'] = _self.searchModel
         } 
           _query['$skip'] = _self.skip
-        if (_self.selectType !== 'ALL') {
-          _query['state'] = _self.selectType
-        }
         console.log('--==-', _query)
 
         _self.findMessages({
