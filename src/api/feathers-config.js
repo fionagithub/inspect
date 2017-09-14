@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-const socket = io('http://192.168.123.240:3032', {
+const socket = io('http://192.168.123.240:3033', {
 transports: ['websocket']
 })
 const feathersClient = feathers()

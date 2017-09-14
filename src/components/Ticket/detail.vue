@@ -17,17 +17,19 @@
             <div class="item multiple-lines d-base">
                 <div class="d-label"> 系统 </div>
                 <div class="d-val">
-                  {{ message.system }}</div>
+              {{ message.system|tran(systemItems) }}</div>
               </div>
               <div class="item multiple-lines d-base">
                 <div class="d-label"> 报障来源 </div>
                 <div class="d-val">
                   {{ message.source.type|typed }}</div>
               </div>
-              <div class="item multiple-lines d-base">
+              <div class="item multiple-lines d-base" >
                 <div class="d-label"> 优先级 </div>
-                <div class="d-val">
-                  {{ message.priortity|priortity }}</div>
+                <div class="d-val d-prty">    
+                  <q-rating class="orange n-rating " disable v-model="prty" :max="priorityMax"></q-rating>
+                  <span> {{message.priortity|tran(_priority) }} </span>
+                </div>
               </div>
               <div class="item multiple-lines d-base">
                 <div class="d-label"> 报障描述 </div>
@@ -47,7 +49,7 @@
               <div class="item multiple-lines">
                 <div class="item-content">
                   <div class="item-label">当前状态:</div>
-                  <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
+                  <q-select class="full-width" type="list" v-model="state" :options="_state"></q-select>
                 </div>
               </div>
               <div class="item multiple-lines">
@@ -64,7 +66,7 @@
                     <i>alarm</i>
                   </div>
                   <div class="timeline-title">
-                    {{n.name}}
+                    {{n.name|tran(_state) }}
                   </div>
                   <div class="timeline-date text-italic d-date">
                     <div>
@@ -100,7 +102,8 @@
  import {
     mapGetters,
     mapMutations,
-    mapActions
+    mapActions,
+    mapState
   } from 'vuex'
   import {Toast} from 'quasar'
   export default {
@@ -111,23 +114,20 @@
         flag:false,
         btnFlag:true,
         state: '',
-        selectState: [{
-          value: '未处理',
-          label: '待处理'
-        }, {
-          value: '处理中',
-          label: '处理中'
-        }, {
-          value: '已处理',
-          label: '已处理'
-        }],
         tips: null,
       }
     },
     computed: {
+      ...mapState(['systemItems','_priority','priorityMax', '_state']),
+
       ...mapGetters('tickets', {
         message: 'current',
-      }),
+      }), 
+      prty(){
+        if(this.message){
+           return parseInt(this.message.priority)
+        }
+      }
     },
     watch:{
       state(n,o){
@@ -153,12 +153,7 @@
     },
     filters: {
       priortity(data) {
-        var _map = {
-          1: '一般',
-          2: '紧急',
-          3: '非常紧急',
-        };
-        return _map[data]
+        return parseInt(data)
       },
       typed(obj){
         let _map={
@@ -180,9 +175,8 @@
       }),
       updateDB(id) {
         this.flag = true
-        //  console.log(this.stateDesc)
         this.patchMessages([id, {
-          state: this.state,
+          state:parseInt(this.state),
           stateComment: this.stateDesc
         }]).then(res => {
           this.flag = false
@@ -250,4 +244,8 @@
 .d-state{
   font-size: 14px;
 }
-</style>
+.d-prty{
+  display: flex;
+  justify-content: space-between;
+}
+  </style>

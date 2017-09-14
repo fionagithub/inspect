@@ -14,7 +14,7 @@
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">系统:</div>
-            <q-select class="full-width" type="list" v-model="system" :options="selectsystem"></q-select>
+            <q-select class="full-width" type="list" v-model="system" :options="systemItems"></q-select>
           </div>
         </div>
         <div class="item">
@@ -55,7 +55,8 @@
   import {
     mapMutations,
     mapActions,
-    mapGetters
+    mapGetters,
+    mapState
   } from 'vuex'
    import popover from '../layout/popover'
  import {
@@ -73,30 +74,23 @@
     created() {
     },
     mounted(){
-     // this.getSystem()
+    },
+    computed:{
+      ...mapState(['systemItems','priorityMax', 'stateItems'])
+
     },
     methods: { 
       ...mapMutations('tickets', {
         clear: 'clearAll'
       }),
-      ...mapActions('mate', {
-        GetSystemItems: 'find',
-      }),
-      getSystem(){
-        let _query={query:{ 'type': 'system'} }
-        this.GetSystemItems(_query ).then(res =>{
-          console.log(res)
-        } )
-      },
       ...mapActions('tickets', {
         createMessages: 'create',
       }),
       add() {
         let data = {
-          'state':'未处理',
           "priority": parseInt(this.priority),
           "system": this.system,
-          "stateTime": this.stateTime,
+          "reportTime": this.stateTime,
           "description": this.description,
         }
         this.createMessages(data)

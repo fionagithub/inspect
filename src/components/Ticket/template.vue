@@ -16,10 +16,10 @@
       <div class=" layout-padding">
         <div class="row gutter wrap justify-stretch content-center text-center">
           <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectType" :options="items_type"></q-select>
+            <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
           </div>
           <div class="auto ">
-            <q-select class=" list-btn" disable type="list" v-model="selectTime" :options="items_time"></q-select>
+            <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
           </div>
         </div>
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
@@ -28,14 +28,15 @@
               <i class="item-primary">mail</i>
               <div class="item-content has-secondary">
                 <div>
-                  {{item.system + `(`+ item.state[0].name+`)` }}
+                  {{item.system|tran(systemItems)}}
+                  ({{  item.state[0].name|tran(stateItems) }})
                 </div>
                 <div class="list-desc">
                   {{item.description}}
                 </div>
               </div>
               <div class='list-time'>
-                {{item._createTime | date}}
+                {{item.reportTime | date}}
               </div>
               <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
@@ -62,6 +63,7 @@
   import {
     _list
   } from './data'
+  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
@@ -73,21 +75,42 @@
   }
   from 'quasar'
   import popover from '../layout/popover'
+  const 
+  _time = [{
+    value: 'NOW',
+    label: '今天'
+  }, {
+    value: 'WEEK',
+    label: '最近七天'
+  }, {
+    value: 'MONTH',
+    label: '最近一个月'
+  }, {
+    value: 'ALL',
+    label: '全部时间'
+  }],timeMap={
+    NOW: moment().format('YYYY-MM-DD[T00:00:00.000Z]'),
+
+    WEEK: moment().subtract(7, 'days').format('YYYY-MM-DD[T00:00:00.000Z]'),
+
+    MONTH: moment().subtract(1, 'months').format('YYYY-MM-DD[T00:00:00.000Z]'),
+
+  };
+
   export default {
     data() { 
       let _dt = {
-        _search:null
-
+        _search:null,
+        selectTime: 'NOW',
+        items_time: _time,
       }
       return Object.assign(_dt, _list)
     },
     computed: {
-      ...mapGetters('metadata', {
-        stateItems: 'list',
-      }), 
       ...mapGetters('tickets', {
         message: 'list',
       }), 
+      ...mapState(['systemItems', 'stateItems'])
     },
     components: {
       popover
@@ -96,6 +119,11 @@
     },
     watch: {
       selectType(c, p) {
+        this.clear()
+        this.skip = 0
+        this.getApi()
+      },
+      selectTime(c, p) {
         this.clear()
         this.skip = 0
         this.getApi()
@@ -109,8 +137,7 @@
       }
     },
     mounted() {
-      this.getApi() //请求初始数据
-      this.getState()
+      this.getApi() //请求初始数据 
     },
     methods: {
       ...mapMutations('tickets', {
@@ -119,39 +146,10 @@
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
-      ...mapActions('metadata', {
-        findstateItems: 'get',
-      }),
       searchKey() {
         this.clear()
         this.skip = 0
         this.getApi()
-      },
-      getState(){
-        let _self=this
-        let id='888'
-  /*         _self.findstateItems(id).catch(err=>{
-          console.log('--=', err)
-
-        })
-      fetch('http://192.168.123.240:3032/metadata/state',{
-           headers: {
-            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyIsInR5cGUiOiJhY2Nlc3MifQ.eyJ1c2VySWQiOiIxIiwiaWF0IjoxNTA1Mjk3MTI4LCJleHAiOjE1MDUzODM1MjgsImF1ZCI6Imh0dHBzOi8veW91cmRvbWFpbi5jb20iLCJpc3MiOiJmZWF0aGVycyIsInN1YiI6ImFub255bW91cyJ9.ymysBJZuil0U3LAMZzCvOxHQmBRYCRzNMdzkOSOqHG0'
-            }
-         }).then(res => {
-          if (res.ok) {
-            res.json().then(data => { 
-              console.log('----', data)
-            })
-          } else {
-            this.items = []
-            console.log("Looks like the response wasn't perfect, got status", res.status);
-          }
-        }).then(data => {
-          this.items = []
-          console.error(data)
-        }) */
-
       },
       getApi(obj) {
         let _self = this
@@ -160,8 +158,8 @@
         _self.tips = null
         let _query = {
           $limit: _self.limit,
-          $sort:{_createTime:-1 },
-          $select: [ '_createTime', 'system', 'state', 'description', 'id']
+          $sort:{reportTime:-1 },
+          $select: [ 'reportTime', 'system', 'state', 'description', 'id']
         }
         if (_self.searchModel!== '' ) {
           _query['$search'] = _self.searchModel
@@ -169,6 +167,9 @@
           _query['$skip'] = _self.skip
         if (_self.selectType !== 'ALL') {
           _query['state'] = _self.selectType
+        }
+        if (_self.selectTime !== 'ALL') {
+          _query['$$start'] =timeMap[_self.selectTime]
         }
         console.log('--==-', _query)
 
@@ -200,7 +201,7 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.fetched = false
-            this.tips = '哦,服务开小差了，请重新登录'
+            this.tips =error.code==401? '哦,服务开小差了，请重新登录': '服务崩溃，稍后再试'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
               timeout: 1000
