@@ -18,6 +18,27 @@ Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
 
+Vue.filter('date', function(date,type) {
+    let _format
+    let fmt = 'YYYYMMDD'
+    let _Now = moment().format(fmt)
+    let _date = moment(date).format(fmt)
+    if (parseInt(_Now) == parseInt(_date)) {
+      _format = '[今天] HH:mm'
+    } else {
+      let num = Math.pow(10, 4)
+      if (parseInt(_Now / num) == parseInt(_date / num)) {
+        _format = 'M月D日'
+      } else {
+        _format = 'Y年M月D日'
+      }
+      if(type){
+          _format+=' ' + type
+      }
+    }
+          console.log('[]', _format)
+    return moment(date).format(_format);
+})
 
 import {
   mapActions,
@@ -73,26 +94,4 @@ Quasar.start(() => {
     store,
     render: h => h(require('./App'))
   })
-})
-
-Vue.filter('date', function(date,type) {
-    let _format
-    let fmt = 'YYYYMMDD'
-    let _Now = moment().format(fmt)
-    let _date = moment(date).format(fmt)
-    if (parseInt(_Now) == parseInt(_date)) {
-      _format = '[今天] HH:mm'
-    } else {
-      let num = Math.pow(10, 4)
-      if (parseInt(_Now / num) == parseInt(_date / num)) {
-        _format = 'M月D日'
-      } else {
-        _format = 'Y年M月D日'
-      }
-      if(type){
-          _format+=' ' + type
-          console.log('[]', _format)
-      }
-    }
-    return moment(date).format(_format);
 })

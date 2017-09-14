@@ -25,7 +25,7 @@ const feathersClient = feathers()
 
    feathersClient.service('/tickets')
 
-   //feathersClient.service('/metadata') 
+   feathersClient.service('/metadata') 
 
    feathersClient.hooks({
     before(hook){

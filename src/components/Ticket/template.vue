@@ -82,9 +82,9 @@
       return Object.assign(_dt, _list)
     },
     computed: {
-     /* ...mapGetters('metadata', {
+      ...mapGetters('metadata', {
         stateItems: 'list',
-      }), */
+      }), 
       ...mapGetters('tickets', {
         message: 'list',
       }), 
@@ -119,9 +119,9 @@
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
-      /*...mapActions('metadata', {
-        FindstateItems: 'find',
-      }),*/
+      ...mapActions('metadata', {
+        findstateItems: 'get',
+      }),
       searchKey() {
         this.clear()
         this.skip = 0
@@ -129,7 +129,29 @@
       },
       getState(){
         let _self=this
-      //  _self.FindstateItems()
+        let id='888'
+  /*         _self.findstateItems(id).catch(err=>{
+          console.log('--=', err)
+
+        })
+      fetch('http://192.168.123.240:3032/metadata/state',{
+           headers: {
+            'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6ImFjY2VzcyIsInR5cGUiOiJhY2Nlc3MifQ.eyJ1c2VySWQiOiIxIiwiaWF0IjoxNTA1Mjk3MTI4LCJleHAiOjE1MDUzODM1MjgsImF1ZCI6Imh0dHBzOi8veW91cmRvbWFpbi5jb20iLCJpc3MiOiJmZWF0aGVycyIsInN1YiI6ImFub255bW91cyJ9.ymysBJZuil0U3LAMZzCvOxHQmBRYCRzNMdzkOSOqHG0'
+            }
+         }).then(res => {
+          if (res.ok) {
+            res.json().then(data => { 
+              console.log('----', data)
+            })
+          } else {
+            this.items = []
+            console.log("Looks like the response wasn't perfect, got status", res.status);
+          }
+        }).then(data => {
+          this.items = []
+          console.error(data)
+        }) */
+
       },
       getApi(obj) {
         let _self = this
