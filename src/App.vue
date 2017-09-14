@@ -1,17 +1,19 @@
 <template>
   <!-- Don't drop "q-app" class -->
   <div id="q-app">
-      <transition name="fade" mode="out-in">
+    <transition name="fade" mode="out-in">
+      <keep-alive include="ticket">>
         <router-view></router-view>
-      </transition>
-     <drawer></drawer>
+      </keep-alive>
+    </transition>
+    <drawer></drawer>
   </div>
 </template>
 
-<script> 
+<script>
   import drawer from 'components/layout/drawer.vue'
 
-  export default { 
+  export default {
     components: {
       drawer
     },

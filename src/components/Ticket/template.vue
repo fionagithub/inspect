@@ -106,6 +106,7 @@
       }
       return Object.assign(_dt, _list)
     },
+    name:'ticket',
     computed: {
       ...mapGetters('tickets', {
         message: 'list',

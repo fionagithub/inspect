@@ -54,7 +54,7 @@ Quasar.start(() => {
               let _list = data['is']
               sum[data['id']]= _list
               if ( data['id']=='state'){
-                this.$store.state.stateItems= _array.concat(_list)
+                this.$store.state.stateItems= _list.concat(_array)
               }
             }
               console.log('[-!!!--]', sum) 

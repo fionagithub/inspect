@@ -81,7 +81,7 @@
     },
     methods: { 
       ...mapMutations('tickets', {
-        clear: 'clearAll'
+        clear: 'clearCurrent'
       }),
       ...mapActions('tickets', {
         createMessages: 'create',

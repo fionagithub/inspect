@@ -23,8 +23,8 @@ const feathersClient = feathers()
     }
   }))
 
-   feathersClient.service('/tickets')
-
+   feathersClient.service('/tickets').on('created',console.log)
+   
    feathersClient.service('/metadata') 
 
    feathersClient.hooks({
