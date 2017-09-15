@@ -1,4 +1,15 @@
-.layout-header{
-  background: transparent;
-  box-shadow:0;
-} 
+  .refresh-message {
+    top: 30vw;
+    position: fixed !important;
+    color: white;
+    width: 50px;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, .8);
+    border-radius: 0 15px 15px 0;
+    left: 0;
+    z-index: 99;
+  }
+
+.n-rating{
+  font-size: 2rem;
+}
