@@ -10,21 +10,24 @@
       <popover></popover>
     </div> 
     <div slot="header" class="toolbar">
-      <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
+      <q-search class="full-width" disable v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
     </div>
     <div class="layout-view">
-      <div class=" layout-padding">
+      <div class="layout-padding">
+        <a class="animate-pop refresh-message" v-if="dv_count" @click='getNewMsg()' >
+          <span>+{{ dv_count }} </span>  
+        </a>
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter no-border " v-if="message.length">
+          <div class="list item-inset-delimiter no-border " v-if="message">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary">mail</i>
               <div class="item-content has-secondary">
                 <div>
                   {{item.name }}
                 </div>
-                <div class="list-desc">
+              <!--  <div class="list-desc">
                   {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
-                </div>
+                </div>-->
               </div> 
               <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
@@ -33,10 +36,13 @@
           <div class="row justify-center" style="margin-bottom: 50px;">
             <spinner name="dots" slot="message" :size="40" v-if="fetched">
             </spinner>
-            <div slot="message" :size="40" v-if="fetched==false"> 
-              <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
+            <div slot="message" :size="40" v-if="fetched==false">
+              <div v-if='tips'>
+                <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+                <span>  {{tips}} </span>
+              </div>
               <div v-else>
-                {{"共计"+message.length+"条数据"  }}
+                {{"共计"+message.length+"条数据" }}
               </div>
             </div>
           </div>
@@ -61,10 +67,10 @@
   from 'quasar'
   import popover from '../layout/popover'
   export default {
-    name:'device',
+    name:'list',
     data() { 
       let _dt = {
-        _search:null
+        Islogined:false
 
       }
       return Object.assign(_dt, _list)
@@ -73,6 +79,7 @@
       ...mapGetters('devices', {
         message: 'list',
       }), 
+      ...mapState(['dv_count'])
     },
     components: {
       popover
@@ -89,9 +96,29 @@
       }
     },
     mounted() {
-      this.getApi() //请求初始数据
+      this.getApi() //请求初始数据 
+      this.$nextTick(() => {
+        feathers.service('devices').on('created', res => {
+          this.$store.state.dv_count += 1
+          console.log('rrrr', this.$store.state.dv_count, res)
+          this.filterDV([res])
+        });
+      }
+      )
     },
     methods: {
+      getNewMsg(){
+        this.$store.state.dv_count = 0
+        this.clear()
+        this.skip = 0
+        this.getApi() //请求初始数据 
+      },
+      ...mapActions('devices', {
+        clear: 'clearAll',
+      }),
+      ...mapMutations('devices', {
+        filterDV: 'removeItems',
+      }),
       ...mapActions('devices', {
         findMessages: 'find',
       }),
@@ -143,10 +170,11 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.fetched = false
-            this.tips = '哦,服务开小差了，请重新登录'
+            this.Islogined=error.code==401?true:false
+            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
-              timeout: 1000
+              timeout: 3000
             })
           })
 
@@ -165,7 +193,7 @@
       }
     },
     destroyed: function () {
-      this.clear() // 置空ticket-vuex      
+     // this.clear() // 置空ticket-vuex      
       console.log("已销毁");
     },
   }

@@ -3,11 +3,13 @@ import Vue from 'vue'
 
 Vue.use(Vuex)
 let state = {
-   priorityMax: 3,
- stateItems: [],
+  tkt_count: 0,
+  dv_count: 0,
+  priorityMax: 3,
+  stateItems: [],
   systemItems: [],
   _priority: [],
-  _state:[],
+  _state: [],
 }
 
 let mutations = {}

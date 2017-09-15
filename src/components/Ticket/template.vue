@@ -13,8 +13,11 @@
       <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
     </div>
     <div class="layout-view">
-      <div class=" layout-padding">
-        <div class="row gutter wrap justify-stretch content-center text-center">
+      <div class="layout-padding">
+        <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
+          <span>+{{ tkt_count }} </span>  
+        </a>
+     <div class="row gutter wrap justify-stretch content-center text-center">
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
           </div>
@@ -45,10 +48,13 @@
           <div class="row justify-center" style="margin-bottom: 50px;">
             <spinner name="dots" slot="message" :size="40" v-if="fetched">
             </spinner>
-            <div slot="message" :size="40" v-if="fetched==false"> 
-              <router-link to='/login' v-if='tips' >   {{tips}} </router-link> 
+            <div slot="message" :size="40" v-if="fetched==false">
+              <div v-if='tips'>
+                <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+                <span>  {{tips}} </span>
+              </div>
               <div v-else>
-                {{"共计"+message.length+"条数据"  }}
+                {{"共计"+message.length+"条数据" }}
               </div>
             </div>
           </div>
@@ -63,6 +69,7 @@
   import {
     _list
   } from './data'
+//  import * as feathers from './api/feathers-config'
   import moment from 'moment'
   import {
     mapGetters,
@@ -75,48 +82,34 @@
   }
   from 'quasar'
   import popover from '../layout/popover'
-  const 
-  _time = [{
-    value: 'NOW',
-    label: '今天'
-  }, {
-    value: 'WEEK',
-    label: '最近七天'
-  }, {
-    value: 'MONTH',
-    label: '最近一个月'
-  }, {
-    value: 'ALL',
-    label: '全部时间'
-  }],timeMap={
-    NOW: moment().format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-    WEEK: moment().subtract(7, 'days').format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-    MONTH: moment().subtract(1, 'months').format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-  };
-
   export default {
     data() { 
       let _dt = {
-        _search:null,
-        selectTime: 'NOW',
-        items_time: _time,
+        Islogined:false
+     //   tkt_count:0
       }
       return Object.assign(_dt, _list)
     },
-    name:'ticket',
+    name:'list',
     computed: {
       ...mapGetters('tickets', {
         message: 'list',
       }), 
-      ...mapState(['systemItems', 'stateItems'])
+      ...mapState('tickets', {
+        tktCrt: 'copy',
+      }), 
+      ...mapState(['systemItems','tkt_count', 'stateItems'])
     },
-    components: {
-      popover
-    },
-    created() {
+    mounted() {
+      this.getApi() //请求初始数据 
+      this.$nextTick(() => {
+        feathers.service('tickets').on('created', res => {
+          this.$store.state.tkt_count += 1
+          console.log('rrrr', this.$store.state.tkt_count, res)
+          this.filterTkt([res])
+        });
+      }
+      )
     },
     watch: {
       selectType(c, p) {
@@ -137,12 +130,23 @@
         }
       }
     },
-    mounted() {
-      this.getApi() //请求初始数据 
+    components: {
+      popover
+    },
+    created() {
     },
     methods: {
+      getNewMsg(){
+        this.$store.state.tkt_count = 0
+        this.clear()
+        this.skip = 0
+        this.getApi() //请求初始数据 
+      },
       ...mapMutations('tickets', {
-        clear: 'clearAll'
+        clear: 'clearAll',
+      }),
+      ...mapMutations('tickets', {
+        filterTkt: 'removeItems',
       }),
       ...mapActions('tickets', {
         findMessages: 'find',
@@ -170,7 +174,7 @@
           _query['state'] = _self.selectType
         }
         if (_self.selectTime !== 'ALL') {
-          _query['$$start'] =timeMap[_self.selectTime]
+          _query['$$start'] =  _self.timeMap[_self.selectTime]
         }
         console.log('--==-', _query)
 
@@ -202,10 +206,11 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.fetched = false
-            this.tips =error.code==401? '哦,服务开小差了，请重新登录': '服务崩溃，稍后再试'
+            this.Islogined=error.code==401?true:false
+            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
-              timeout: 1000
+              timeout: 3000
             })
           })
 
@@ -282,5 +287,6 @@
     bottom: 18px;
     z-index: 99;
   }
+
 
 </style>

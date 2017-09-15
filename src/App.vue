@@ -2,7 +2,7 @@
   <!-- Don't drop "q-app" class -->
   <div id="q-app">
     <transition name="fade" mode="out-in">
-      <keep-alive include="ticket">>
+      <keep-alive include="list">>
         <router-view></router-view>
       </keep-alive>
     </transition>
@@ -11,8 +11,8 @@
 </template>
 
 <script>
+  import './assets/css/index.css'
   import drawer from 'components/layout/drawer.vue'
-
   export default {
     components: {
       drawer

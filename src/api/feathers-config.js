@@ -27,18 +27,20 @@ const feathersClient = feathers()
     }
   }))
 
-feathersClient.service('/tickets').on('created', console.log)
-feathersClient.service('/devices').on('created', console.log)
+feathersClient.service('/tickets')
+feathersClient.service('/devices')
+
+feathersClient.service('/metadata')
 
 feathersClient.service('/metadata')
 
 feathersClient.hooks({
   before (hook) {
      // console.log('My custom before hook ran!');
-     },
+  },
   error (hook) {
      // console.log('======hook=======>', hook)
-     }
+  }
 })
 
 export default feathersClient

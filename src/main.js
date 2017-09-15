@@ -10,7 +10,7 @@ import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
 import store from './config/store'
-import './api/feathers-config'
+import feathersClient from './api/feathers-config'
 import './config/filters'
 import Vuelidate from 'vuelidate'
 Vue.use(Vuelidate)
@@ -18,7 +18,7 @@ moment.locale('zh-cn');
 Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
-
+window.feathers=feathersClient
 
 import {
   mapActions,
@@ -30,7 +30,7 @@ Quasar.start(() => {
     el: '#q-app',
     computed:{ 
       ...mapState('auth', ['payload']),
-    }, 
+    },
     created(){
       if(this.payload){
         this.getAuth()

@@ -22,13 +22,14 @@
               <div class="item multiple-lines d-base">
                 <div class="d-label"> 报障来源 </div>
                 <div class="d-val">
-                  {{ message.source.type|typed }}</div>
+                  {{ message.source.type|getTyped }}
+                </div>
               </div>
               <div class="item multiple-lines d-base" >
                 <div class="d-label"> 优先级 </div>
                 <div class="d-val d-prty">    
                   <q-rating class="orange n-rating " disable v-model="prty" :max="priorityMax"></q-rating>
-                  <span> {{message.priortity|tran(_priority) }} </span>
+                  <span> {{prty|tran(_priority) }} </span>
                 </div>
               </div>
               <div class="item multiple-lines d-base">
@@ -150,17 +151,25 @@
     },
     mounted() {
       this.getMessage()
+      this.$nextTick(()=>{
+          feathers.service('tickets').on('patched', res => {
+            console.log('--!!!!!!!!!!==', res)
+            this.ptdtkt(res)
+          })
+      })
     },
     filters: {
       priortity(data) {
         return parseInt(data)
       },
-      typed(obj){
+      getTyped(obj){
         let _map={
           manual:'人工填报',
           system:'系统填报'
         }
-        return _map[obj]
+        if(obj){
+          return _map[obj]
+        }
       }
     },
     methods: {
@@ -169,6 +178,9 @@
       }),
       ...mapActions('tickets', {
         findMessages: 'get',
+      }),
+      ...mapMutations('tickets', {
+        ptdtkt:'updateItem'
       }),
       ...mapActions('tickets', {
         patchMessages: 'patch',
@@ -189,7 +201,7 @@
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages(id).catch(err => {
+        _self.findMessages(id).catch(error => {
           let type = error.errorType
           error = Object.assign({}, error)
           error.message = (type === 'uniqueViolated') ?
@@ -197,17 +209,17 @@
             'An error prevented sign.'
           console.log('-=:[]', error)
           _self.fetched = false
-          _self.tips = '哦,服务开小差了，请重新登录'
+          _self.tips = '哦，服务崩溃，稍后再试'
           Toast.create.negative({
             html: '服务崩溃，稍后再试',
-            timeout: 1000
+            timeout: 3000
           })
         })
       }
     },
     destroyed: function () {
-      this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
+     // this.clear() // 置空ticket-vuex      
+    //  console.log("已销毁");
     },
   }
 
