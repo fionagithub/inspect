@@ -5,7 +5,7 @@
         <i>arrow_back</i>
       </button> 
       <q-toolbar-title :padding="1">
-        报障清单 
+        设备清单 
       </q-toolbar-title>
       <popover></popover>
     </div> 
@@ -14,30 +14,18 @@
     </div>
     <div class="layout-view">
       <div class=" layout-padding">
-        <div class="row gutter wrap justify-stretch content-center text-center">
-          <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
-          </div>
-          <div class="auto ">
-            <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
-          </div>
-        </div>
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
           <div class="list item-inset-delimiter no-border " v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary">mail</i>
               <div class="item-content has-secondary">
                 <div>
-                  {{item.system|tran(systemItems)}}
-                  ({{  item.state[0].name|tran(stateItems) }})
+                  {{item.name }}
                 </div>
                 <div class="list-desc">
-                  {{item.description}}
+                  {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
-              </div>
-              <div class='list-time'>
-                {{item.reportTime | date}}
-              </div>
+              </div> 
               <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
           </div>
@@ -55,15 +43,12 @@
         </q-infinite-scroll>
       </div>
     </div>
-    <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
-    </button>
   </q-layout>
 </template>
 <script>
   import {
     _list
   } from './data'
-  import moment from 'moment'
   import {
     mapGetters,
     mapMutations,
@@ -75,43 +60,19 @@
   }
   from 'quasar'
   import popover from '../layout/popover'
-  const 
-  _time = [{
-    value: 'NOW',
-    label: '今天'
-  }, {
-    value: 'WEEK',
-    label: '最近七天'
-  }, {
-    value: 'MONTH',
-    label: '最近一个月'
-  }, {
-    value: 'ALL',
-    label: '全部时间'
-  }],timeMap={
-    NOW: moment().format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-    WEEK: moment().subtract(7, 'days').format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-    MONTH: moment().subtract(1, 'months').format('YYYY-MM-DD[T00:00:00.000Z]'),
-
-  };
-
   export default {
+    name:'device',
     data() { 
       let _dt = {
-        _search:null,
-        selectTime: 'NOW',
-        items_time: _time,
+        _search:null
+
       }
       return Object.assign(_dt, _list)
     },
-    name:'ticket',
     computed: {
-      ...mapGetters('tickets', {
+      ...mapGetters('devices', {
         message: 'list',
       }), 
-      ...mapState(['systemItems', 'stateItems'])
     },
     components: {
       popover
@@ -119,16 +80,6 @@
     created() {
     },
     watch: {
-      selectType(c, p) {
-        this.clear()
-        this.skip = 0
-        this.getApi()
-      },
-      selectTime(c, p) {
-        this.clear()
-        this.skip = 0
-        this.getApi()
-      },
       searchModel(c, o){
         if (c==''){
           this.clear()
@@ -138,13 +89,10 @@
       }
     },
     mounted() {
-      this.getApi() //请求初始数据 
+      this.getApi() //请求初始数据
     },
     methods: {
-      ...mapMutations('tickets', {
-        clear: 'clearAll'
-      }),
-      ...mapActions('tickets', {
+      ...mapActions('devices', {
         findMessages: 'find',
       }),
       searchKey() {
@@ -159,19 +107,12 @@
         _self.tips = null
         let _query = {
           $limit: _self.limit,
-          $sort:{reportTime:-1 },
-          $select: [ 'reportTime', 'system', 'state', 'description', 'id']
+          $select: ['location', 'name', 'id']
         }
         if (_self.searchModel!== '' ) {
           _query['$search'] = _self.searchModel
         } 
           _query['$skip'] = _self.skip
-        if (_self.selectType !== 'ALL') {
-          _query['state'] = _self.selectType
-        }
-        if (_self.selectTime !== 'ALL') {
-          _query['$$start'] =timeMap[_self.selectTime]
-        }
         console.log('--==-', _query)
 
         _self.findMessages({
@@ -202,7 +143,7 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.fetched = false
-            this.tips =error.code==401? '哦,服务开小差了，请重新登录': '服务崩溃，稍后再试'
+            this.tips = '哦,服务开小差了，请重新登录'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
               timeout: 1000
@@ -217,15 +158,9 @@
         }
         done()
       },
-
-      add() {
-        this.$router.push({
-          path: '/ticket/new'
-        })
-      },
       getDetail(id) {
         this.$router.push({
-          path: '/ticket/' + id
+          path: '/device/' + id
         })
       }
     },
@@ -234,13 +169,6 @@
       console.log("已销毁");
     },
   }
-
-  /*
-  import io from 'socket.io-client'
-  const socket=io('http://192.168.123.125:3030')
-  socket.emit('message::find', { status: 'read', user: 10 }, (error, data) => {
-    console.log('Found all messages', data);
-  });*/
 
 </script>
 <style>

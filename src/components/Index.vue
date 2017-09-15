@@ -19,7 +19,7 @@
     </div>
       <img class="index-img" src="../assets/bj_logo.png">
       <div class="index-menu  text-center" >
-        <div class="row content-center text-center">
+        <div class="row content-center text-center menu-row">
           <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
             <router-link :to="item.uri">
               <button class="teal circular big " :disabled="item.disabled">
@@ -29,7 +29,7 @@
             </router-link>
           </div>
         </div>
-        <div class="row content-center text-center">
+        <div class="row content-center text-center menu-row">
           <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
             <router-link :to="item.uri">
               <button class="teal circular big " :disabled="item.disabled">
@@ -65,8 +65,7 @@
           uri: '/device'
         }, {
           title: '设备',
-          disabled: true,
-          uri: '/alarm'
+          uri: '/device'
         }, {
           title: '巡检',
           disabled: true,
@@ -76,14 +75,12 @@
     },
     computed: {
       leftDrawer() {
-        return this.$parent.$children[1].$refs.leftDrawer
+        return this.$parent.$children[0].$refs.leftDrawer
       }
     },
     created() {
-      this.setNavInfo()
     }, 
     methods: {
-      ...mapMutations(['setNav']),
       alert() {
         Dialog.create({
           buttons: ['了解'],
@@ -91,28 +88,18 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
-      setNavInfo() {
-        let obj = {
-          show: {
-            drawer: true,
-          },
-          popover: '首页管理'
-        }
-        this.setNav(obj)
-      },
     },
   }
 
 </script>
 <style>
   .index-menu{
-    margin: 30px;
-    width: 80vw;
+    padding: 3rem 2rem;
+    width: 100vw;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
   }  
-  .link-btn {
-    margin: 20px 0;
-  }
-
   .index-page .banner {
     width: 100vw;
   }
@@ -137,5 +124,8 @@
     background: #FDB617!important ;
     padding: .3rem!important;
   }
-
+.menu-row{
+  align-items: center;
+  padding: 30px 10px;
+}
 </style>

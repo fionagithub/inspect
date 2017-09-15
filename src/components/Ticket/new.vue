@@ -1,36 +1,47 @@
 <template>
-  <div class="layout-view ">
-    <div class="layout-padding ">
-      <div class="item two-lines">
-        <div class="item-content row items-center wrap">
-          <div class="item-label">系统:</div>
-          <q-select class="full-width" type="list" v-model="system" :options="selectsystem"></q-select>
-        </div>
+  <q-layout>
+    <div slot="header" class="toolbar">
+        <button class="head_goback" @click="$router.go(-1)">
+          <i>arrow_back</i>
+        </button> 
+        <q-toolbar-title :padding="1">
+          新增报障 
+        </q-toolbar-title>
+        <popover></popover>
       </div>
-      <div class="item">
-        <div class="item-content row items-center wrap">
-          <div class="item-label">优先级:</div>
-          <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
+    <div class="layout-view" >
+      <div class="layout-padding ">
+        <div class="item two-lines">
+          <div class="item-content row items-center wrap">
+            <div class="item-label">系统:</div>
+            <q-select class="full-width" type="list" v-model="system" :options="systemItems"></q-select>
+          </div>
         </div>
-      </div>
-      <div class="item multiple-lines">
-        <div class="item-content row items-center wrap">
-          <div class="item-label">报障时间:</div>
-          <q-datetime class="full-width red" v-model="stateTime" type="datetime" :ok-label='okLabel' :cancel-label='cclLabel' :clear-label='clrLabel'></q-datetime>
+        <div class="item">
+          <div class="item-content row items-center wrap">
+            <div class="item-label">优先级:</div>
+            <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
+          </div>
         </div>
-      </div>
-      <div class="item multiple-lines">
-        <div class="item-content">
-          <div class="item-label">报障描述:</div>
-          <textarea class="full-width new-desc" v-model="description"> </textarea>
+        <div class="item multiple-lines">
+          <div class="item-content row items-center wrap">
+            <div class="item-label">报障时间:</div>
+            <q-datetime class="full-width red" v-model="stateTime" type="datetime" :ok-label='okLabel' :cancel-label='cclLabel' :clear-label='clrLabel'></q-datetime>
+          </div>
         </div>
-      </div>
-      <!--<pre>$v: {{ $v }}</pre>-->
-      <div class="add-btn">
-        <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+        <div class="item multiple-lines">
+          <div class="item-content">
+            <div class="item-label">报障描述:</div>
+            <textarea class="full-width new-desc" v-model="description"> </textarea>
+          </div>
+        </div>
+        <!--<pre>$v: {{ $v }}</pre>-->
+        <div class="add-btn">
+          <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+        </div>
       </div>
     </div>
-  </div>
+  </q-layout>
 </template>
 
 <script>
@@ -41,13 +52,14 @@
     between,
     minLength
   } from 'vuelidate/lib/validators'
-  import toolbar from 'components/layout/toolbar.vue'
   import {
     mapMutations,
     mapActions,
-    mapGetters
+    mapGetters,
+    mapState
   } from 'vuex'
-  import {
+   import popover from '../layout/popover'
+ import {
     Toast
   } from 'quasar'
   import {_new} from './data'
@@ -60,44 +72,25 @@
       return Object.assign(_dt, _new)
     },
     created() {
-      this.setNavInfo()
     },
     mounted(){
-     // this.getSystem()
+    },
+    computed:{
+      ...mapState(['systemItems','priorityMax', 'stateItems'])
+
     },
     methods: { 
       ...mapMutations('tickets', {
-        clear: 'clearAll'
+        clear: 'clearCurrent'
       }),
-      ...mapActions('mate', {
-        GetSystemItems: 'find',
-      }),
-      getSystem(){
-        let _query={query:{ 'type': 'system'} }
-        this.GetSystemItems(_query ).then(res =>{
-          console.log(res)
-        } )
-      },
       ...mapActions('tickets', {
         createMessages: 'create',
       }),
-      ...mapMutations(['setNav']),
-      setNavInfo() {
-        this.setNav({
-          popover: '开发中',
-          title: '新增报障',
-          show: {
-            bar: true,
-          },
-          direction: true
-        })
-      },
       add() {
         let data = {
-          'state':'未处理',
           "priority": parseInt(this.priority),
           "system": this.system,
-          "stateTime": this.stateTime,
+          "reportTime": this.stateTime,
           "description": this.description,
         }
         this.createMessages(data)
@@ -122,7 +115,7 @@
     },
     plugins: ['vuelidate'],
     components: {
-      toolbar
+      popover
     },
     destroyed: function () {
       this.clear() // 置空ticket-vuex      

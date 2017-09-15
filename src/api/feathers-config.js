@@ -7,16 +7,13 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-/* const socket = io('http://192.168.123.125:3030', {
+/* const socket = io('http://192.168.123.240:3033', {
 transports: ['websocket']
 }) */
-const apiUrl = window.location.origin.replace(/:\/\/m\./g, '://api.')
+const apiUrl = window.location.origin.replace(/:\/\/m\./g, '://api-beta.')
 const socket = io(apiUrl, {
   transports: ['websocket']
 })
-/* const socket = io('http://192.168.123.129:3031', {
-  transports: ['websocket']
-}) */
 const feathersClient = feathers()
   .configure(hooks())
   .configure(socketio(socket, {timeout: 5000}))
@@ -30,17 +27,18 @@ const feathersClient = feathers()
     }
   }))
 
-feathersClient.service('/tickets')
+feathersClient.service('/tickets').on('created', console.log)
+feathersClient.service('/devices').on('created', console.log)
 
-feathersClient.service('/mate')
+feathersClient.service('/metadata')
 
 feathersClient.hooks({
-     before (hook) {
+  before (hook) {
      // console.log('My custom before hook ran!');
-    },
-     error (hook) {
+     },
+  error (hook) {
      // console.log('======hook=======>', hook)
-  }
-   })
+     }
+})
 
 export default feathersClient
