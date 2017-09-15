@@ -23,8 +23,8 @@ const feathersClient = feathers()
     }
   }))
 
-   feathersClient.service('/tickets').on('created',console.log)
-   feathersClient.service('/devices').on('created',console.log)
+   feathersClient.service('/tickets')
+   feathersClient.service('/devices')
    
    feathersClient.service('/metadata') 
 
