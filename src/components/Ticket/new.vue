@@ -102,7 +102,7 @@
           .catch(error => {
             Toast.create.negative({
               html: '出错了.',
-              timeout: 1000
+              timeout: 3000
             })
             let type = error.errorType
             error = Object.assign({}, error)
@@ -151,8 +151,4 @@
     display: block;
     color: #CC3333;
   }
-.n-rating{
-  font-size: 2rem;
-  margin: 0 10px;
-}
 </style>
