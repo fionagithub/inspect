@@ -74,8 +74,68 @@
           </div>
         </div>
         <div class="card" ref="tab-2">
-          <div>
-            {{message}}
+          <div v-if="message">
+            <div class="card-title">
+              <div>{{message.name}} </div>
+            </div>
+            <div class="card-content list no-border highlight">
+              <div class="item multiple-lines d-lines content">
+                <div class="item-content row items-center">
+                  <div class="item-label">生产商</div>
+                  <div class="item-title">
+                    {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label">设备品牌</div>
+                  <div class="item-title">
+                    {{'正常' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label"> 规格型号</div>
+                  <div class="item-title">
+                    {{' A:999 B:888 C:333' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label">设备重量</div>
+                  <div class="item-title">
+                    {{'正常' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label"> 设计寿命</div>
+                  <div class="item-title">
+                    {{' A:999 B:888 C:333' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label">出厂日期</div>
+                  <div class="item-title">
+                    {{'正常' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label"> 供应商</div>
+                  <div class="item-title">
+                    {{' A:999 B:888 C:333' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label"> 安装单位</div>
+                  <div class="item-title">
+                    {{' A:999 B:888 C:333' }}
+                  </div>
+                </div>
+                <div class="item-content row items-center">
+                  <div class="item-label">安装时间</div>
+                  <div class="item-title">
+                    {{message._modifyTime |date('HH:mm:ss') }}
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="card" ref="tab-3">
@@ -92,6 +152,10 @@
           </div>
 
         </div>
+      </div>
+      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
+        <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+        <span v-else>  {{tips}} </span>
       </div>
     </div>
   </q-layout>
@@ -111,7 +175,10 @@
     name: "detail",
     data() {
       return {
-        tabNo:'tab-1'
+       
+        tips: null,
+        Islogined:false,
+         tabNo:'tab-1'
       }
     },
     computed: {
@@ -153,10 +220,10 @@
             'That is unavailable.' :
             'An error prevented sign.'
           console.log('-=:[]', error)
-          _self.fetched = false
-          _self.tips = '哦,服务开小差了，请重新登录'
+          this.Islogined=error.code==401?true:false
+          this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
           Toast.create.negative({
-            html: '服务崩溃，稍后再试',
+            html:this.tips ,
             timeout: 3000
           })
         })
