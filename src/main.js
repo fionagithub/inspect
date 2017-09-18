@@ -29,14 +29,21 @@ Quasar.start(() => {
   new Vue({
     el: '#q-app',
     computed:{ 
-      ...mapState('auth', ['payload']),
-    },
+      ...mapState('auth', ['payload', 'user' ]),
+    }, 
     created(){
-      if(this.payload){
-        this.getAuth()
-      }else{
+      if(!this.user){
        this.setAuth()
       }
+    },
+    watch:{
+      user(obj){
+        if (obj){
+          this.getAuth()
+           this.getConf()
+        }
+      }
+
     },
     methods:{
       ...mapActions('metadata', {
@@ -70,10 +77,9 @@ Quasar.start(() => {
         let _self = this
         _self.authenticate().then((response) => {
           _self.getAuth()
-           _self.getConf()
-        }).catch((error) => {
-          _self.$router.push('/login')
-          console.log('Error authenticating!', error);
+        }).catch((error) => { 
+           _self.$router.push('/login')
+          console.log('Error--from main!!!!!', error);
         });
       },
       getAuth() {
