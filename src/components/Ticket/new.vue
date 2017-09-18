@@ -40,6 +40,10 @@
           <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
         </div>
       </div>
+      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
+        <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
+        <span v-else>  {{tips}} </span>
+      </div>
     </div>
   </q-layout>
 </template>
@@ -67,7 +71,8 @@
     name: "new",
     data() {
       let _dt = {
-        stateTime: moment().format()
+                tips: null,
+Islogined:false
       }
       return Object.assign(_dt, _new)
     },
@@ -100,16 +105,18 @@
             // console.log('-=-=', res)
           })
           .catch(error => {
-            Toast.create.negative({
-              html: '出错了.',
-              timeout: 3000
-            })
             let type = error.errorType
             error = Object.assign({}, error)
             error.message = (type === 'uniqueViolated') ?
               'That is unavailable.' :
               'An error prevented sign.'
             console.log('-=:[]', error)
+            this.Islogined=error.code==401?true:false
+            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
+            Toast.create.negative({
+              html: this.tips,
+              timeout: 3000
+            })
           })
       }
     },

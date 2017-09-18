@@ -217,7 +217,7 @@
             this.Islogined=error.code==401?true:false
             this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
             Toast.create.negative({
-              html: '服务崩溃，稍后再试',
+              html: this.tips ,
               timeout: 3000
             })
           })
