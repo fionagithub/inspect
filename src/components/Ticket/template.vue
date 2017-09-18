@@ -51,7 +51,7 @@
             <div slot="message" :size="40" v-if="fetched==false">
               <div v-if='tips'>
                 <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-                <span>  {{tips}} </span>
+                <span v-else>  {{tips}} </span>
               </div>
               <div v-else>
                 {{"共计"+message.length+"条数据" }}
@@ -100,16 +100,16 @@
       }), 
       ...mapState(['systemItems','tkt_count', 'stateItems'])
     },
+    created() {
+    },
     mounted() {
-      this.getApi() //请求初始数据 
       this.$nextTick(() => {
         feathers.service('tickets').on('created', res => {
           this.$store.state.tkt_count += 1
           console.log('rrrr', this.$store.state.tkt_count, res)
           this.filterTkt([res])
         });
-      }
-      )
+      })
     },
     watch: {
       selectType(c, p) {
@@ -133,7 +133,14 @@
     components: {
       popover
     },
-    created() {
+    activated() {
+      console.log('-----activated--')
+      this.getApi() //请求初始数据 
+    },
+    deactivated() {
+      console.log('-----deactivated--')
+      this.tips = null
+      this.Islogined = false
     },
     methods: {
       getNewMsg(){
@@ -206,6 +213,7 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.fetched = false
+             this.$store.state.tkt_count = 0
             this.Islogined=error.code==401?true:false
             this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
             Toast.create.negative({
@@ -222,7 +230,6 @@
         }
         done()
       },
-
       add() {
         this.$router.push({
           path: '/ticket/new'
@@ -239,14 +246,6 @@
       console.log("已销毁");
     },
   }
-
-  /*
-  import io from 'socket.io-client'
-  const socket=io('http://192.168.123.125:3030')
-  socket.emit('message::find', { status: 'read', user: 10 }, (error, data) => {
-    console.log('Found all messages', data);
-  });*/
-
 </script>
 <style>
   .list-btn {
