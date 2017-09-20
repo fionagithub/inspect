@@ -76,7 +76,7 @@ Quasar.start(() => {
       setAuth() {
         let _self = this
         _self.authenticate().then((response) => {
-          _self.getAuth()
+          console.log('ok--from main!!!!!');
         }).catch((error) => { 
            _self.$router.push('/login')
           console.log('Error--from main!!!!!', error);
