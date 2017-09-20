@@ -91,7 +91,8 @@
           <!--<pre>$v: {{ $v }}</pre>-->
         </div>
         <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-          <router-link to='/login'>   {{tips }} </router-link> 
+          <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+          <span v-else>  {{tips}} </span>
         </div>
       </div>
     </div>
@@ -116,7 +117,8 @@
         btnFlag:true,
         state: '',
         tips: null,
-      }
+        Islogined:false
+     }
     },
     computed: {
       ...mapState(['systemItems','_priority','priorityMax', '_state']),
@@ -208,17 +210,17 @@
             'That is unavailable.' :
             'An error prevented sign.'
           console.log('-=:[]', error)
-          _self.fetched = false
-          _self.tips = '哦，服务崩溃，稍后再试'
+          this.Islogined=error.code==401?true:false
+          this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
           Toast.create.negative({
-            html: '服务崩溃，稍后再试',
+            html:this.tips ,
             timeout: 3000
           })
         })
       }
     },
     destroyed: function () {
-     // this.clear() // 置空ticket-vuex      
+     this.clear() // 置空ticket-vuex      
     //  console.log("已销毁");
     },
   }

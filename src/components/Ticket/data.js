@@ -40,4 +40,5 @@ import moment from 'moment'
    clrLabel: '清空',
    cclLabel: '取消',
    okLabel: '设置',
+  stateTime: moment().format()
  }
