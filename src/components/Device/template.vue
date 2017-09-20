@@ -25,9 +25,9 @@
                 <div>
                   {{item.name }}
                 </div>
-              <!--  <div class="list-desc">
+                <div class="list-desc">
                   {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
-                </div>-->
+                </div>
               </div> 
               <i class="item-secondary icon">keyboard_arrow_right</i>
             </div>
@@ -85,6 +85,10 @@
       popover
     },
     created() {
+      feathers.service('devices').on('patched', res => {
+        console.log('--!!!!!!!!!!==', res)
+        this.ptdDV(res)
+      })
     },
     watch: {
       searchModel(c, o){
@@ -113,6 +117,9 @@
         this.skip = 0
         this.getApi() //请求初始数据 
       },
+      ...mapMutations('devices', {
+        ptdDV:'updateItem'
+      }),
       ...mapActions('devices', {
         clear: 'clearAll',
       }),

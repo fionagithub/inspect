@@ -13,9 +13,9 @@
     <q-tabs slot="navigation" :refs="$refs" v-model="tabNo">
       <q-tab name="tab-1">概览
       </q-tab>
-      <q-tab name="tab-2">台帐
+      <q-tab name="tab-2" @selected="getMft()">台帐
       </q-tab>
-      <q-tab name="tab-3">维修记录
+      <q-tab name="tab-3" @selected="getRcd()">维修记录
       </q-tab>
     </q-tabs>
     <div class="layout-view">
@@ -47,7 +47,9 @@
                 <div class="item-content row items-center">
                   <div class="item-label"> 指标读数</div>
                   <div class="item-title">
-                    {{' A:999 B:888 C:333' }}
+                    <div v-for='mtr in message.monitors'  >
+                    {{mtr.monitorTypeId+':'+ mtr.value}}
+                    </div>
                   </div>
                 </div>
                 <div class="item-content row items-center">
@@ -73,7 +75,7 @@
             </div>
           </div>
         </div>
-        <div class="card" ref="tab-2">
+        <div class="card" ref="tab-2" >
           <div v-if="message">
             <div class="card-title">
               <div>{{message.name}} </div>
@@ -175,7 +177,6 @@
     name: "detail",
     data() {
       return {
-       
         tips: null,
         Islogined:false,
          tabNo:'tab-1'
@@ -200,6 +201,13 @@
       ...mapActions('devices', {
         findMessages: 'get',
       }),
+      getRcd(){
+        console.log('-rrr--id::::', this.message.tenantId )
+
+      },
+      getMft(){
+        console.log('---id::::', this.message.manufacturerId )
+      },
       goTicket(){
         this.$router.push({
           path: '/ticket/new'
