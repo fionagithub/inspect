@@ -7,7 +7,20 @@
       <q-toolbar-title :padding="1">
         报障清单 
       </q-toolbar-title>
-      <popover></popover>
+       <button>
+          <i>more_vert</i>
+          <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
+            <div class="list highlight pop-list ">
+              <div class="item">
+                <div class="item-content"  >
+                <label>
+                   优先级  <q-toggle v-model="isPrped"></q-toggle> 
+                </label>
+                </div>
+              </div>
+            </div>
+          </q-popover>
+        </button>
     </div> 
     <div slot="header" class="toolbar">
       <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
@@ -28,7 +41,7 @@
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
           <div class="list item-inset-delimiter no-border " v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i class="item-primary">mail</i>
+              <i :class="item.priority|getPrtColo" class="item-primary">assignment</i>
               <div class="item-content has-secondary">
                 <div>
                   {{item.system|tran(systemItems)}}
@@ -69,7 +82,6 @@
   import {
     _list
   } from './data'
-//  import * as feathers from './api/feathers-config'
   import moment from 'moment'
   import {
     mapGetters,
@@ -82,10 +94,20 @@
   }
   from 'quasar'
   import popover from '../layout/popover'
+  let _moment = moment(0, "h"),
+   timeMap = {
+     NOW: _moment.toISOString(),
+
+     WEEK: _moment.subtract(7, 'days').toISOString(),
+
+     MONTH: _moment.subtract(1, 'months').toISOString(),
+
+   };
   export default {
     data() { 
       let _dt = {
-        Islogined:false
+        isPrped:true,
+       Islogined:false
      //   tkt_count:0
       }
       return Object.assign(_dt, _list)
@@ -112,6 +134,11 @@
       })
     },
     watch: {
+      isPrped(cc,oo){
+        this.clear()
+        this.skip=0
+        this.getApi()
+      },
       selectType(c, p) {
         this.clear()
         this.skip = 0
@@ -131,7 +158,17 @@
       }
     },
     components: {
-      popover
+      popover,
+    },
+    filters:{
+      getPrtColo(obj){
+       let colr={
+          1:'item-primary',
+          2:'item-primary text-orange-4',
+          3:'item-primary text-red-4',
+        }
+        return colr[obj]
+      }
     },
     activated() {
       console.log('-----activated--')
@@ -171,7 +208,7 @@
         let _query = {
           $limit: _self.limit,
           $sort:{reportTime:-1 },
-          $select: [ 'reportTime', 'system', 'state', 'description', 'id']
+          $select: [ 'reportTime', 'system', 'state','priority', 'description', 'id']
         }
         if (_self.searchModel!== '' ) {
           _query['$search'] = _self.searchModel
@@ -180,8 +217,13 @@
         if (_self.selectType !== 'ALL') {
           _query['state'] = _self.selectType
         }
+        if(_self.isPrped){
+          _query['$sort'] = {priority:-1}
+        }else{
+          _query['$sort'] = {reportTime:-1}
+        }
         if (_self.selectTime !== 'ALL') {
-          _query['$$start'] =  _self.timeMap[_self.selectTime]
+          _query['$$start'] =  timeMap[_self.selectTime]
         }
         console.log('--==-', _query)
 
@@ -235,6 +277,14 @@
           path: '/ticket/new'
         })
       },
+      
+      alert() {
+        Dialog.create({
+          buttons: ['了解'],
+          title: '抱歉',
+          message: '目前尚处于原型开发阶段，部分功能有待完善'
+        })
+      },
       getDetail(id) {
         this.$router.push({
           path: '/ticket/' + id
@@ -264,7 +314,9 @@
   .q-popover .item-container {
     height: 38px;
   }
-
+.pop-list{
+  min-width: 120px; max-height: 500px;
+}
   .list-time {
     position: absolute;
     top: 0;
@@ -285,7 +337,6 @@
     right: 18px;
     bottom: 18px;
     z-index: 99;
-  }
-
+  } 
 
 </style>
