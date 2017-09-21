@@ -71,8 +71,9 @@
     name: "new",
     data() {
       let _dt = {
-                tips: null,
-Islogined:false
+        stateTime: moment().format(),
+        tips: null,
+        Islogined: false
       }
       return Object.assign(_dt, _new)
     },
@@ -81,7 +82,7 @@ Islogined:false
     mounted(){
     },
     computed:{
-      ...mapState(['systemItems','priorityMax', 'stateItems'])
+      ...mapState(['systemItems','priorityMax', 'stateItems']),
 
     },
     methods: { 

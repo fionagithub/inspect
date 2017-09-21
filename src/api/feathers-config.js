@@ -31,6 +31,9 @@ feathersClient.service('/tickets')
 feathersClient.service('/devices')
 
 feathersClient.service('/metadata')
+feathersClient.service('/feedback')
+
+feathersClient.service('/metadata')
 
 feathersClient.service('/metadata')
 

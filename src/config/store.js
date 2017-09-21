@@ -10,6 +10,7 @@ let state = {
   systemItems: [],
   _priority: [],
   _state: [],
+  _prir:true
 }
 
 let mutations = {}

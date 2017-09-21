@@ -40,6 +40,9 @@
         </div>
 
       </div>
+      <div slot="footer"  >
+          0.0.3a
+      </div>
   </div>
 </template>
 
