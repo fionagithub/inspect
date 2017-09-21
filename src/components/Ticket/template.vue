@@ -14,7 +14,7 @@
               <div class="item">
                 <div class="item-content"  >
                 <label>
-                   优先级  <q-toggle v-model="isPrped"></q-toggle> 
+                   按优先级排序  <q-toggle v-model="isPrped"></q-toggle> 
                 </label>
                 </div>
               </div>
@@ -30,7 +30,7 @@
         <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
           <span>+{{ tkt_count }} </span>  
         </a>
-     <div class="row gutter wrap justify-stretch content-center text-center">
+     <div class="row wrap justify-stretch content-center text-center">
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
           </div>
@@ -39,10 +39,10 @@
           </div>
         </div>
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter no-border " v-if="message.length">
+          <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i :class="item.priority|getPrtColo" class="item-primary">assignment</i>
-              <div class="item-content has-secondary">
+              <i :class="item.priority|getPrtColo" class="item-primary item-icon ">assignment</i>
+              <div class="item-content has-secondary list-content ">
                 <div>
                   {{item.system|tran(systemItems)}}
                   ({{  item.state[0].name|tran(stateItems) }})
@@ -54,7 +54,7 @@
               <div class='list-time'>
                 {{item.reportTime | date}}
               </div>
-              <i class="item-secondary icon">keyboard_arrow_right</i>
+              <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
 
@@ -315,7 +315,8 @@
     height: 38px;
   }
 .pop-list{
-  min-width: 120px; max-height: 500px;
+  min-width: 120px; 
+  max-height: 500px;
 }
   .list-time {
     position: absolute;
@@ -329,9 +330,6 @@
     text-align: right;
   }
 
-  .icon {
-    margin: 16px 12px!important;
-  }
 
   .fix-add {
     right: 18px;

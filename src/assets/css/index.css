@@ -10,6 +10,23 @@
     z-index: 99;
   }
 
-.n-rating{
-  font-size: 2rem;
-}
+  .n-rating {
+    font-size: 2rem;
+  }
+
+  .t-base>.item::after {
+    left: 42px!important;
+  }
+
+  .list-content {
+    margin: 0 42px!important;
+  }
+
+  .item-arrow,
+  .item-icon {
+    margin: 0!important;
+    display: flex;
+    right: 0!important;
+    align-items: center;
+    height: 100% !important;
+  }
