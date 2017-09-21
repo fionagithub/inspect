@@ -120,7 +120,7 @@
       ...mapState('tickets', {
         tktCrt: 'copy',
       }), 
-      ...mapState(['systemItems','tkt_count', 'stateItems'])
+      ...mapState(['systemItems','tkt_count','_prir', 'stateItems'])
     },
     created() {
     },
@@ -135,6 +135,7 @@
     },
     watch: {
       isPrped(cc,oo){
+        this.$store.state._prir=cc
         this.clear()
         this.skip=0
         this.getApi()
