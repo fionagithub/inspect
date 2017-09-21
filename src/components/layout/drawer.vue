@@ -32,7 +32,7 @@
         </button>
         </div>
         <div class="item">
-          <button class="full-width" @click="alert()">
+          <button class="full-width" @click="$router.push({path:'/feedback'});$refs.leftDrawer.close()">
           <i class="item-primary">compare_arrows</i>
         反馈
         </button>
@@ -82,7 +82,6 @@
             path: '/login'
           })
           this.$refs.leftDrawer.close()
-
         })
 
       }
