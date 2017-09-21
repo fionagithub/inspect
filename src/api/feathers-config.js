@@ -27,6 +27,7 @@ const feathersClient = feathers()
    feathersClient.service('/devices')
    
    feathersClient.service('/metadata') 
+   feathersClient.service('/feedback')
 
    feathersClient.hooks({
     before(hook){
