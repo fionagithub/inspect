@@ -18,7 +18,7 @@
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
         <div class="add-btn">
-          <button class="teal full-width" @click='add()'>提交</button>
+                   <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
         </div>
       </div>
     </div>
