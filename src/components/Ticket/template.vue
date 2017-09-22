@@ -14,7 +14,7 @@
               <div class="item">
                 <div class="item-content"  >
                 <label>
-                   按优先级排序  <q-toggle v-model="isPrped"></q-toggle> 
+                   按优先级排序  <q-toggle class='teal' v-model="isPrped"></q-toggle> 
                 </label>
                 </div>
               </div>
@@ -41,7 +41,7 @@
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
           <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i :class="item.priority|getPrtColo" class="item-primary item-icon ">assignment</i>
+              <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
               <div class="item-content has-secondary list-content ">
                 <div>
                   {{item.system|tran(systemItems)}}
@@ -126,11 +126,17 @@
     },
     mounted() {
       this.$nextTick(() => {
+      this.getApi() //请求初始数据 
         feathers.service('tickets').on('created', res => {
           this.$store.state.tkt_count += 1
           console.log('rrrr', this.$store.state.tkt_count, res)
           this.filterTkt([res])
         });
+          feathers.service('tickets').on('patched', res => {
+          this.$store.state.tkt_count += 1
+            console.log('--!!!!!patched!!!!!==', res)
+          this.filterTktp(res.id)
+          })
       })
     },
     watch: {
@@ -138,14 +144,18 @@
         this.$store.state._prir=cc
         this.clear()
         this.skip=0
+        this.$store.state.tkt_count=0
         this.getApi()
       },
       selectType(c, p) {
         this.clear()
+        this.$store.state.tkt_count=0
+        
         this.skip = 0
         this.getApi()
       },
       selectTime(c, p) {
+        this.$store.state.tkt_count=0
         this.clear()
         this.skip = 0
         this.getApi()
@@ -153,6 +163,7 @@
       searchModel(c, o){
         if (c==''){
           this.clear()
+        this.$store.state.tkt_count=0
           this.skip = 0
           this.getApi()
         }
@@ -162,18 +173,30 @@
       popover,
     },
     filters:{
-      getPrtColo(obj){
-       let colr={
-          1:'item-primary',
-          2:'item-primary text-orange-4',
-          3:'item-primary text-red-4',
+      gettktIcon(obj){
+        let map={
+          0:'assignment',
+          1:'assignment_late',
+          2:'assignment_turned_in'
         }
-        return colr[obj]
+        return map[obj]
+        
+      },
+      getPrtColo(obj, src){
+          if(src==2){
+            return 'text-green-6'
+          }else{
+            let colr={
+                1:'',
+                2:'text-yellow-6',
+                3:'text-red-4',
+              }
+              return colr[obj]
+          }
       }
     },
     activated() {
       console.log('-----activated--')
-      this.getApi() //请求初始数据 
     },
     deactivated() {
       console.log('-----deactivated--')
@@ -189,6 +212,9 @@
       },
       ...mapMutations('tickets', {
         clear: 'clearAll',
+      }),
+      ...mapMutations('tickets', {
+        filterTktp: 'removeItem',
       }),
       ...mapMutations('tickets', {
         filterTkt: 'removeItems',
