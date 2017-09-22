@@ -30,3 +30,14 @@
     align-items: center;
     height: 100% !important;
   }
+  button.teal{
+    background: #007d8d!important;
+  }
+  .q-toggle.teal input:checked + div:before{
+    background: #48D8E2!important;
+    
+  }
+  .q-toggle.teal input:checked + div::after{
+    background: #007d8d!important;
+    
+  }
