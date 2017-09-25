@@ -307,7 +307,6 @@
           path: '/ticket/new'
         })
       },
-      
       alert() {
         Dialog.create({
           buttons: ['了解'],
