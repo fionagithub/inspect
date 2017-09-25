@@ -18,8 +18,6 @@
    searchModel: '',
    limit: 10,
    skip: 0,
-   selectType: '0',
-   selectTime: 'NOW',
    items_time: _time,
  }
  export const _new = {

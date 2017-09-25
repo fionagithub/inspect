@@ -41,7 +41,7 @@
 
       </div>
       <div slot="footer"  >
-          0.0.3a
+          0.4.1
       </div>
   </div>
 </template>
@@ -49,11 +49,14 @@
 <script>
   import 'src/assets/css/index.css'
   import {
+    mapGetters,
+    mapMutations,
+    mapState,
+    mapActions
+  } from 'vuex'
+  import {
     Dialog
   } from 'quasar' 
-  import {
-    mapMutations,
-  } from 'vuex'
   export default {
     name: "index",
     data() {
@@ -61,7 +64,7 @@
         items: [{
           title: '报障',
           uri: '/ticket',
-          count:22
+          count:0
         }, {
           title: '故障',
           disabled: true,
@@ -81,9 +84,29 @@
         return this.$parent.$children[0].$refs.leftDrawer
       }
     },
-    created() {
+    mounted() {
+      this.getTktCunt()
     }, 
     methods: {
+      ...mapActions('tickets', {
+        findTkt: 'find',
+      }),
+      getTktCunt(){
+        let self=this
+        this.findTkt({
+          query:{
+          $limit:0,
+          state:"0"
+          }
+        }).then(res=>{
+          console.log('--res---;', res)
+          self.items.map(function(k,i){
+            if( k.uri.indexOf('/ticket')==0 ){
+              k.count = res.total 
+            }
+          })
+        })
+      },
       alert() {
         Dialog.create({
           buttons: ['了解'],

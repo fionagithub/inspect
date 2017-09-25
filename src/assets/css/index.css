@@ -41,3 +41,9 @@
     background: #007d8d!important;
     
   }
+  .form-group--error {
+    display: block;
+    color: #CC3333;
+    font-size: 1rem;
+    margin: 8px;
+  }

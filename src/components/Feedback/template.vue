@@ -14,11 +14,12 @@
           <div class="item-content">
             <div class="item-label">我要反馈:</div>
             <textarea class="full-width new-desc" v-model='description'> </textarea>
-          </div>
+              <div class="form-group--error" v-if="!$v.description.minLength">至少{{ $v.description.$params.minLength.min }}位...</div>
+           </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
         <div class="add-btn">
-                   <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+            <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
         </div>
       </div>
     </div>
