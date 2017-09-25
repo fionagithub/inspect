@@ -41,7 +41,7 @@
 
       </div>
       <div slot="footer"  >
-          0.0.3a
+          0.4.1 170925 开发版
       </div>
   </div>
 </template>

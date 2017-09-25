@@ -22,7 +22,7 @@
               <div class="item multiple-lines d-base">
                 <div class="d-label"> 报障来源 </div>
                 <div class="d-val">
-                  {{ message.source.type|getTyped }}
+                  {{ message.source|getTyped }}
                 </div>
               </div>
               <div class="item multiple-lines d-base" >
@@ -117,15 +117,13 @@
         btnFlag:true,
         state: '',
         tips: null,
+        message:{},
         Islogined:false
      }
     },
     computed: {
       ...mapState(['systemItems','_priority','priorityMax', '_state']),
 
-      ...mapGetters('tickets', {
-        message: 'current',
-      }), 
       prty(){
         if(this.message){
            return parseInt(this.message.priority)
@@ -153,12 +151,7 @@
     },
     mounted() {
       this.getMessage()
-      this.$nextTick(()=>{
-          feathers.service('tickets').on('patched', res => {
-            console.log('--!!!!!!!!!!==', res)
-            this.ptdtkt(res)
-          })
-      })
+     
     },
     filters: {
       priortity(data) {
@@ -170,7 +163,7 @@
           system:'系统填报'
         }
         if(obj){
-          return _map[obj]
+          return _map[obj.type]
         }
       }
     },
@@ -196,14 +189,17 @@
           this.flag = false
           this.state = ''
           this.stateDesc = ''
+          this.message=res
           Toast.create('提交成功.')
-          console.log('-patch-success-')
+          console.log('-patch-success-',this.message )
         })
       },
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages(id).catch(error => {
+        _self.findMessages(id).then(res=>{
+          this.message=res
+        }).catch(error => {
           let type = error.errorType
           error = Object.assign({}, error)
           error.message = (type === 'uniqueViolated') ?
@@ -220,7 +216,7 @@
       }
     },
     destroyed: function () {
-     this.clear() // 置空ticket-vuex      
+   //  this.clear() // 置空ticket-vuex      
     //  console.log("已销毁");
     },
   }

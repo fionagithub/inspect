@@ -10,6 +10,10 @@
         <popover></popover>
       </div>
     <div class="layout-view" >
+      <div class="row justify-center" v-if="tips">
+        <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
+        <span v-else>  {{tips}} </span>
+      </div>
       <div class="layout-padding ">
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
@@ -39,10 +43,6 @@
         <div class="add-btn">
           <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
         </div>
-      </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
       </div>
     </div>
   </q-layout>

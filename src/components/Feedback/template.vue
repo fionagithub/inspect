@@ -52,9 +52,9 @@
       add() {
         console.log(this.user)
         let data = {
-          "_tanent":  this.user._tenantId,
+          _tenantId :  this.user._tenantId,
           "username": this.user.name,
-          "userid": this.user.id,
+          _userId: this.user.id,
           "content": this.description,
         }
         this.createMessages(data)
