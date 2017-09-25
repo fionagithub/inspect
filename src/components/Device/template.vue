@@ -18,10 +18,10 @@
           <span>+{{ dv_count }} </span>  
         </a>
         <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter no-border " v-if="message">
+          <div class="list item-inset-delimiter no-border t-base " v-if="message">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i class="item-primary">mail</i>
-              <div class="item-content has-secondary">
+              <i class="item-primary item-icon">mail</i>
+              <div class="item-content has-secondary list-content ">
                 <div>
                   {{item.name }}
                 </div>
@@ -29,7 +29,7 @@
                   {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
               </div> 
-              <i class="item-secondary icon">keyboard_arrow_right</i>
+              <i class="item-secondary item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
 

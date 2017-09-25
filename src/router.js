@@ -22,6 +22,7 @@ export default new VueRouter({
 
   routes: [
     { path: '/', component: load('Index') }, // Default
+    { path: '/feedback', component: load('Feedback/template') }, // Default
     { path: '/login', component: load('Login') }, // Default
     { path: '/ticket', component: load('Ticket/template') }, // Default
     { path: '/ticket/new', component: load('Ticket/new') }, // Default
