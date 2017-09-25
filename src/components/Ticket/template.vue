@@ -14,7 +14,7 @@
               <div class="item">
                 <div class="item-content"  >
                 <label>
-                   按优先级排序  <q-toggle class='teal' v-model="isPrped"></q-toggle> 
+                   按优先级排序 <q-toggle v-model="prird"></q-toggle>
                 </label>
                 </div>
               </div>
@@ -30,9 +30,9 @@
         <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
           <span>+{{ tkt_count }} </span>  
         </a>
-     <div class="row wrap justify-stretch content-center text-center">
+        <div class="row wrap justify-stretch content-center text-center">
           <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
+            <q-select class=" list-btn" type="list" v-model="selectType" @input=setstate() :options="stateItems"></q-select>
           </div>
           <div class="auto ">
             <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
@@ -97,18 +97,30 @@
   let _moment = moment(0, "h"),
    timeMap = {
      NOW: _moment.toISOString(),
-
      WEEK: _moment.subtract(7, 'days').toISOString(),
-
      MONTH: _moment.subtract(1, 'months').toISOString(),
-
    };
+  let filtersStorage = {
+    type() {
+      return JSON.parse(localStorage.getItem("selectType")) ;
+    },
+    time(){
+      return JSON.parse(localStorage.getItem("selectTime")) ;
+    },
+    prir(){
+      return JSON.parse(localStorage.getItem("prird")) ;
+    },
+    save (key,filters) {
+      localStorage.setItem(key, JSON.stringify(filters));
+    }
+  }
   export default {
     data() { 
       let _dt = {
-        isPrped:true,
-       Islogined:false
-     //   tkt_count:0
+        selectType:filtersStorage.type() ||'0' ,
+        selectTime:filtersStorage.time() ||'NOW' ,
+        prird: filtersStorage.prir() || false,
+         Islogined:false,
       }
       return Object.assign(_dt, _list)
     },
@@ -120,54 +132,34 @@
       ...mapState('tickets', {
         tktCrt: 'copy',
       }), 
-      ...mapState(['systemItems','tkt_count','_prir', 'stateItems'])
-    },
-    created() {
+      ...mapState(['systemItems','tkt_count', 'stateItems']),
     },
     mounted() {
       this.$nextTick(() => {
-      this.getApi() //请求初始数据 
+        this.getApi() //请求初始数据 
         feathers.service('tickets').on('created', res => {
           this.$store.state.tkt_count += 1
           console.log('rrrr', this.$store.state.tkt_count, res)
           this.filterTkt([res])
         });
-          feathers.service('tickets').on('patched', res => {
-          this.$store.state.tkt_count += 1
-            console.log('--!!!!!patched!!!!!==', res)
-          this.filterTktp(res.id)
-          })
+        feathers.service('tickets').on('patched', res => {
+          console.log('--!!!!!patched!!!!!==', res)
+        })
       })
     },
-    watch: {
-      isPrped(cc,oo){
-        this.$store.state._prir=cc
-        this.clear()
-        this.skip=0
-        this.$store.state.tkt_count=0
-        this.getApi()
-      },
+    watch:{
       selectType(c, p) {
-        this.clear()
-        this.$store.state.tkt_count=0
-        
-        this.skip = 0
-        this.getApi()
+        filtersStorage.save("selectType",c)
+        this.setFilters()
       },
       selectTime(c, p) {
-        this.$store.state.tkt_count=0
-        this.clear()
-        this.skip = 0
-        this.getApi()
+        filtersStorage.save("selectTime",c)
+        this.setFilters()
       },
-      searchModel(c, o){
-        if (c==''){
-          this.clear()
-        this.$store.state.tkt_count=0
-          this.skip = 0
-          this.getApi()
-        }
-      }
+      prird(c, p) {
+        filtersStorage.save("prird",c)
+        this.setFilters()
+      },
     },
     components: {
       popover,
@@ -175,8 +167,8 @@
     filters:{
       gettktIcon(obj){
         let map={
-          0:'assignment',
-          1:'assignment_late',
+          0:'assignment_late',
+          1:'assignment',
           2:'assignment_turned_in'
         }
         return map[obj]
@@ -204,17 +196,17 @@
       this.Islogined = false
     },
     methods: {
-      getNewMsg(){
-        this.$store.state.tkt_count = 0
+      setFilters(){
+        this.$store.state.tkt_count=0
         this.clear()
         this.skip = 0
-        this.getApi() //请求初始数据 
+        this.getApi()
+      },
+      getNewMsg(){
+        this.setFilters()
       },
       ...mapMutations('tickets', {
         clear: 'clearAll',
-      }),
-      ...mapMutations('tickets', {
-        filterTktp: 'removeItem',
       }),
       ...mapMutations('tickets', {
         filterTkt: 'removeItems',
@@ -223,9 +215,11 @@
         findMessages: 'find',
       }),
       searchKey() {
-        this.clear()
-        this.skip = 0
-        this.getApi()
+        this.setFilters()
+      },
+      setstate(){
+        console.log('-=state-')
+        this.$store.state.selectType='1'
       },
       getApi(obj) {
         let _self = this
@@ -244,7 +238,7 @@
         if (_self.selectType !== 'ALL') {
           _query['state'] = _self.selectType
         }
-        if(_self.isPrped){
+        if(_self.prird){
           _query['$sort'] = {priority:-1}
         }else{
           _query['$sort'] = {reportTime:-1}
@@ -341,10 +335,10 @@
   .q-popover .item-container {
     height: 38px;
   }
-.pop-list{
-  min-width: 120px; 
-  max-height: 500px;
-}
+  .pop-list{
+    min-width: 120px; 
+    max-height: 500px;
+  }
   .list-time {
     position: absolute;
     top: 0;
@@ -361,7 +355,7 @@
   .fix-add {
     right: 18px;
     bottom: 18px;
-    z-index: 99;
+    z-index:9;
   } 
 
 </style>
