@@ -32,7 +32,13 @@
         </a>
         <div class="row wrap justify-stretch content-center text-center">
           <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectType" @input=setstate() :options="stateItems"></q-select>
+            <q-select class=" list-btn" type="list" v-model="selectSys" disable :options="systemItems"></q-select>
+          </div>
+          <div class="auto">
+            <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
+          </div>
+          <div class="auto">
+            <q-select class=" list-btn" type="list" v-model="selectSys" disable :options="systemItems"></q-select>
           </div>
           <div class="auto ">
             <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
@@ -107,6 +113,9 @@
     time(){
       return JSON.parse(localStorage.getItem("selectTime")) ;
     },
+    sys(){
+      return JSON.parse(localStorage.getItem("system")) ;
+    },
     prir(){
       return JSON.parse(localStorage.getItem("prird")) ;
     },
@@ -120,7 +129,8 @@
         selectType:filtersStorage.type() ||'0' ,
         selectTime:filtersStorage.time() ||'NOW' ,
         prird: filtersStorage.prir() || false,
-         Islogined:false,
+        selectSys:filtersStorage.sys() ||'100' ,
+        Islogined:false,
       }
       return Object.assign(_dt, _list)
     },
@@ -148,6 +158,10 @@
       })
     },
     watch:{
+      selectSys(c, p) {
+        filtersStorage.save("system",c)
+        this.setFilters()
+      },
       selectType(c, p) {
         filtersStorage.save("selectType",c)
         this.setFilters()
@@ -216,10 +230,6 @@
       }),
       searchKey() {
         this.setFilters()
-      },
-      setstate(){
-        console.log('-=state-')
-        this.$store.state.selectType='1'
       },
       getApi(obj) {
         let _self = this
