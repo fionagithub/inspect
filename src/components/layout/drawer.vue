@@ -1,8 +1,6 @@
 <template>
 
   <q-drawer ref="leftDrawer" class="drawer">
-
-    <div>
       <div class="toolbar">
         <div class="user">
           <img src="../img/mountains.jpg">
@@ -12,37 +10,23 @@
         </div>
       </div>
 
-      <div class="list">
-        <div class="item">
-          <button class="full-width" @click="alert()">
-          <i class="item-primary">view_quilt</i>
-          <span>我</span>
-        </button>
-        </div>
-        <div class="item">
-          <button class="full-width" @click="alert()">
-          <i class="item-primary">build</i>
-        设置
-        </button>
-        </div>
-        <div class="item">
-          <button class="full-width" @click="alert()">
-          <i class="item-primary">tab</i>
-        消息
-        </button>
-        </div>
-        <div class="item">
-          <button class="full-width" @click="$router.push({path:'/feedback'});$refs.leftDrawer.close()">
-          <i class="item-primary">compare_arrows</i>
+      <div class="list no-border platform-delimiter">
+        <q-drawer-link icon="tab" disabled to="/">
+          我
+        </q-drawer-link>
+        <q-drawer-link icon="compare_arrows" disabled to="/">
+           设置
+        </q-drawer-link>
+        <q-drawer-link icon="compare_arrows" disabled to="/">
+           消息
+        </q-drawer-link>
+        <q-drawer-link icon="build" to="/feedback">
         反馈
-        </button>
-        </div>
+        </q-drawer-link>
       </div>
-
       <div class="footer">
         <button class="red full-width" @click="login_out()">退出</button>
       </div>
-    </div>
   </q-drawer>
 </template>
 <script>

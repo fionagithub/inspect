@@ -9,8 +9,8 @@ let state = {
   stateItems: [],
   systemItems: [],
   _priority: [],
-  _state: [],
-  _prir:true
+  _state: [], 
+  _system:[]
 }
 
 let mutations = {}

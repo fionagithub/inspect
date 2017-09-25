@@ -51,17 +51,24 @@ Quasar.start(() => {
       }),
       getConf(){
         this.findStateItems( ).then(res=>{
-          let _array = [{
-            value: 'ALL',
-            label: '全部状态'
-          }] 
-            let sum ={}
+          let _array,sum ={}
             for (var item in res) {
               let data = res[item]
               let _list = data['is']
               sum[data['id']]= _list
               if ( data['id']=='state'){
+                _array = [{
+                  value: 'ALL',
+                  label: '全部状态'
+                }] 
                 this.$store.state.stateItems= _list.concat(_array)
+              }
+              if ( data['id']=='system'){
+                _array = [{
+                  value: 'ALL',
+                  label: '全部系统'
+                }] 
+                this.$store.state._system= _list.concat(_array)
               }
             }
               console.log('[-!!!--]', sum) 
