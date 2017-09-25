@@ -32,13 +32,10 @@
         </a>
         <div class="row wrap justify-stretch content-center text-center">
           <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectSys" disable :options="systemItems"></q-select>
+            <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
           </div>
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
-          </div>
-          <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectSys" disable :options="systemItems"></q-select>
           </div>
           <div class="auto ">
             <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
@@ -129,7 +126,7 @@
         selectType:filtersStorage.type() ||'0' ,
         selectTime:filtersStorage.time() ||'NOW' ,
         prird: filtersStorage.prir() || false,
-        selectSys:filtersStorage.sys() ||'100' ,
+        selectSys:filtersStorage.sys() ||'ALL' ,
         Islogined:false,
       }
       return Object.assign(_dt, _list)
@@ -142,7 +139,7 @@
       ...mapState('tickets', {
         tktCrt: 'copy',
       }), 
-      ...mapState(['systemItems','tkt_count', 'stateItems']),
+      ...mapState(['systemItems','tkt_count','_system', 'stateItems']),
     },
     mounted() {
       this.$nextTick(() => {
@@ -237,16 +234,18 @@
         _self.fetched = true
         _self.tips = null
         let _query = {
+          $skip:_self.skip,
           $limit: _self.limit,
-          $sort:{reportTime:-1 },
           $select: [ 'reportTime', 'system', 'state','priority', 'description', 'id']
         }
         if (_self.searchModel!== '' ) {
           _query['$search'] = _self.searchModel
         } 
-          _query['$skip'] = _self.skip
         if (_self.selectType !== 'ALL') {
           _query['state'] = _self.selectType
+        }
+        if (_self.selectSys !== 'ALL') {
+          _query['system']=_self.selectSys
         }
         if(_self.prird){
           _query['$sort'] = {priority:-1}
