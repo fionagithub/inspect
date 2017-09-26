@@ -1,4 +1,5 @@
 <template>
+<div>
   <q-layout>
     <div slot="header" class="toolbar">
       <button class="head_goback" @click="$router.go(-1)">
@@ -76,17 +77,31 @@
           </div>
         </q-infinite-scroll>
       </div>
-      <router-view></router-view>
     </div>
     <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
     </button>
   </q-layout>
+  <q-modal ref="layoutModal" :content-css="{minWidth: '100vw', minHeight: '100vh'}">
+    <q-layout>
+    <div slot="header" class="toolbar">
+      <button class="head_goback" @click="$refs.layoutModal.close();clearCrt() ">
+          <i>arrow_back</i>
+      </button>
+      <q-toolbar-title :padding="1">
+          报障详情 
+      </q-toolbar-title>
+    </div>
+     <detail></detail>  
+  </q-layout>
+</q-modal>
+</div>  
 </template>
 <script>
   import {
     _list
   } from './data'
   import moment from 'moment'
+  import mdl from './detail'
   import {
     mapGetters,
     mapMutations,
@@ -98,6 +113,10 @@
   }
   from 'quasar'
   import popover from '../layout/popover'
+  import detail from './detail'
+  import Vue from 'vue'
+
+  Vue.component('detail', detail);
   let _moment = moment(0, "h"),
    timeMap = {
      NOW: _moment.toISOString(),
@@ -315,17 +334,16 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
+      ...mapActions('tickets', {
+        getTkt: 'get',
+      }), 
+      ...mapMutations('tickets', {
+        clearCrt: 'clearCurrent'
+      }),
       getDetail(id) {
-        this.$router.push({
-          path: '/ticket/' + id
-        })
-       console.log(this.$children[0].$children)
-      this.$children[0].$children[7].$refs['layoutModal'].open()
-      }
-    },
-    destroyed: function () {
-      this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
+        this.getTkt(id)
+        this.$refs.layoutModal.open()
+       },
     },
   }
 </script>
