@@ -24,11 +24,7 @@ export default new VueRouter({
         { path: '/', component: load('Index') },
         { path: '/feedback', component: load('Feedback/template') },
         { path: '/login', component: load('Login') },
-        {
-            path: '/ticket',
-            component: load('Ticket/template'),
-        },
-        { path: '/ticket/new', component: load('Ticket/new') },
+        { path: '/ticket', component: load('Ticket/template') },
         { path: '/device', component: load('Device/template') },
         { path: '/device/:id', component: load('Device/detail') },
         { path: '*', component: load('Error404') } // Not found

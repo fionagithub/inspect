@@ -82,17 +82,28 @@
     </button>
   </q-layout>
   <q-modal ref="layoutModal" :content-css="{minWidth: '100vw', minHeight: '100vh'}">
-    <q-layout>
-    <div slot="header" class="toolbar">
-      <button class="head_goback" @click="$refs.layoutModal.close();clearCrt() ">
-          <i>arrow_back</i>
-      </button>
-      <q-toolbar-title :padding="1">
-          报障详情 
-      </q-toolbar-title>
-    </div>
-     <detail></detail>  
-  </q-layout>
+    <q-layout v-if='isEdit'>
+        <div slot="header" class="toolbar">
+          <button class="head_goback" @click="getTktDt()">
+              <i>arrow_back</i>
+          </button>
+          <q-toolbar-title :padding="1">
+              报障详情 
+          </q-toolbar-title>
+        </div>
+        <detail></detail>  
+    </q-layout>
+     <q-layout v-if='isCreated'>
+        <div slot="header" class="toolbar">
+          <button class="head_goback" @click="getTktNew() ">
+              <i>arrow_back</i>
+          </button>
+          <q-toolbar-title :padding="1">
+              新增报障 
+          </q-toolbar-title>
+        </div>
+        <new></new>  
+    </q-layout>
 </q-modal>
 </div>  
 </template>
@@ -101,7 +112,6 @@
     _list
   } from './data'
   import moment from 'moment'
-  import mdl from './detail'
   import {
     mapGetters,
     mapMutations,
@@ -114,8 +124,9 @@
   from 'quasar'
   import popover from '../layout/popover'
   import detail from './detail'
+  import nnew from './new'
   import Vue from 'vue'
-
+  Vue.component('new', nnew);
   Vue.component('detail', detail);
   let _moment = moment(0, "h"),
    timeMap = {
@@ -143,6 +154,8 @@
   export default {
     data() { 
       let _dt = {
+        isCreated:false,
+        isEdit:false,
         selectType:filtersStorage.type() ||'0' ,
         selectTime:filtersStorage.time() ||'NOW' ,
         prird: filtersStorage.prir() || false,
@@ -217,21 +230,36 @@
           }
       }
     },
-    activated() {
-      this.getApi()
-      console.log('-----activated--')
-    },
-    deactivated() {
-      console.log('-----deactivated--')
-      this.tips = null
-      this.Islogined = false
-    },
     methods: {
       setFilters(){
         this.$store.state.tkt_count=0
         this.clear()
         this.skip = 0
         this.getApi()
+      },
+      ...mapActions('tickets', {
+        getTkt: 'get',
+      }), 
+      ...mapMutations('tickets', {
+        clearCrt: 'clearCurrent'
+      }),
+      getTktDt(){
+        this.isEdit=false
+         this.$refs.layoutModal.close();
+         this.clearCrt() 
+      },
+      getTktNew(){
+         this.$refs.layoutModal.close();
+         this.isCreated=false
+      },
+      getDetail(id) {
+        this.getTkt(id)
+        this.isEdit=true
+        this.$refs.layoutModal.open()
+      },
+      add() {
+        this.$refs.layoutModal.open()
+        this.isCreated=true
       },
       getNewMsg(){
         this.setFilters()
@@ -322,11 +350,6 @@
         }
         done()
       },
-      add() {
-        this.$router.push({
-          path: '/ticket/new'
-        })
-      },
       alert() {
         Dialog.create({
           buttons: ['了解'],
@@ -334,16 +357,15 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
-      ...mapActions('tickets', {
-        getTkt: 'get',
-      }), 
-      ...mapMutations('tickets', {
-        clearCrt: 'clearCurrent'
-      }),
-      getDetail(id) {
-        this.getTkt(id)
-        this.$refs.layoutModal.open()
-       },
+    },
+    activated() {
+      this.getApi()
+      console.log('-----activated--')
+    },
+    deactivated() {
+      console.log('-----deactivated--')
+      this.tips = null
+      this.Islogined = false
     },
   }
 </script>

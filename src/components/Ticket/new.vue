@@ -1,14 +1,4 @@
 <template>
-  <q-layout>
-    <div slot="header" class="toolbar">
-        <button class="head_goback" @click="$router.go(-1)">
-          <i>arrow_back</i>
-        </button> 
-        <q-toolbar-title :padding="1">
-          新增报障 
-        </q-toolbar-title>
-        <popover></popover>
-      </div>
     <div class="layout-view" >
       <div class="row justify-center" v-if="tips">
         <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
@@ -46,7 +36,6 @@
         </div>
       </div>
     </div>
-  </q-layout>
 </template>
 <script>
   import moment from 'moment'
