@@ -37,5 +37,7 @@ feathersClient.hooks({
         // console.log('======hook=======>', hook)
     },
 })
-socket.on('reconnect', () => { feathersClient.authenticate() })
+socket.on('reconnect', () => {
+    console.log('--recon---')
+})
 export default feathersClient

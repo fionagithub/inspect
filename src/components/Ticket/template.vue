@@ -62,7 +62,7 @@
             </div>
           </div>
 
-          <div class="row justify-center" style="margin-bottom: 50px;">
+          <div class="row justify-center" style="margin: 5px 0;">
             <spinner name="dots" slot="message" :size="40" v-if="fetched">
             </spinner>
             <div slot="message" :size="40" v-if="fetched==false">
@@ -104,7 +104,7 @@
         </div>
         <new></new>  
     </q-layout>
-</q-modal>
+  </q-modal>
 </div>  
 </template>
 <script>
