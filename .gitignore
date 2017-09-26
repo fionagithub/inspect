@@ -12,3 +12,4 @@ cordova/platforms
 cordova/plugins
 thumbs.db
 !.gitkeep
+*.http
