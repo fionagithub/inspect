@@ -21,14 +21,19 @@ export default new VueRouter({
    */
 
   routes: [
-    { path: '/', component: load('Index') }, // Default
-    { path: '/feedback', component: load('Feedback/template') }, // Default
-    { path: '/login', component: load('Login') }, // Default
-    { path: '/ticket', component: load('Ticket/template') }, // Default
-    { path: '/ticket/new', component: load('Ticket/new') }, // Default
-    { path: '/device', component: load('Device/template') }, // Default
-    { path: '/device/:id', component: load('Device/detail') }, // Default
-    { path: '/ticket/:id', component: load('Ticket/detail') }, // Default
+    { path: '/', component: load('Index') }, 
+    { path: '/feedback', component: load('Feedback/template') }, 
+    { path: '/login', component: load('Login') }, 
+    { path: '/ticket', component: load('Ticket/template'),children:[
+      {
+        path: ':id',
+        component: load('Ticket/deta') 
+      },
+
+    ]}, 
+    { path: '/ticket/new', component: load('Ticket/new') }, 
+    { path: '/device', component: load('Device/template') }, 
+    { path: '/device/:id', component: load('Device/detail') }, 
     { path: '*', component: load('Error404') } // Not found
   ]
 })

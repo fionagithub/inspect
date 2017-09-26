@@ -76,6 +76,7 @@
           </div>
         </q-infinite-scroll>
       </div>
+      <router-view></router-view>
     </div>
     <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
     </button>
@@ -143,7 +144,6 @@
     },
     mounted() {
       this.$nextTick(() => {
-        this.getApi() //请求初始数据 
         feathers.service('tickets').on('created', res => {
           this.$store.state.tkt_count += 1
           console.log('rrrr', this.$store.state.tkt_count, res)
@@ -199,6 +199,7 @@
       }
     },
     activated() {
+      this.getApi()
       console.log('-----activated--')
     },
     deactivated() {
@@ -318,6 +319,8 @@
         this.$router.push({
           path: '/ticket/' + id
         })
+       console.log(this.$children[0].$children)
+      this.$children[0].$children[7].$refs['layoutModal'].open()
       }
     },
     destroyed: function () {
