@@ -31,7 +31,7 @@
         <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
           <span>+{{ tkt_count }} </span>  
         </a>
-        <div class="row wrap justify-stretch content-center text-center">
+        <div class="row wrap justify-stretch content-center text-center list-filters ">
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
           </div>
@@ -42,7 +42,7 @@
             <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
           </div>
         </div>
-        <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
+        <q-pull-to-refresh :handler="loadMore" >
           <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
@@ -61,11 +61,11 @@
               <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
-
-          <div class="row justify-center" style="margin: 5px 0;">
-            <spinner name="dots" slot="message" :size="40" v-if="fetched">
-            </spinner>
-            <div slot="message" :size="40" v-if="fetched==false">
+          <div>
+          </div>
+         <div class="row justify-center" style="margin: 5px 0;">
+            <button v-if="fetched" class="bordered light text-black full-width load" @click='getMore()'>加载更多</button>
+            <div  v-if="fetched==false">
               <div v-if='tips'>
                 <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
                 <span v-else>  {{tips}} </span>
@@ -73,9 +73,9 @@
               <div v-else>
                 {{"共计"+message.length+"条数据" }}
               </div>
-            </div>
+            </div>   
           </div>
-        </q-infinite-scroll>
+        </q-pull-to-refresh>
       </div>
     </div>
     <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
@@ -276,6 +276,10 @@
       searchKey() {
         this.setFilters()
       },
+      getMore(){
+        this.skip=this.message.length
+        this.getApi()
+      },
       getApi(obj) {
         let _self = this
         _self.isLoading = true
@@ -309,7 +313,7 @@
             query: _query
           }).then((res) => {
             if (res.data.length == 0 &&  _self.message.length==0 ) {
-              _self.tips = '暂无数据.'
+              _self.tips = '木有了.'
               console.log('-=[sdf]')
               _self.fetched = false
               if (obj) {
@@ -317,7 +321,6 @@
                 _self.tips = '没有搜索到相关数据.'
               }
             }
-            _self.skip += res.data.length
             if (res.data.length < _self.limit) {
               _self.fetched = false
             } else {
@@ -343,7 +346,7 @@
           })
 
       },
-      loadMore(index, done) {
+      loadMore(done) {
         if (this.isLoading == false) {
           console.log('-=loadMore=--')
           this.getApi()
@@ -382,7 +385,11 @@
     white-space: nowrap;
     overflow: hidden;
   }
-
+.list-filters{
+  position:relative;
+  z-index:9;
+  background:white;
+}
   .q-popover .item-container {
     height: 38px;
   }
@@ -390,6 +397,7 @@
     min-width: 120px; 
     max-height: 500px;
   }
+
   .list-time {
     position: absolute;
     top: 0;
@@ -401,8 +409,9 @@
     font-size: 10px;
     text-align: right;
   }
-
-
+.load{
+      border: 1px solid;
+}
   .fix-add {
     right: 18px;
     bottom: 18px;
