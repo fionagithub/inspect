@@ -7,9 +7,8 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-const socket = io('http://api-beta.laputacloud.com', {
-    transports: ['websocket']
-})
+const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3033' : window.location.origin.replace(/:\/\/m\./g, '://api-beta.')
+const socket = io(API_HOST, { transports: ['websocket'] })
 const feathersClient = feathers()
     .configure(hooks())
     .configure(socketio(socket, { timeout: 5000 }))
@@ -36,8 +35,5 @@ feathersClient.hooks({
     error(hook) {
         // console.log('======hook=======>', hook)
     },
-})
-socket.on('reconnect', () => {
-    console.log('--recon---')
 })
 export default feathersClient
