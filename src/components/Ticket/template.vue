@@ -27,7 +27,7 @@
       <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
     </div>
     <div class="layout-view">
-      <div class="layout-padding">
+      <div class="layout-padding list-padding">
         <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
           <span>+{{ tkt_count }} </span>  
         </a>
@@ -35,14 +35,14 @@
           <div class="auto">
             <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
           </div>
-          <div class="auto">
+          <div class="auto filter-padding">
             <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
           </div>
           <div class="auto ">
             <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
           </div>
         </div>
-        <q-pull-to-refresh :handler="loadMore" >
+        <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
@@ -60,28 +60,22 @@
               </div>
               <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
             </div>
-          </div>
-          <div>
-          </div>
-         <div class="row justify-center" style="margin: 5px 0;">
-            <button v-if="fetched" class="bordered light text-black full-width load" @click='getMore()'>加载更多</button>
-            <div  v-if="fetched==false">
-              <div v-if='tips'>
-                <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-                <span v-else>  {{tips}} </span>
-              </div>
-              <div v-else>
-                {{"共计"+message.length+"条数据" }}
-              </div>
-            </div>   
+         </div>
+         
+         <div class="row justify-center " style="margin: 5px 0;">
+           <q-progress-button v-if="isFinished&&total" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load " :percentage="progressBtn" dark-filler > 加载更多(剩余{{total}}条) </q-progress-button>
+            <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey' v-if='tips'>
+              <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+              <span v-else>  {{tips}} </span>
+            </div>
           </div>
         </q-pull-to-refresh>
       </div>
     </div>
-    <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i class="q-fab-icon">add</i>
+    <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i>add</i>
     </button>
   </q-layout>
-  <q-modal ref="layoutModal" :content-css="{minWidth: '100vw', minHeight: '100vh'}">
+  <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
     <q-layout v-if='isEdit'>
         <div slot="header" class="toolbar">
           <button class="head_goback" @click="getTktDt()">
@@ -154,8 +148,18 @@
   export default {
     data() { 
       let _dt = {
-        isCreated:false,
-        isEdit:false,
+        pgmsg:'',
+        isTipsHG:false,
+        isFinished:true,
+        _isKey:false,
+        total:null,
+        isDone:false,
+        rfhmsg: '正在刷新',
+        plmsg:'下拉刷新',
+        rlsmsg:'松开刷新',
+        progressBtn:0,
+        isCreated: false,
+        isEdit: false,
         selectType:filtersStorage.type() ||'0' ,
         selectTime:filtersStorage.time() ||'NOW' ,
         prird: filtersStorage.prir() || false,
@@ -187,6 +191,11 @@
       })
     },
     watch:{
+      searchModel(cc,pp){
+        if(cc==''){
+          this.setFilters()
+        }
+      },
       selectSys(c, p) {
         filtersStorage.save("system",c)
         this.setFilters()
@@ -223,7 +232,7 @@
           }else{
             let colr={
                 1:'',
-                2:'text-yellow-6',
+                2:'text-yellow-8',
                 3:'text-red-4',
               }
               return colr[obj]
@@ -231,59 +240,28 @@
       }
     },
     methods: {
-      setFilters(){
+      setFilters(sus){
         this.$store.state.tkt_count=0
         this.clear()
+        this.isFinished=false
+        this.progressBtn=0
         this.skip = 0
-        this.getApi()
-      },
-      ...mapActions('tickets', {
-        getTkt: 'get',
-      }), 
-      ...mapMutations('tickets', {
-        clearCrt: 'clearCurrent'
-      }),
-      getTktDt(){
-        this.isEdit=false
-         this.$refs.layoutModal.close();
-         this.clearCrt() 
-      },
-      getTktNew(){
-         this.$refs.layoutModal.close();
-         this.isCreated=false
-      },
-      getDetail(id) {
-        this.getTkt(id)
-        this.isEdit=true
-        this.$refs.layoutModal.open()
-      },
-      add() {
-        this.$refs.layoutModal.open()
-        this.isCreated=true
+        this.getApi(sus)
       },
       getNewMsg(){
         this.setFilters()
       },
-      ...mapMutations('tickets', {
-        clear: 'clearAll',
-      }),
-      ...mapMutations('tickets', {
-        filterTkt: 'removeItems',
-      }),
-      ...mapActions('tickets', {
-        findMessages: 'find',
-      }),
       searchKey() {
+      //  this._isKey=true
         this.setFilters()
       },
       getMore(){
         this.skip=this.message.length
         this.getApi()
       },
-      getApi(obj) {
+      getApi(done) {
         let _self = this
         _self.isLoading = true
-        _self.fetched = true
         _self.tips = null
         let _query = {
           $skip:_self.skip,
@@ -312,30 +290,47 @@
         _self.findMessages({
             query: _query
           }).then((res) => {
+            if(res.total==0){
+              _self.isTipsHG=true
+            }else{
+              _self.isTipsHG=false
+            }
+            let _perct= Math.pow(10, 2)/res.total
+              _self.total = res.total- _self.message.length
+             console.log('-=-', _perct )
+             _self.progressBtn = _self.message.length * _perct
             if (res.data.length == 0 &&  _self.message.length==0 ) {
-              _self.tips = '木有了.'
+              _self.tips = '＞﹏＜...空空如也.'
               console.log('-=[sdf]')
-              _self.fetched = false
-              if (obj) {
+              _self.isFinished = false
+              if (_self.searchModel) {
                 console.log('-search--=1-')
-                _self.tips = '没有搜索到相关数据.'
+                _self.tips = '很抱歉，没有找到与\"'+_self.searchModel  +'\"相关的数据.'
+              }
+              _self.progressBtn = 100
+            }else{
+              if(_self.total==0){
+                _self.tips = '没有更多数据了.'
               }
             }
             if (res.data.length < _self.limit) {
-              _self.fetched = false
-            } else {
-              _self.isLoading = false
+              _self.isFinished = false
+            }else{
+              _self.isFinished = true
             }
+            _self.isLoading = false
+            done instanceof Function ?done():'';
             console.log('-=res--', _self.tips, res.data)
           })
           .catch(error => {
+            this.isTipsHG=true
             let type = error.errorType
             error = Object.assign({}, error)
             error.message = (type === 'uniqueViolated') ?
               'That is unavailable.' :
               'An error prevented sign.'
             console.log('-=:[]', error)
-            this.fetched = false
+            this.isFinished = false
              this.$store.state.tkt_count = 0
             this.Islogined=error.code==401?true:false
             this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
@@ -343,15 +338,54 @@
               html: this.tips ,
               timeout: 3000
             })
+            done instanceof Function ?done():'';
           })
-
       },
       loadMore(done) {
         if (this.isLoading == false) {
           console.log('-=loadMore=--')
-          this.getApi()
+          this.setFilters(done)
         }
-        done()
+      },
+      ...mapMutations('tickets', {
+        clear: 'clearAll',
+      }),
+      ...mapMutations('tickets', {
+        filterTkt: 'removeItems',
+      }),
+      ...mapActions('tickets', {
+        findMessages: 'find',
+      }),
+      ...mapActions('tickets', {
+        getTkt: 'get',
+      }), 
+      ...mapMutations('tickets', {
+        clearCrt: 'clearCurrent'
+      }),
+      notify () {
+         this.isCreated=false
+         this.isEdit=false
+         this.$refs.layoutModal.close();
+         this.clearCrt() 
+      },
+      getTktDt(){
+         this.isEdit=false
+         this.$refs.layoutModal.close();
+         this.clearCrt() 
+      },
+      getTktNew(){
+         this.$refs.layoutModal.close();
+         this.clearCrt() 
+         this.isCreated=false
+      },
+      getDetail(id) {
+        this.getTkt(id)
+         this.isEdit=true
+        this.$refs.layoutModal.open()
+      },
+      add() {
+         this.isCreated=true
+        this.$refs.layoutModal.open()
       },
       alert() {
         Dialog.create({
@@ -373,6 +407,9 @@
   }
 </script>
 <style>
+.list-padding{
+  padding-top:0;
+}
   .list-btn {
     width: 100%;
   }
@@ -385,11 +422,18 @@
     white-space: nowrap;
     overflow: hidden;
   }
-.list-filters{
-  position:relative;
-  z-index:9;
-  background:white;
-}
+  .list-filters{
+    position:relative;
+    z-index:9;
+    height:40px;
+    padding-top:10px;
+    background:white;
+  }
+
+  .q-picker-textfield .q-picker-textfield-value{
+    font-size:1rem;
+    height:auto;
+  }
   .q-popover .item-container {
     height: 38px;
   }
@@ -397,7 +441,9 @@
     min-width: 120px; 
     max-height: 500px;
   }
-
+  .filter-padding{
+    padding:0 3px;
+  }
   .list-time {
     position: absolute;
     top: 0;
@@ -409,11 +455,21 @@
     font-size: 10px;
     text-align: right;
   }
-.load{
-      border: 1px solid;
-}
+  .load{
+    border: 1px solid #dcdfde;
+  }
+  .tips{
+    align-items:center;
+  }
+  .tips-height{
+    min-height:60vh;
+  }
+  .tips-min{
+    min-height:5vh;
+  }
   .fix-add {
     right: 18px;
+    justify-content:center;
     bottom: 18px;
     z-index:9;
   } 

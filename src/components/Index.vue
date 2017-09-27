@@ -41,7 +41,7 @@
 
       </div>
       <div slot="footer"  >
-          0.4.1
+          0.5.1
       </div>
   </div>
 </template>
@@ -84,7 +84,7 @@
         return this.$parent.$children[0].$refs.leftDrawer
       }
     },
-    mounted() {
+    created() {
       this.getTktCunt()
     }, 
     methods: {
