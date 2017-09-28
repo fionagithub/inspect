@@ -78,7 +78,7 @@
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
     <q-layout v-if='isEdit'>
         <div slot="header" class="toolbar">
-          <button class="head_goback" @click="getTktDt()">
+          <button class="head_goback" @click="$refs.layoutModal.close()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
@@ -89,7 +89,7 @@
     </q-layout>
      <q-layout v-if='isCreated'>
         <div slot="header" class="toolbar">
-          <button class="head_goback" @click="getTktNew() ">
+          <button class="head_goback" @click="$refs.layoutModal.close()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
@@ -128,23 +128,8 @@
      WEEK: _moment.subtract(7, 'days').toISOString(),
      MONTH: _moment.subtract(1, 'months').toISOString(),
    };
-  let filtersStorage = {
-    type() {
-      return JSON.parse(localStorage.getItem("selectType")) ;
-    },
-    time(){
-      return JSON.parse(localStorage.getItem("selectTime")) ;
-    },
-    sys(){
-      return JSON.parse(localStorage.getItem("system")) ;
-    },
-    prir(){
-      return JSON.parse(localStorage.getItem("prird")) ;
-    },
-    save (key,filters) {
-      localStorage.setItem(key, JSON.stringify(filters));
-    }
-  }
+   import filtersStorage from '../conf/storage'
+
   export default {
     data() { 
       let _dt = {
@@ -160,10 +145,10 @@
         progressBtn:0,
         isCreated: false,
         isEdit: false,
-        selectType:filtersStorage.type() ||'0' ,
-        selectTime:filtersStorage.time() ||'NOW' ,
-        prird: filtersStorage.prir() || false,
-        selectSys:filtersStorage.sys() ||'ALL' ,
+        selectType:filtersStorage('selectType') ||'0' ,
+        selectTime:filtersStorage('selectTime') ||'NOW' ,
+        prird: filtersStorage('prird') || false,
+        selectSys:filtersStorage('system') ||'ALL' ,
         Islogined:false,
       }
       return Object.assign(_dt, _list)
@@ -198,19 +183,19 @@
         }
       },
       selectSys(c, p) {
-        filtersStorage.save("system",c)
+        filtersStorage({key:"system", value:c },"save")
         this.setFilters()
       },
       selectType(c, p) {
-        filtersStorage.save("selectType",c)
+        filtersStorage({key:"selectType", value:c} ,"save")
         this.setFilters()
       },
       selectTime(c, p) {
-        filtersStorage.save("selectTime",c)
+        filtersStorage({key:"selectTime", value:c} ,"save")
         this.setFilters()
       },
       prird(c, p) {
-        filtersStorage.save("prird",c)
+        filtersStorage({key:"prird", value:c },"save")
         this.setFilters()
       },
     },
@@ -369,16 +354,6 @@
          this.$refs.layoutModal.close();
          this.clearCrt() 
       },
-      getTktDt(){
-         this.isEdit=false
-         this.$refs.layoutModal.close();
-         this.clearCrt() 
-      },
-      getTktNew(){
-         this.$refs.layoutModal.close();
-         this.clearCrt() 
-         this.isCreated=false
-      },
       getDetail(id) {
         this.getTkt(id)
          this.isEdit=true
@@ -456,6 +431,9 @@
   }
   .tips{
     align-items:center;
+  }
+  .pull-to-refresh-message{
+    color: black;
   }
   .tips-height{
     min-height:60vh;

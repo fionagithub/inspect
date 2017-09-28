@@ -84,9 +84,9 @@ Quasar.start(() => {
             setAuth() {
                 let _self = this
                 _self.authenticate().then((response) => {
-                     let redirect = decodeURIComponent(_self.$route.query.redirect || '/');
+                   /*  let redirect = decodeURIComponent(_self.$route.query.redirect || '/');
                     console.log('ok--from main!!!!!',redirect);
-                     _self.$router.push(redirect)
+                     _self.$router.push(redirect)*/
                 }).catch((error) => {
                     _self.$router.push('/login')
                     console.log('Error--from main!!!!!', error);
