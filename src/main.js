@@ -21,8 +21,11 @@ Vue.use(Quasar) // Install Quasar Framework
 window.feathers = feathersClient
 
 const errorHandler = error => {
-    console.log('[]--fc=[]')
+    console.log('[ccc]--fc=[]')
 };
+
+feathers.on('reauthentication-error', errorHandler)
+
 import {
     mapActions,
     mapState
@@ -38,9 +41,6 @@ Quasar.start(() => {
             if (!this.user) {
                 this.setAuth()
             }
-        },
-        mounted() {
-            feathersClient.on('reauthentication-error', errorHandler)
         },
         watch: {
             user(obj) {

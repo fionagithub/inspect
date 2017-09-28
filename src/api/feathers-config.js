@@ -9,7 +9,6 @@ import store from '../config/store'
 
 const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3033' : window.location.origin.replace(/:\/\/m\./g, '://api-beta.')
 const socket = io(API_HOST, { transports: ['websocket'] })
-
 const feathersClient = feathers()
   .configure(hooks())
   .configure(socketio(socket, {timeout: 5000}))
@@ -32,12 +31,9 @@ feathersClient.service('/feedback')
 feathersClient.hooks({
   before (hook) {
         // console.log('My custom before hook ran!');
-    },
+  },
   error (hook) {
         // console.log('======hook=======>', hook)
-    }
-})
-socket.on('reconnect', () => {
-  console.log('--recon---')
+  }
 })
 export default feathersClient

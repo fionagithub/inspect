@@ -13,7 +13,6 @@
    }]
  export const _list = {
    tips: null,
-   fetched: true,
    isLoading: true,
    searchModel: '',
    limit: 10,
