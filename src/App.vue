@@ -2,9 +2,7 @@
   <!-- Don't drop "q-app" class -->
   <div id="q-app">
     <transition name="fade" mode="out-in">
-      <keep-alive include="list">>
         <router-view></router-view>
-      </keep-alive>
     </transition>
     <drawer></drawer>
   </div>
