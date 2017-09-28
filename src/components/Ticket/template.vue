@@ -180,6 +180,7 @@
     },
     mounted() {
       this.$nextTick(() => {
+        this.getApi()
         feathers.service('tickets').on('created', res => {
           this.$store.state.tkt_count += 1
           console.log('rrrr', this.$store.state.tkt_count, res)
@@ -395,12 +396,7 @@
         })
       },
     },
-    activated() {
-      this.getApi()
-      console.log('-----activated--')
-    },
-    deactivated() {
-      console.log('-----deactivated--')
+    destroyed: function () {
       this.tips = null
       this.Islogined = false
     },

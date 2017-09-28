@@ -13,6 +13,10 @@ import store from './config/store'
 import feathersClient from './api/feathers-config'
 import './config/filters'
 import Vuelidate from 'vuelidate'
+import {
+    mapActions,
+    mapState
+} from 'vuex'
 Vue.use(Vuelidate)
 moment.locale('zh-cn');
 Vue.use(Quasar) // Install Quasar Framework
@@ -20,16 +24,6 @@ Vue.use(Quasar) // Install Quasar Framework
     // setInterval authenticate
 window.feathers = feathersClient
 
-const errorHandler = error => {
-    console.log('[ccc]--fc=[]')
-};
-
-feathers.on('reauthentication-error', errorHandler)
-
-import {
-    mapActions,
-    mapState
-} from 'vuex'
 Quasar.start(() => {
     /* eslint-disable no-new */
     new Vue({
@@ -39,6 +33,7 @@ Quasar.start(() => {
         },
         created() {
             if (!this.user) {
+                console.log('---mmm--cc---')
                 this.setAuth()
             }
         },
@@ -89,7 +84,9 @@ Quasar.start(() => {
             setAuth() {
                 let _self = this
                 _self.authenticate().then((response) => {
-                    console.log('ok--from main!!!!!');
+                     let redirect = decodeURIComponent(_self.$route.query.redirect || '/');
+                    console.log('ok--from main!!!!!',redirect);
+                     _self.$router.push(redirect)
                 }).catch((error) => {
                     _self.$router.push('/login')
                     console.log('Error--from main!!!!!', error);
