@@ -41,7 +41,7 @@
 
   </div>
   <div slot="footer">
-    0.5.1
+    {{verson}}
   </div>
   </div>
 </template>
@@ -62,6 +62,7 @@
     name: "index",
     data() {
       return {
+        verson:'0.4.6 070928',
         tktCut: filtersStorage('tktCut') || null,
         items: [{
           title: '报障',
