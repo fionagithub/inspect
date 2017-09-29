@@ -1,7 +1,7 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar">
-        <button class="head_goback" @click="$router.go(-1)">
+        <button class="head_goback" @click="goback()">
           <i>arrow_back</i>
         </button> 
         <q-toolbar-title :padding="1">
@@ -50,6 +50,9 @@
       ...mapActions('feedback', {
         createMessages: 'create',
       }),
+      goback(){
+        this.$router.push({path:'/'})
+      },
       add() {
         console.log(this.user)
         let data = {

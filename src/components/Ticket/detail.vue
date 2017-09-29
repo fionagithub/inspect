@@ -176,8 +176,8 @@
   }
   
   .d-val {
-    font-size: 14px;
-    font-weight: 300;
+    font-size: 16px;
+    font-weight: 400;
     color: #606060;
     line-height: 20px;
     flex: 3;

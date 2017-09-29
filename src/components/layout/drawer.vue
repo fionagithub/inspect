@@ -20,7 +20,7 @@
         <q-drawer-link icon="compare_arrows" disabled to="/">
            消息
         </q-drawer-link>
-        <q-drawer-link icon="build" to="/feedback">
+        <q-drawer-link icon="build" :to="{path: '/', query: { _modal: 'getFd' }}"  >
         反馈
         </q-drawer-link>
       </div>
@@ -59,6 +59,10 @@
           title: '抱歉',
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
+      },
+      getDetail() {
+        console.log('---dre')
+        this.$store.state._feedback=true
       },
       login_out() {
         this.logout().then(() => {
