@@ -43,7 +43,7 @@
       </div>
     </div>
     <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-      <detail v-if='isEdit'></detail>
+      <dv-detail v-if='isEdit'/>>
     </q-modal>
   </q-layout>
 </template>
@@ -63,7 +63,7 @@
     Toast
   }
   from 'quasar'
-  Vue.component('detail', detail);
+  Vue.component('dvDetail', detail);
   export default {
     name: 'device',
     data() {

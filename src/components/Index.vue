@@ -44,7 +44,7 @@
     {{verson}}
   </div>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <detail v-if='isEdit'></detail>
+    <feed-back v-if='isEdit'/>
   </q-modal>
   </div>
 </template>
@@ -52,10 +52,10 @@
 <script>
   import filtersStorage from './conf/storage'
   import 'src/assets/css/index.css'
-  import detail from './Feedback/template'
+  import feedBack from './Feedback/template'
   import Vue from 'vue'
 
-  Vue.component('detail', detail);
+  Vue.component('feedBack', feedBack);
   import {
     mapGetters,
     mapMutations,
