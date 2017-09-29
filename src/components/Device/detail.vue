@@ -66,7 +66,7 @@
               </div>
             </div>
             <div class="card-actions card-no-top-padding">
-              <div class="text-line" v-for='item in 18'>
+              <div class="text-line" v-for='item in message.tags'>
                 {{item}}
               </div>
             </div>
