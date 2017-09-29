@@ -1,6 +1,5 @@
 <template>
   <q-layout>
-
     <div slot="header" class="toolbar">
       <button class="head_goback" @click="$router.go(-1)">
         <i>arrow_back</i>
@@ -67,13 +66,14 @@
               </div>
             </div>
             <div class="card-actions card-no-top-padding">
-              <div class="text-lime" v-for='item in message.tags'>
+              <div class="text-line" v-for='item in 18'>
                 {{item}}
               </div>
-              <div class="auto"></div>
-              <button class="primary clear small" @click='goTicket()' ><i class="on-left">directions</i> 我要报障</button>
             </div>
-          </div>
+            <div class="go-ticket card-actions card-no-top-padding" >
+           <button class="primary clear small" @click='goTicket()' ><i class="on-left">directions</i> 我要报障</button>
+            </div>
+             </div>
         </div>
         <div class="card" ref="tab-2" >
           <div v-if="message">
@@ -209,9 +209,6 @@
         console.log('---id::::', this.message.manufacturerId )
       },
       goTicket(){
-        this.$router.push({
-          path: '/ticket/new'
-        })
       },
       setTab(){
         this.tabNo='tab-3'
@@ -262,5 +259,17 @@
 }
 .item-title{
   flex:2;
+  font-size: 16px;
+  font-weight: 400;
+}
+.card-actions{
+  flex-wrap: wrap;
+  padding: 12px;
+  justify-content: flex-start;
+}
+.go-ticket{
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
 }
 </style>

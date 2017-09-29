@@ -44,13 +44,6 @@ const router = new VueRouter({
       component: load('Device/template')
     },
     {
-      path: '/device/:id',
-      meta: {
-        requiresAuth: true
-      },
-      component: load('Device/detail')
-    },
-    {
       path: '*',
       component: load('Error404')
     } // Not found

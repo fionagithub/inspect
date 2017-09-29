@@ -3,22 +3,21 @@
     <div slot="header" class="toolbar">
       <button class="head_goback" @click="$router.go(-1)">
         <i>arrow_back</i>
-      </button> 
+      </button>
       <q-toolbar-title :padding="1">
-        设备清单 
+        设备清单
       </q-toolbar-title>
-      <popover></popover>
-    </div> 
+    </div>
     <div slot="header" class="toolbar">
-      <q-search class="full-width" disable v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
+      <q-search class="full-width" disable v-model="searchModel" @enter='setFilters()' placeholder="搜索..."></q-search>
     </div>
     <div class="layout-view">
       <div class="layout-padding">
-        <a class="animate-pop refresh-message" v-if="dv_count" @click='getNewMsg()' >
+        <a class="animate-pop refresh-message" v-if="dv_count" @click='setFilters()'>
           <span>+{{ dv_count }} </span>  
         </a>
-        <q-infinite-scroll :handler="loadMore" ref="infiniteScroll" :offset="100">
-          <div class="list item-inset-delimiter no-border t-base " v-if="message">
+        <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
+          <div class="list item-inset-delimiter no-border t-base ">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary item-icon">mail</i>
               <div class="item-content has-secondary list-content ">
@@ -28,30 +27,29 @@
                 <div class="list-desc">
                   {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
-              </div> 
+              </div>
               <i class="item-secondary item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
-
-          <div class="row justify-center" style="margin-bottom: 50px;">
-            <spinner name="dots" slot="message" :size="40" v-if="fetched">
-            </spinner>
-            <div slot="message" :size="40" v-if="fetched==false">
-              <div v-if='tips'>
-                <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-                <span>  {{tips}} </span>
-              </div>
-              <div v-else>
-                {{"共计"+message.length+"条数据" }}
-              </div>
+          <div class="row justify-center " style="margin: 5px 0;">
+            <q-progress-button v-if="isFinished&&total" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+              :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
+            <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey' v-if='tips'>
+              <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
+              <span v-else>  {{tips}} </span>
             </div>
           </div>
-        </q-infinite-scroll>
+        </q-pull-to-refresh>
       </div>
     </div>
+    <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+      <detail v-if='isEdit'></detail>
+    </q-modal>
   </q-layout>
 </template>
 <script>
+  import Vue from 'vue'
+  import detail from './detail'
   import {
     _list
   } from './data'
@@ -65,12 +63,21 @@
     Toast
   }
   from 'quasar'
-  import popover from '../layout/popover'
+  Vue.component('detail', detail);
   export default {
-    name:'list',
-    data() { 
+    name: 'device',
+    data() {
       let _dt = {
-        Islogined:false
+        isFinished: true,
+        isTipsHG: false,
+        pgmsg: '',
+        total: null,
+        progressBtn: 0,
+        isEdit: false,
+        rfhmsg: '正在刷新',
+        plmsg: '下拉刷新',
+        rlsmsg: '松开刷新',
+        Islogined: false
 
       }
       return Object.assign(_dt, _list)
@@ -78,11 +85,9 @@
     computed: {
       ...mapGetters('devices', {
         message: 'list',
-      }), 
-      ...mapState(['dv_count'])
-    },
-    components: {
-      popover
+      }),
+      ...mapState(['dv_count', '_version']),
+
     },
     created() {
       feathers.service('devices').on('patched', res => {
@@ -91,8 +96,8 @@
       })
     },
     watch: {
-      searchModel(c, o){
-        if (c==''){
+      searchModel(c, o) {
+        if (c == '') {
           this.clear()
           this.skip = 0
           this.getApi()
@@ -107,21 +112,21 @@
           console.log('rrrr', this.$store.state.dv_count, res)
           this.filterDV([res])
         });
-      }
-      )
+      })
     },
-    methods: {
-      getNewMsg(){
-        this.$store.state.dv_count = 0
-        this.clear()
-        this.skip = 0
-        this.getApi() //请求初始数据 
+    methods: { 
+      getMore() {
+        this.skip = this.message.length
+        this.getApi()
       },
       ...mapMutations('devices', {
-        ptdDV:'updateItem'
+        ptdDV: 'updateItem'
       }),
-      ...mapActions('devices', {
+      ...mapMutations('devices', {
         clear: 'clearAll',
+      }),
+      ...mapMutations('devices', {
+        clearCrt: 'clearCurrent'
       }),
       ...mapMutations('devices', {
         filterDV: 'removeItems',
@@ -129,44 +134,62 @@
       ...mapActions('devices', {
         findMessages: 'find',
       }),
-      searchKey() {
-        this.clear()
-        this.skip = 0
-        this.getApi()
+      ...mapActions('devices', {
+        getTkt: 'get',
+      }),
+      notify() {
+        this.isEdit = false
+        this.$refs.layoutModal.close();
+        this.clearCrt()
       },
-      getApi(obj) {
+      getApi(done) {
         let _self = this
         _self.isLoading = true
-        _self.fetched = true
         _self.tips = null
         let _query = {
           $limit: _self.limit,
+          $skip: _self.skip,
           $select: ['location', 'name', 'id']
         }
-        if (_self.searchModel!== '' ) {
+        if (_self.searchModel !== '') {
           _query['$search'] = _self.searchModel
-        } 
-          _query['$skip'] = _self.skip
+        }
         console.log('--==-', _query)
 
         _self.findMessages({
             query: _query
           }).then((res) => {
-            if (res.data.length == 0 &&  _self.message.length==0 ) {
-              _self.tips = '暂无数据.'
+
+            if (res.total == 0) {
+              _self.isTipsHG = true
+            } else {
+              _self.isTipsHG = false
+            }
+            let _perct = Math.pow(10, 2) / res.total
+            _self.total = res.total - _self.message.length
+            console.log('-=-', _perct)
+            _self.progressBtn = _self.message.length * _perct
+            if (res.data.length == 0 && _self.message.length == 0) {
+              _self.isFinished = false
+              _self.tips = '＞﹏＜...空空如也.'
               console.log('-=[sdf]')
-              _self.fetched = false
-              if (obj) {
+              if (_self.searchModel) {
                 console.log('-search--=1-')
-                _self.tips = '没有搜索到相关数据.'
+                _self.tips = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
+              }
+              _self.progressBtn = 100
+            } else {
+              if (_self.total == 0) {
+                _self.tips = '没有更多数据了.'
               }
             }
-            _self.skip += res.data.length
             if (res.data.length < _self.limit) {
-              _self.fetched = false
+              _self.isFinished = false
             } else {
-              _self.isLoading = false
+              _self.isFinished = true
             }
+            _self.isLoading = false
+            done instanceof Function ? done() : '';
             console.log('-=res--', _self.tips, res.data)
           })
           .catch(error => {
@@ -176,32 +199,41 @@
               'That is unavailable.' :
               'An error prevented sign.'
             console.log('-=:[]', error)
-            this.fetched = false
-            this.Islogined=error.code==401?true:false
-            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
+            this.isFinished = false
+            this.$store.state.dv_count = 0
+            this.Islogined = error.code == 401 ? true : false
+            done instanceof Function ? done() : '';
+            this.tips = error.code == 401 ? '认证失败，请重新登录' : '哦,服务崩溃，稍后再试'
             Toast.create.negative({
               html: '服务崩溃，稍后再试',
               timeout: 3000
             })
           })
-
       },
-      loadMore(index, done) {
+      setFilters(sus) {
+        this.$store.state.dv_count = 0
+        console.log(this)
+        this.clear()
+        this.isFinished = false
+        this.progressBtn = 0
+        this.skip = 0
+        this.getApi(sus)
+      },
+      loadMore(done) {
         if (this.isLoading == false) {
           console.log('-=loadMore=--')
-          this.getApi()
+          this.setFilters(done)
         }
-        done()
       },
       getDetail(id) {
-        this.$router.push({
-          path: '/device/' + id
-        })
+        this.getTkt(id)
+        this.isEdit = true
+        this.$refs.layoutModal.open()
       }
     },
     destroyed: function () {
-     // this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
+      this.tips = null
+      this.Islogined = false
     },
   }
 
