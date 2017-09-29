@@ -43,12 +43,19 @@
   <div slot="footer">
     {{verson}}
   </div>
+  <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+    <feed-back v-if='isEdit'/>
+  </q-modal>
   </div>
 </template>
 
 <script>
   import filtersStorage from './conf/storage'
   import 'src/assets/css/index.css'
+  import feedBack from './Feedback/template'
+  import Vue from 'vue'
+
+  Vue.component('feedBack', feedBack);
   import {
     mapGetters,
     mapMutations,
@@ -62,7 +69,8 @@
     name: "index",
     data() {
       return {
-        verson:'0.4.6 070928',
+        verson: '0.4.7 070929',
+        isEdit: false,
         tktCut: filtersStorage('tktCut') || null,
         items: [{
           title: '报障',
@@ -79,31 +87,55 @@
           disabled: true,
           uri: '/device'
         }],
-
       }
     },
     computed: {
       leftDrawer() {
         return this.$parent.$children[0].$refs.leftDrawer
+      },
+      _modal() {
+        let _pa = this.$route.query
+        console.log('---mm', _pa)
+        return _pa
+      }
+    },
+    watch: {
+       '$route'(to, from) {
+        console.log('[][', to,from )
+        if (to.query._modal) {
+          this[to.query._modal]()
+        }
       }
     },
     created() {
       if (!this.tktCut) {
         this.getTktCunt()
-      }else{
+      } else {
         this.setCut(this.tktCut)
+      }
+      console.log('[=]', this)
+      if(this.$route.query){
+        this.$router.push({path:'/',query:{}})
       }
     },
     methods: {
       ...mapActions('tickets', {
         findTkt: 'find',
       }),
+      getFd() {
+        this.isEdit = true
+        this.$refs.layoutModal.open()
+      },
       setCut(ttl) {
         this.items.map(function (k, i) {
           if (k.uri.indexOf('/ticket') == 0) {
             k.count = ttl
           }
         })
+      },
+      notify() {
+        this.isEdit = false
+        this.$refs.layoutModal.close();
       },
       getTktCunt() {
         let self = this

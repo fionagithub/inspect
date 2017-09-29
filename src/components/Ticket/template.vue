@@ -85,7 +85,7 @@
               报障详情 
           </q-toolbar-title>
         </div>
-        <detail></detail>  
+        <tk-detail/>>
     </q-layout>
      <q-layout v-if='isCreated'>
         <div slot="header" class="toolbar">
@@ -121,7 +121,7 @@
   import nnew from './new'
   import Vue from 'vue'
   Vue.component('new', nnew);
-  Vue.component('detail', detail);
+  Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
    timeMap = {
      NOW: _moment.toISOString(),
