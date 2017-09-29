@@ -23,7 +23,7 @@
         <div class="card" ref="tab-1">
           <div v-if="message">
             <div class="card-media">
-              <img src="../img/water.jpg">
+              <img src="../img/building.jpg">
               <button class="green circular d-status"><i>check</i></button>
             </div>
             <div class="card-title d-title">
@@ -48,7 +48,7 @@
                   <div class="item-label"> 指标读数</div>
                   <div class="item-title">
                     <div v-for='mtr in message.monitors'  >
-                    {{mtr.monitorTypeId+':'+ mtr.value}}
+                    {{mtr.name+':'+ mtr.value+mtr.unit }}
                     </div>
                   </div>
                 </div>
