@@ -13,8 +13,8 @@
     </div>
     <div class="layout-view">
       <div class="layout-padding">
-        <a class="animate-pop refresh-message" v-if="dv_count" @click='setFilters()'>
-          <span>+{{ dv_count }} </span>  
+        <a class="animate-pop refresh-message" v-if="this.$store.state.add_count.dvCut" @click='setFilters()'>
+          <span>+{{ this.$store.state.add_count.dvCut }} </span>  
         </a>
         <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
@@ -86,7 +86,10 @@
       ...mapGetters('devices', {
         message: 'list',
       }),
-      ...mapState(['dv_count', '_version']),
+      ...mapState('add_count', {
+        dvCut: 'dvCut',
+      }),
+      ...mapState(['_version']),
 
     },
     created() {
@@ -108,8 +111,8 @@
       this.getApi() //请求初始数据 
       this.$nextTick(() => {
         feathers.service('devices').on('created', res => {
-          this.$store.state.dv_count += 1
-          console.log('rrrr', this.$store.state.dv_count, res)
+          this.$store.state.this.$store.state.add_count.dvCut += 1
+          console.log('rrrr', this.$store.state.this.$store.state.add_count.dvCut, res)
           this.filterDV([res])
         });
       })
@@ -200,7 +203,7 @@
               'An error prevented sign.'
             console.log('-=:[]', error)
             this.isFinished = false
-            this.$store.state.dv_count = 0
+            this.$store.state.this.$store.state.add_count.dvCut = 0
             this.Islogined = error.code == 401 ? true : false
             done instanceof Function ? done() : '';
             this.tips = error.code == 401 ? '认证失败，请重新登录' : '哦,服务崩溃，稍后再试'
@@ -211,7 +214,7 @@
           })
       },
       setFilters(sus) {
-        this.$store.state.dv_count = 0
+        this.$store.state.this.$store.state.add_count.dvCut = 0
         console.log(this)
         this.clear()
         this.isFinished = false

@@ -3,8 +3,11 @@ import Vue from 'vue'
 
 Vue.use(Vuex)
 let state = {
-  tkt_count: 0,
-  dv_count: 0,
+  add_count:{
+
+  tktCut: 0,
+  dvCut: 0,
+  },
   priorityMax: 3,
   stateItems: [],
   systemItems: [],

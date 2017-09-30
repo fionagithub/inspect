@@ -1,14 +1,14 @@
 <template>
-<div>
-  <q-layout>
-    <div slot="header" class="toolbar">
-      <button class="head_goback" @click="$router.go(-1)">
+  <div>
+    <q-layout>
+      <div slot="header" class="toolbar">
+        <button class="head_goback" @click="$router.go(-1)">
         <i>arrow_back</i>
-      </button> 
-      <q-toolbar-title :padding="1">
-        报障清单 
-      </q-toolbar-title>
-       <button>
+      </button>
+        <q-toolbar-title :padding="1">
+          报障清单
+        </q-toolbar-title>
+        <button>
           <i>more_vert</i>
           <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
             <div class="list highlight pop-list ">
@@ -22,84 +22,84 @@
             </div>
           </q-popover>
         </button>
-    </div> 
-    <div slot="header" class="toolbar">
-      <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
-    </div>
-    <div class="layout-view">
-      <div class="layout-padding list-padding">
-        <a class="animate-pop refresh-message" v-if="tkt_count" @click='getNewMsg()' >
-          <span>+{{ tkt_count }} </span>  
-        </a>
-        <div class="row wrap justify-stretch content-center text-center list-filters ">
-          <div class="auto">
-            <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
-          </div>
-          <div class="auto filter-padding">
-            <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
-          </div>
-          <div class="auto ">
-            <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
-          </div>
-        </div>
-        <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
-          <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
-            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
-              <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
-              <div class="item-content has-secondary list-content ">
-                <div>
-                  {{item.system|tran(systemItems)}}
-                  ({{  item.state[0].name|tran(stateItems) }})
-                </div>
-                <div class="list-desc">
-                  {{item.description}}
-                </div>
-              </div>
-              <div class='list-time'>
-                {{item.reportTime | date}}
-              </div>
-              <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
-            </div>
-         </div>
-         
-         <div class="row justify-center " style="margin: 5px 0;">
-           <q-progress-button v-if="isFinished&&total" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load " :percentage="progressBtn" dark-filler > 加载更多(剩余{{total}}条) </q-progress-button>
-            <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey' v-if='tips'>
-              <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-              <span v-else>  {{tips}} </span>
-            </div>
-          </div>
-        </q-pull-to-refresh>
       </div>
-    </div>
-    <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i>add</i>
+      <div slot="header" class="toolbar">
+        <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
+      </div>
+      <div class="layout-view">
+        <div class="layout-padding list-padding">
+          <a class="animate-pop refresh-message" v-if="tktCut" @click='getNewMsg()'>
+          <span>+{{ tktCut }} </span>  
+        </a>
+          <div class="row wrap justify-stretch content-center text-center list-filters ">
+            <div class="auto">
+              <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
+            </div>
+            <div class="auto filter-padding">
+              <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
+            </div>
+            <div class="auto ">
+              <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
+            </div>
+          </div>
+          <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
+            <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
+              <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+                <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
+                <div class="item-content has-secondary list-content ">
+                  <div>
+                    {{item.system|tran(systemItems)}} ({{ item.state[0].name|tran(stateItems) }})
+                  </div>
+                  <div class="list-desc">
+                    {{item.description}}
+                  </div>
+                </div>
+                <div class='list-time'>
+                  {{item.reportTime | date}}
+                </div>
+                <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
+              </div>
+            </div>
+
+            <div class="row justify-center " style="margin: 5px 0;">
+              <q-progress-button v-if="(isFinished&&total)||!loginUri" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+                :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
+              <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey'>
+                <router-link to='/login' v-if='loginUri'> {{loginUri}} </router-link>
+                <span v-else>  {{tips}} </span>
+              </div>
+            </div>
+          </q-pull-to-refresh>
+        </div>
+      </div>
+      <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i>add</i>
     </button>
-  </q-layout>
-  <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <q-layout v-if='isEdit'>
+    </q-layout>
+    <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+      <q-layout v-if='isEdit'>
         <div slot="header" class="toolbar">
           <button class="head_goback" @click="$refs.layoutModal.close()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
-              报障详情 
+            报障详情
           </q-toolbar-title>
         </div>
         <tk-detail/>>
-    </q-layout>
-     <q-layout v-if='isCreated'>
+      </q-layout>
+      <q-layout v-if='isCreated'>
         <div slot="header" class="toolbar">
           <button class="head_goback" @click="$refs.layoutModal.close()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
-              新增报障 
+            新增报障
           </q-toolbar-title>
         </div>
-        <new></new>  
-    </q-layout>
-  </q-modal>
-</div>  
+        <new></new>
+      </q-layout>
+    </q-modal>
+  </div>
 </template>
 <script>
   import {
@@ -123,52 +123,55 @@
   Vue.component('new', nnew);
   Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
-   timeMap = {
-     NOW: _moment.toISOString(),
-     WEEK: _moment.subtract(7, 'days').toISOString(),
-     MONTH: _moment.subtract(1, 'months').toISOString(),
-   };
-   import filtersStorage from '../conf/storage'
+    timeMap = {
+      NOW: _moment.toISOString(),
+      WEEK: _moment.subtract(7, 'days').toISOString(),
+      MONTH: _moment.subtract(1, 'months').toISOString(),
+    };
+  import filtersStorage from '../conf/storage'
 
   export default {
-    data() { 
+    data() {
       let _dt = {
-        pgmsg:'',
-        isTipsHG:false,
-        isFinished:true,
-        _isKey:false,
-        total:null,
-        isDone:false,
+        pgmsg: '',
+        isTipsHG: false,
+        isFinished: true,
+        _isKey: false,
+        total: null,
+        isDone: false,
         rfhmsg: '正在刷新',
-        plmsg:'下拉刷新',
-        rlsmsg:'松开刷新',
-        progressBtn:0,
+        plmsg: '下拉刷新',
+        rlsmsg: '松开刷新',
+        progressBtn: 0,
         isCreated: false,
         isEdit: false,
-        selectType:filtersStorage('selectType') ||'0' ,
-        selectTime:filtersStorage('selectTime') ||'NOW' ,
+        selectType: filtersStorage('selectType') || '0',
+        selectTime: filtersStorage('selectTime') || 'NOW',
         prird: filtersStorage('prird') || false,
-        selectSys:filtersStorage('system') ||'ALL' ,
-        Islogined:false,
+        selectSys: filtersStorage('system') || 'ALL',
+        loginUri: null,
       }
       return Object.assign(_dt, _list)
     },
-    name:'list',
+    name: 'list',
     computed: {
       ...mapGetters('tickets', {
         message: 'list',
-      }), 
+      }),
       ...mapState('tickets', {
         tktCrt: 'copy',
-      }), 
-      ...mapState(['systemItems','tkt_count','_system', 'stateItems']),
+      }),
+      ...mapState('add_count', {
+        tktCut: 'tktCut',
+      }),
+      ...mapState(['systemItems', '_system', 'tickets', 'stateItems']),
     },
     mounted() {
       this.$nextTick(() => {
         this.getApi()
         feathers.service('tickets').on('created', res => {
-          this.$store.state.tkt_count += 1
-          console.log('rrrr', this.$store.state.tkt_count, res)
+        this.$store.state.add_count.tktCut += 1
+          console.log('rrrr', this.$store.state.add_count.tkt, res)
           this.filterTkt([res])
         });
         feathers.service('tickets').on('patched', res => {
@@ -176,73 +179,111 @@
         })
       })
     },
-    watch:{
-      searchModel(cc,pp){
-        if(cc==''){
+    watch: {
+      tickets(newVal) {
+        if ('_error' in newVal) {
+          let error = newVal._error
+          if (error.code == 401) {
+            this.loginUri = '认证失败，请重新登录'
+          } else {
+            this.tips = '哦,服务崩溃，稍后再试'
+          }
+          if ('id' in newVal) {} else {
+          this.$store.state.add_count.tktCut = 0
+          }
+          if(newVal.ids.length=0){
+             this.isTipsHG = true
+          }
+            Toast.create.negative({
+              html: this.tips|| this.loginUri ,
+              timeout: 3000
+            })
+            let type = error.errorType
+            error = Object.assign({}, error)
+            error.message = (type === 'uniqueViolated') ?
+              'That is unavailable.' :
+              'An error prevented sign.'
+            console.log('-=:[]', error)
+        }
+      },
+      searchModel(cc, pp) {
+        if (cc == '') {
           this.setFilters()
         }
       },
       selectSys(c, p) {
-        filtersStorage({key:"system", value:c },"save")
+        filtersStorage({
+          key: "system",
+          value: c
+        }, "save")
         this.setFilters()
       },
       selectType(c, p) {
-        filtersStorage({key:"selectType", value:c} ,"save")
+        filtersStorage({
+          key: "selectType",
+          value: c
+        }, "save")
         this.setFilters()
       },
       selectTime(c, p) {
-        filtersStorage({key:"selectTime", value:c} ,"save")
+        filtersStorage({
+          key: "selectTime",
+          value: c
+        }, "save")
         this.setFilters()
       },
       prird(c, p) {
-        filtersStorage({key:"prird", value:c },"save")
+        filtersStorage({
+          key: "prird",
+          value: c
+        }, "save")
         this.setFilters()
       },
     },
     components: {
       popover,
     },
-    filters:{
-      gettktIcon(obj){
-        let map={
-          0:'assignment_late',
-          1:'assignment',
-          2:'assignment_turned_in'
+    filters: {
+      gettktIcon(obj) {
+        let map = {
+          0: 'assignment_late',
+          1: 'assignment',
+          2: 'assignment_turned_in'
         }
         return map[obj]
-        
+
       },
-      getPrtColo(obj, src){
-          if(src==2){
-            return 'text-green-6'
-          }else{
-            let colr={
-                1:'',
-                2:'text-yellow-8',
-                3:'text-red-4',
-              }
-              return colr[obj]
+      getPrtColo(obj, src) {
+        if (src == 2) {
+          return 'text-green-6'
+        } else {
+          let colr = {
+            1: '',
+            2: 'text-yellow-8',
+            3: 'text-red-4',
           }
+          return colr[obj]
+        }
       }
     },
     methods: {
-      setFilters(sus){
-        this.$store.state.tkt_count=0
+      setFilters(sus) {
+      this.$store.state.add_count.tktCut = 0
         this.clear()
-        this.isFinished=false
-        this.progressBtn=0
+        this.isFinished = false
+        this.progressBtn = 0
         this.skip = 0
         this.getApi(sus)
       },
-      getNewMsg(){
+      getNewMsg() {
         this.setFilters()
       },
       searchKey() {
-      //  this._isKey=true
+        //  this._isKey=true
         this.setFilters()
       },
-      getMore(){
-        this.skip=this.message.length
+      getMore() {
+        this.skip = this.message.length
         this.getApi()
       },
       getApi(done) {
@@ -250,82 +291,68 @@
         _self.isLoading = true
         _self.tips = null
         let _query = {
-          $skip:_self.skip,
+          $skip: _self.skip,
           $limit: _self.limit,
-          $select: [ 'reportTime', 'system', 'state','priority', 'description', 'id']
+          $select: ['reportTime', 'system', 'state', 'priority', 'description', 'id']
         }
-        if (_self.searchModel!== '' ) {
+        if (_self.searchModel !== '') {
           _query['$search'] = _self.searchModel
-        } 
+        }
         if (_self.selectType !== 'ALL') {
           _query['state'] = _self.selectType
         }
         if (_self.selectSys !== 'ALL') {
-          _query['system']=_self.selectSys
+          _query['system'] = _self.selectSys
         }
-        if(_self.prird){
-          _query['$sort'] = {priority:-1}
-        }else{
-          _query['$sort'] = {reportTime:-1}
+        if (_self.prird) {
+          _query['$sort'] = {
+            priority: -1
+          }
+        } else {
+          _query['$sort'] = {
+            reportTime: -1
+          }
         }
         if (_self.selectTime !== 'ALL') {
-          _query['$$start'] =  timeMap[_self.selectTime]
+          _query['$$start'] = timeMap[_self.selectTime]
         }
         console.log('--==-', _query)
 
         _self.findMessages({
-            query: _query
-          }).then((res) => {
-            if(res.total==0){
-              _self.isTipsHG=true
-            }else{
-              _self.isTipsHG=false
+          query: _query
+        }).then((res) => {
+          if (res.total == 0) {
+            _self.isTipsHG = true
+          } else {
+            _self.isTipsHG = false
+          }
+          let _perct = Math.pow(10, 2) / res.total
+          _self.total = res.total - _self.message.length
+          console.log('-=-', _perct)
+          _self.progressBtn = _self.message.length * _perct
+          if (res.data.length == 0 && _self.message.length == 0) {
+            _self.tips = '＞﹏＜...空空如也.'
+            console.log('-=[sdf]')
+            _self.isFinished = false
+            if (_self.searchModel) {
+              console.log('-search--=1-')
+              _self.tips = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
             }
-            let _perct= Math.pow(10, 2)/res.total
-              _self.total = res.total- _self.message.length
-             console.log('-=-', _perct )
-             _self.progressBtn = _self.message.length * _perct
-            if (res.data.length == 0 &&  _self.message.length==0 ) {
-              _self.tips = '＞﹏＜...空空如也.'
-              console.log('-=[sdf]')
-              _self.isFinished = false
-              if (_self.searchModel) {
-                console.log('-search--=1-')
-                _self.tips = '很抱歉，没有找到与\"'+_self.searchModel  +'\"相关的数据.'
-              }
-              _self.progressBtn = 100
-            }else{
-              if(_self.total==0){
-                _self.tips = '没有更多数据了.'
-              }
+            _self.progressBtn = 100
+          } else {
+            if (_self.total == 0) {
+              _self.tips = '没有更多数据了.'
             }
-            if (res.data.length < _self.limit) {
-              _self.isFinished = false
-            }else{
-              _self.isFinished = true
-            }
-            _self.isLoading = false
-            done instanceof Function ?done():'';
-            console.log('-=res--', _self.tips, res.data)
-          })
-          .catch(error => {
-            this.isTipsHG=true
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-            this.isFinished = false
-             this.$store.state.tkt_count = 0
-            this.Islogined=error.code==401?true:false
-            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-            Toast.create.negative({
-              html: this.tips ,
-              timeout: 3000
-            })
-            done instanceof Function ?done():'';
-          })
+          }
+          if (res.data.length < _self.limit) {
+            _self.isFinished = false
+          } else {
+            _self.isFinished = true
+          }
+          _self.isLoading = false
+          done instanceof Function ? done() : '';
+          console.log('-=res--', _self.tips, res.data)
+        })
       },
       loadMore(done) {
         if (this.isLoading == false) {
@@ -344,23 +371,23 @@
       }),
       ...mapActions('tickets', {
         getTkt: 'get',
-      }), 
+      }),
       ...mapMutations('tickets', {
         clearCrt: 'clearCurrent'
       }),
-      notify () {
-         this.isCreated=false
-         this.isEdit=false
-         this.$refs.layoutModal.close();
-         this.clearCrt() 
+      notify() {
+        this.isCreated = false
+        this.isEdit = false
+        this.$refs.layoutModal.close();
+        this.clearCrt()
       },
       getDetail(id) {
         this.getTkt(id)
-         this.isEdit=true
+        this.isEdit = true
         this.$refs.layoutModal.open()
       },
       add() {
-         this.isCreated=true
+        this.isCreated = true
         this.$refs.layoutModal.open()
       },
       alert() {
@@ -373,14 +400,16 @@
     },
     destroyed: function () {
       this.tips = null
-      this.Islogined = false
+      this.loginUri = null
     },
   }
+
 </script>
 <style>
-.list-padding{
-  padding-top:0;
-}
+  .list-padding {
+    padding-top: 0;
+  }
+
   .list-btn {
     width: 100%;
   }
@@ -393,28 +422,33 @@
     white-space: nowrap;
     overflow: hidden;
   }
-  .list-filters{
-    position:relative;
-    z-index:9;
-    height:40px;
-    padding-top:10px;
-    background:white;
+
+  .list-filters {
+    position: relative;
+    z-index: 9;
+    height: 40px;
+    padding-top: 10px;
+    background: white;
   }
 
-  .q-picker-textfield .q-picker-textfield-value{
-    font-size:1rem;
-    height:auto;
+  .q-picker-textfield .q-picker-textfield-value {
+    font-size: 1rem;
+    height: auto;
   }
+
   .q-popover .item-container {
     height: 38px;
   }
-  .pop-list{
-    min-width: 120px; 
+
+  .pop-list {
+    min-width: 120px;
     max-height: 500px;
   }
-  .filter-padding{
-    padding:0 3px;
+
+  .filter-padding {
+    padding: 0 3px;
   }
+
   .list-time {
     position: absolute;
     top: 0;
@@ -426,26 +460,27 @@
     font-size: 10px;
     text-align: right;
   }
-  .load{
+
+  .load {
     border: 1px solid #dcdfde;
   }
-  .tips{
-    align-items:center;
+
+  .tips {
+    align-items: center;
   }
-  .pull-to-refresh-message{
+
+  .pull-to-refresh-message {
     color: black;
   }
-  .tips-height{
-    min-height:60vh;
-  }
-  .tips-min{
-    min-height:5vh;
-  }
+
+  .tips-height {
+    min-height: 60vh;
+  } 
   .fix-add {
     right: 18px;
-    justify-content:center;
+    justify-content: center;
     bottom: 18px;
-    z-index:9;
-  } 
+    z-index: 9;
+  }
 
 </style>

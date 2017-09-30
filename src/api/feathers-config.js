@@ -28,33 +28,18 @@ const feathersClient = feathers()
   }))
 
 feathersClient.service('/tickets')
-feathersClient.service('/devices').vuex({
-    state: {
-      _error: false
-    }
-  })
-  .hooks({
-    error(hook) {
-        let _err= hook.service.vuexOptions.module.state
-        _err._error=true
-      console.log('error --- hook ---', _err);
-    },
-    after(hook) {
-        let _err= 122
-        hook.service.vuexOptions.module.state._error=123
-      console.log('after---',store.state);
-    }
-  })
+feathersClient.service('/devices')
 
 feathersClient.service('/metadata')
 feathersClient.service('/feedback')
 
 feathersClient.hooks({
-  before(hook) {
-    // console.log('My custom before hook ran!');
+  after(hook) {
+     console.log('======hook=======>', hook)
+     // console.log( hook.error  );
   },
   error(hook) {
-    // console.log('======hook=======>', hook)
+    store.state[hook.path]._error = hook
   },
 })
 export default feathersClient
