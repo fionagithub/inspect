@@ -1,10 +1,7 @@
 <template>
     <div class="layout-view" >
-      <div class="row justify-center" v-if="tips">
-        <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
-      </div>
       <div class="layout-padding ">
+        <err v-if="getErrFlag"/>
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">系统:</div>
@@ -51,7 +48,7 @@
     mapGetters,
     mapState
   } from 'vuex'
-   import popover from '../layout/popover'
+  import popover from '../layout/popover'
  import {
     Toast
   } from 'quasar'
@@ -61,20 +58,20 @@
     data() {
       let _dt = {
         stateTime: moment().format(),
-        tips: null,
-        Islogined: false
       }
       return Object.assign(_dt, _new)
     },
     created() {
+      this.setError()
     },
     mounted(){
     },
     computed:{
       ...mapState(['systemItems','priorityMax', 'stateItems']),
-
+      ...mapGetters(['getErrFlag']),
     },
     methods: { 
+      ...mapMutations(['setError']),
       ...mapMutations('tickets', {
         clear: 'clearCurrent'
       }),
@@ -94,20 +91,6 @@
             this.$router.go(-1)
             // console.log('-=-=', res)
           })
-          .catch(error => {
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-            this.Islogined=error.code==401?true:false
-            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-            Toast.create.negative({
-              html: this.tips,
-              timeout: 3000
-            })
-          })
       }
     },
     plugins: ['vuelidate'],
@@ -115,6 +98,7 @@
       popover
     },
     destroyed: function () {
+      this.setError()
       this.clear() // 置空ticket-vuex      
       console.log("已销毁");
     },

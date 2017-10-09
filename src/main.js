@@ -14,9 +14,13 @@ import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import moment from 'moment'
+import err from './components/Error'
+Vue.component('err', err);
+
 import {
   mapActions,
-  mapState
+  mapMutations,
+ mapState
 } from 'vuex'
 moment.locale('zh-cn');
 
@@ -47,6 +51,8 @@ Quasar.start(() => {
       _error(error) {
         if(error){
          this.handleError(error)
+        }else{
+          this.setErr()
         }
       }, 
       payload(obj) {
@@ -57,15 +63,19 @@ Quasar.start(() => {
       }
     },
     methods: {
+      ...mapMutations(['setLogUri','setConfMenu','setErr', 'setErrTips','setErrFlag']),
       handleError(error) {
-      store.state.global_err_tips.isFlag=true
+        let uri, tips
+        this.setErrFlag(true)
         if (error.code == 401) {
-        store.state.global_err_tips.loginUri = '认证失败，请重新登录'
+          uri = '认证失败，请重新登录'
+         this.setLogUri(uri)
         } else {
-        store.state.global_err_tips.tips = '哦,服务崩溃，稍后再试'
+          tips = '哦,服务崩溃，稍后再试'
+          this.setErrTips(tips)
         }
         Toast.create.negative({
-          html:  store.state.global_err_tips.tips|| store.state.global_err_tips.loginUri,
+          html:  tips|| uri,
           timeout: 3000
         }) 
       },
@@ -74,7 +84,7 @@ Quasar.start(() => {
       }),
       getConf() {
         this.findStateItems().then(res => {
-          let _array, sum = {}
+          let _array, sum = {},obj={}
           for (var item in res) {
             let data = res[item]
             let _list = data['is']
@@ -84,20 +94,21 @@ Quasar.start(() => {
                 value: 'ALL',
                 label: '全部状态'
               }]
-              this.$store.state.stateItems = _list.concat(_array)
+              obj.stateItems = _list.concat(_array)
             }
             if (data['id'] == 'system') {
               _array = [{
                 value: 'ALL',
                 label: '全部系统'
               }]
-              this.$store.state._system = _list.concat(_array)
+              obj._system = _list.concat(_array)
             }
           }
           console.log('[-!!!--]', sum)
-          this.$store.state._state = sum.state
-          this.$store.state._priority = sum.priority
-          this.$store.state.systemItems = sum.system
+          obj._state = sum.state
+          obj._priority = sum.priority
+          obj.systemItems = sum.system
+          this.setConfMenu(obj)
         })
       },
       ...mapActions('auth', [

@@ -2,6 +2,7 @@
   
   <div class="layout-view" >
     <div class="layout-padding">
+      <err v-if="getErrFlag"/>
       <div v-if="tktDtl">
         <div class="card">
           <div class="card-content">
@@ -81,10 +82,6 @@
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
       </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
-      </div>
     </div>
   </div>
 </template>
@@ -105,12 +102,11 @@
         flag:false,
         btnFlag:true,
         state: '',
-        tips: null,
-        Islogined:false
      }
     },
     computed: {
-      ...mapGetters('tickets', {
+         ...mapGetters(['getErrFlag']),
+   ...mapGetters('tickets', {
         tktDtl: 'current',
       }), 
       ...mapState(['systemItems','_priority','priorityMax', '_state']),

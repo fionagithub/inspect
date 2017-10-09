@@ -30,9 +30,42 @@ let getters = {
   getErrTips(state) {
     return state.global_err_tips.tips
   },
+  getTktCut(state){
+    return state.add_count.tktCut
+  },
 }
 
-let mutations = {}
+let mutations = {
+  setErr(state){
+    state.global_err_tips = {
+      isFlag: false,
+      loginUri: null,
+      tips: null,
+    }
+  },
+  setError(state){
+    state._error = null
+  },
+  setErrFlag(state, flag) {
+    state.global_err_tips.isFlag = flag
+  },
+  setLogUri(state, uri) {
+    state.global_err_tips.loginUri = uri
+  },
+  setErrTips(state, tips) {
+    state.global_err_tips.tips = tips
+  },
+  setConfMenu(state, obj) {
+    for (let i in obj){
+      state[i]=obj[i]
+    }
+  },
+  setAddCount(state, obj){
+    for (let i in obj){
+      state.add_count[i]=obj[i]
+    }
+  }
+}
 
 export default new Vuex.Store({
   state,

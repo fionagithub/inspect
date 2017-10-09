@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="row justify-center error">
     <router-link to='/login' v-if='getLogUri'> {{getLogUri}} </router-link>
     <span v-else>  {{getErrTips}} </span>
   </div>
@@ -16,3 +16,8 @@
   }
 
 </script>
+<style>
+.error{
+  margin: 5px;
+}
+</style>

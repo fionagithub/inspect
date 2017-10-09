@@ -66,19 +66,6 @@
             Toast.create('提交成功.')
             this.$router.push({path:'/'})
           })
-          .catch(error => {
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-            let tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-            Toast.create.negative({
-              html: tips ,
-              timeout: 3000
-            })
-          })
       }
     },
     plugins: ['vuelidate'], 

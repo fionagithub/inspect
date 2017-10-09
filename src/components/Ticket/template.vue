@@ -28,8 +28,8 @@
       </div>
       <div class="layout-view">
         <div class="layout-padding list-padding">
-          <a class="animate-pop refresh-message" v-if="tktCut" @click='getNewMsg()'>
-          <span>+{{ tktCut }} </span>  
+          <a class="animate-pop refresh-message" v-if="getTktCut" @click='getNewMsg()'>
+          <span>+{{ getTktCut }} </span>  
         </a>
           <div class="row wrap justify-stretch content-center text-center list-filters ">
             <div class="auto">
@@ -66,7 +66,7 @@
                 :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
-                <tips v-if='getErrFlag'/>
+                <err v-if='getErrFlag'/>
               </div>
             </div>
           </q-pull-to-refresh>
@@ -85,7 +85,7 @@
             报障详情
           </q-toolbar-title>
         </div>
-        <tk-detail/>>
+        <tk-detail/>
       </q-layout>
       <q-layout v-if='isCreated'>
         <div slot="header" class="toolbar">
@@ -121,9 +121,7 @@
   import detail from './detail'
   import nnew from './new'
   import Vue from 'vue'
-  import tips from '../Error'
   Vue.component('new', nnew);
-  Vue.component('tips', tips);
   Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
     timeMap = {
@@ -138,6 +136,7 @@
       let _dt = {
         tipsMsg:null,
         pgmsg: '',
+        tktCut:0,
         isTipsHG: false,
         isFinished: true,
         _isKey: false,
@@ -158,15 +157,12 @@
     },
     name: 'list',
     computed: {
-      ...mapGetters(['getErrFlag']),
+      ...mapGetters(['getErrFlag', 'getTktCut']),
       ...mapGetters('tickets', {
         message: 'list',
       }),
       ...mapState('tickets', {
         tktCrt: 'copy',
-      }),
-      ...mapState({
-        tktCut:state => state.add_count.tktCut,
       }),
       ...mapState(['systemItems', '_system', 'tickets', 'stateItems']),
     },
@@ -174,8 +170,8 @@
       this.$nextTick(() => {
         this.getApi()
         feathers.service('tickets').on('created', res => {
-        this.$store.state.add_count.tktCut += 1
-          console.log('rrrr', this.$store.state.add_count.tkt, res)
+          this.tktCut += 1
+          this.setAddCount({tktCut: this.tktCut})
           this.filterTkt([res])
         });
         feathers.service('tickets').on('patched', res => {
@@ -245,8 +241,10 @@
       }
     },
     methods: {
+      ...mapMutations(['setAddCount']),
       setFilters(sus) {
-      this.$store.state.add_count.tktCut = 0
+        this.tktCut = 0
+        this.setAddCount({tktCut:0})
         this.clear()
         this.isFinished = false
         this.progressBtn = 0
@@ -296,7 +294,7 @@
         }
   
           console.log('--==-', _query)
-  _self.findMessages({
+      _self.findMessages({
           query: _query
         }).then((res) => {
           if (res.total == 0) {
@@ -404,7 +402,7 @@
     position: relative;
     z-index: 9;
     height: 40px;
-    padding-top: 10px;
+    padding-top: 5px;
     background: white;
   }
 
