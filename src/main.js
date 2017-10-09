@@ -26,25 +26,7 @@ Vue.use(Quasar) // Install Quasar Framework
 // setInterval authenticate
 window.feathers = feathersClient
 
-feathers.hooks({
-  error: {
-    all: [
-      function (hook) {
-        console.log('======hook=======>', hook)
-        errorHandle(hook.error)
-      }
-    ]
-  }
-})
-
-
-
-function errorHandle(err) {
-  console.log('=XXX=>', err)
-  if (err.code === 401) {
-    console.log('登录过期，重新登录？')
-  }
-}
+import {Toast} from 'quasar'
 
 Quasar.start(() => {
   /* eslint-disable no-new */
@@ -52,15 +34,21 @@ Quasar.start(() => {
     el: '#q-app',
     computed: {
       ...mapState('auth', ['payload']),
+      ...mapState(['_error']),
     },
     created() {
       let token = localStorage.getItem('feathers-jwt')
       if (token) {
-        console.log('---mmm--cc---')
+      //  console.log('---mmm--cc---')
         this.setAuth()
       }
     },
     watch: {
+      _error(error) {
+        if(error){
+         this.handleError(error)
+        }
+      }, 
       payload(obj) {
         if (obj) {
           this.getAuth()
@@ -69,6 +57,18 @@ Quasar.start(() => {
       }
     },
     methods: {
+      handleError(error) {
+      store.state.global_err_tips.isFlag=true
+        if (error.code == 401) {
+        store.state.global_err_tips.loginUri = '认证失败，请重新登录'
+        } else {
+        store.state.global_err_tips.tips = '哦,服务崩溃，稍后再试'
+        }
+        Toast.create.negative({
+          html:  store.state.global_err_tips.tips|| store.state.global_err_tips.loginUri,
+          timeout: 3000
+        }) 
+      },
       ...mapActions('metadata', {
         findStateItems: 'find',
       }),
@@ -110,7 +110,7 @@ Quasar.start(() => {
           console.log('ok--from main!!!!!',redirect);
               _self.$router.push(redirect)*/
         }).catch((error) => {
-          _self.$router.push('/login')
+        //  _self.$router.push('/login')
           console.log('Error--from main!!!!!', error);
         });
       },

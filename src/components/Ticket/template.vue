@@ -62,11 +62,11 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&total)||!loginUri" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+              <q-progress-button v-if="(isFinished&&total)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
                 :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
-              <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey'>
-                <router-link to='/login' v-if='loginUri'> {{loginUri}} </router-link>
-                <span v-else>  {{tips}} </span>
+              <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
+                <span v-if='tipsMsg'>  {{tipsMsg}} </span>
+                <tips v-if='getErrFlag'/>
               </div>
             </div>
           </q-pull-to-refresh>
@@ -116,11 +116,14 @@
     Toast
   }
   from 'quasar'
+  
   import popover from '../layout/popover'
   import detail from './detail'
   import nnew from './new'
   import Vue from 'vue'
+  import tips from '../Error'
   Vue.component('new', nnew);
+  Vue.component('tips', tips);
   Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
     timeMap = {
@@ -133,6 +136,7 @@
   export default {
     data() {
       let _dt = {
+        tipsMsg:null,
         pgmsg: '',
         isTipsHG: false,
         isFinished: true,
@@ -149,20 +153,20 @@
         selectTime: filtersStorage('selectTime') || 'NOW',
         prird: filtersStorage('prird') || false,
         selectSys: filtersStorage('system') || 'ALL',
-        loginUri: null,
       }
       return Object.assign(_dt, _list)
     },
     name: 'list',
     computed: {
+      ...mapGetters(['getErrFlag']),
       ...mapGetters('tickets', {
         message: 'list',
       }),
       ...mapState('tickets', {
         tktCrt: 'copy',
       }),
-      ...mapState('add_count', {
-        tktCut: 'tktCut',
+      ...mapState({
+        tktCut:state => state.add_count.tktCut,
       }),
       ...mapState(['systemItems', '_system', 'tickets', 'stateItems']),
     },
@@ -180,32 +184,6 @@
       })
     },
     watch: {
-      tickets(newVal) {
-        if ('_error' in newVal) {
-          let error = newVal._error
-          if (error.code == 401) {
-            this.loginUri = '认证失败，请重新登录'
-          } else {
-            this.tips = '哦,服务崩溃，稍后再试'
-          }
-          if ('id' in newVal) {} else {
-          this.$store.state.add_count.tktCut = 0
-          }
-          if(newVal.ids.length=0){
-             this.isTipsHG = true
-          }
-            Toast.create.negative({
-              html: this.tips|| this.loginUri ,
-              timeout: 3000
-            })
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-        }
-      },
       searchModel(cc, pp) {
         if (cc == '') {
           this.setFilters()
@@ -289,7 +267,7 @@
       getApi(done) {
         let _self = this
         _self.isLoading = true
-        _self.tips = null
+        _self.tipsMsg = null
         let _query = {
           $skip: _self.skip,
           $limit: _self.limit,
@@ -316,9 +294,9 @@
         if (_self.selectTime !== 'ALL') {
           _query['$$start'] = timeMap[_self.selectTime]
         }
-        console.log('--==-', _query)
-
-        _self.findMessages({
+  
+          console.log('--==-', _query)
+  _self.findMessages({
           query: _query
         }).then((res) => {
           if (res.total == 0) {
@@ -331,17 +309,17 @@
           console.log('-=-', _perct)
           _self.progressBtn = _self.message.length * _perct
           if (res.data.length == 0 && _self.message.length == 0) {
-            _self.tips = '＞﹏＜...空空如也.'
+            _self.tipsMsg = '＞﹏＜...空空如也.'
             console.log('-=[sdf]')
             _self.isFinished = false
             if (_self.searchModel) {
               console.log('-search--=1-')
-              _self.tips = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
+              _self.tipsMsg = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
             }
             _self.progressBtn = 100
           } else {
             if (_self.total == 0) {
-              _self.tips = '没有更多数据了.'
+              _self.tipsMsg = '没有更多数据了.'
             }
           }
           if (res.data.length < _self.limit) {
@@ -351,7 +329,7 @@
           }
           _self.isLoading = false
           done instanceof Function ? done() : '';
-          console.log('-=res--', _self.tips, res.data)
+          console.log('-=res--', _self.tipsMsg, res.data)
         })
       },
       loadMore(done) {
@@ -399,8 +377,7 @@
       },
     },
     destroyed: function () {
-      this.tips = null
-      this.loginUri = null
+      this.tipsMsg = null
     },
   }
 

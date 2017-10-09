@@ -51,6 +51,13 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if(store.state._error){
+    store.state._error=null
+     store.state.global_err_tips={
+    isFlag: false,
+        loginUri: null,
+        tips: null}
+  }
   if (to.matched.some(record => record.meta.requiresAuth)) {
     let token = localStorage.getItem('feathers-jwt')
      feathers.passport.verifyJWT(token).then(res=>{
