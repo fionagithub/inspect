@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 
-const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3033' : window.location.origin.replace(/:\/\/m\./g, '://api-beta.')
+const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3033' : ''
 const socket = io(API_HOST, {
   transports: ['websocket']
 })
@@ -30,8 +30,8 @@ const feathersClient = feathers()
 feathersClient.service('/tickets')
 feathersClient.service('/devices').vuex({
   state: {
-      _error: false
-    }
+    _error: false
+  }
 })
   .hooks({
     error (hook) {
