@@ -155,9 +155,8 @@
 
         </div>
       </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
+    <div class="row justify-center" style="margin-bottom: 50px;">
+        <err v-if="getErrFlag"/>
       </div>
     </div>
   </q-layout>
@@ -177,12 +176,14 @@
     name: "detail",
     data() {
       return {
-        tips: null,
-        Islogined:false,
-         tabNo:'tab-1'
+        tabNo:'tab-1'
       }
     },
     computed: {
+     ...mapGetters(['getGlbErr']),
+      getErrFlag(){
+        return this.getGlbErr.isFlag
+      },
       ...mapGetters('devices', {
         message: 'current',
       }),
@@ -218,20 +219,7 @@
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages(id).catch(err => {
-          let type = error.errorType
-          error = Object.assign({}, error)
-          error.message = (type === 'uniqueViolated') ?
-            'That is unavailable.' :
-            'An error prevented sign.'
-          console.log('-=:[]', error)
-          this.Islogined=error.code==401?true:false
-          this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-          Toast.create.negative({
-            html:this.tips ,
-            timeout: 3000
-          })
-        })
+        _self.findMessages(id)
       }
     },
     destroyed: function () {

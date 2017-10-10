@@ -13,8 +13,8 @@
     </div>
     <div class="layout-view">
       <div class="layout-padding">
-        <a class="animate-pop refresh-message" v-if="this.$store.state.add_count.dvCut" @click='setFilters()'>
-          <span>+{{ this.$store.state.add_count.dvCut }} </span>  
+        <a class="animate-pop refresh-message" v-if="getDvCut" @click='setFilters()'>
+          <span>+{{ getDvCut }} </span>  
         </a>
         <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
@@ -32,11 +32,11 @@
             </div>
           </div>
           <div class="row justify-center " style="margin: 5px 0;">
-            <q-progress-button v-if="isFinished&&total" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+            <q-progress-button v-if="(isFinished&&total)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
               :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
-            <div :class="isTipsHG? 'tips-height':''" class='row justify-center tips text-grey' v-if='tips'>
-              <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-              <span v-else>  {{tips}} </span>
+            <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
+              <span v-if='tips'> {{tips}} </span> 
+              <err v-if='getErrFlag'/>
             </div>
           </div>
         </q-pull-to-refresh>
@@ -68,6 +68,7 @@
     name: 'device',
     data() {
       let _dt = {
+        dvCut:0,
         isFinished: true,
         isTipsHG: false,
         pgmsg: '',
@@ -77,26 +78,22 @@
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
-        Islogined: false
-
       }
       return Object.assign(_dt, _list)
     },
     computed: {
+      ...mapGetters(['getGlbErr','getCtCut']),
+      getErrFlag(){
+        return this.getGlbErr.isFlag
+      }, 
+      getDvCut(){
+        return this.getCtCut.dvCut
+      },
       ...mapGetters('devices', {
         message: 'list',
       }),
-      ...mapState('add_count', {
-        dvCut: 'dvCut',
-      }),
-      ...mapState(['_version']),
-
     },
     created() {
-      feathers.service('devices').on('patched', res => {
-        console.log('--!!!!!!!!!!==', res)
-        this.ptdDV(res)
-      })
     },
     watch: {
       searchModel(c, o) {
@@ -110,9 +107,13 @@
     mounted() {
       this.getApi() //请求初始数据 
       this.$nextTick(() => {
+        feathers.service('devices').on('patched', res => {
+          console.log('--!!!!!!!!!!==', res)
+          this.ptdDV(res)
+        })
         feathers.service('devices').on('created', res => {
-          this.$store.state.this.$store.state.add_count.dvCut += 1
-          console.log('rrrr', this.$store.state.this.$store.state.add_count.dvCut, res)
+          this.dvCut += 1       
+          this.setAddCount({dvCut: this.dvCut})
           this.filterDV([res])
         });
       })
@@ -195,27 +196,10 @@
             done instanceof Function ? done() : '';
             console.log('-=res--', _self.tips, res.data)
           })
-          .catch(error => {
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-            this.isFinished = false
-            this.$store.state.this.$store.state.add_count.dvCut = 0
-            this.Islogined = error.code == 401 ? true : false
-            done instanceof Function ? done() : '';
-            this.tips = error.code == 401 ? '认证失败，请重新登录' : '哦,服务崩溃，稍后再试'
-            Toast.create.negative({
-              html: '服务崩溃，稍后再试',
-              timeout: 3000
-            })
-          })
       },
       setFilters(sus) {
-        this.$store.state.this.$store.state.add_count.dvCut = 0
-        console.log(this)
+        this.dvCut = 0
+        this.setAddCount({dvCut:0})
         this.clear()
         this.isFinished = false
         this.progressBtn = 0
@@ -236,7 +220,6 @@
     },
     destroyed: function () {
       this.tips = null
-      this.Islogined = false
     },
   }
 

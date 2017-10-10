@@ -113,7 +113,6 @@
       } else {
         this.setCut(this.tktCut)
       }
-      console.log('[=]', this)
       if(this.$route.query){
         this.$router.push({path:'/',query:{}})
       }

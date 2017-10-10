@@ -105,7 +105,10 @@
      }
     },
     computed: {
-         ...mapGetters(['getErrFlag']),
+     ...mapGetters(['getGlbErr']),
+      getErrFlag(){
+        return this.getGlbErr.isFlag
+      },
    ...mapGetters('tickets', {
         tktDtl: 'current',
       }), 

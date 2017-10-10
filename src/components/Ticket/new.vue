@@ -68,7 +68,10 @@
     },
     computed:{
       ...mapState(['systemItems','priorityMax', 'stateItems']),
-      ...mapGetters(['getErrFlag']),
+      ...mapGetters(['getGlbErr']),
+      getErrFlag(){
+        return this.getGlbErr.isFlag
+      },
     },
     methods: { 
       ...mapMutations(['setError']),

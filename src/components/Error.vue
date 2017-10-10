@@ -11,7 +11,13 @@
   } from 'vuex'
   export default {
     computed: {
-      ...mapGetters(['getLogUri', 'getErrTips']),
+     ...mapGetters(['getGlbErr']),
+      getLogUri(){
+        return this.getGlbErr.loginUri
+      },
+       getErrTips(){
+        return this.getGlbErr.tips
+      },
     },
   }
 

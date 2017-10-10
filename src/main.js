@@ -41,11 +41,7 @@ Quasar.start(() => {
       ...mapState(['_error']),
     },
     created() {
-      let token = localStorage.getItem('feathers-jwt')
-      if (token) {
-      //  console.log('---mmm--cc---')
-        this.setAuth()
-      }
+      this.setAuth()
     },
     watch: {
       _error(error) {
@@ -63,17 +59,17 @@ Quasar.start(() => {
       }
     },
     methods: {
-      ...mapMutations(['setLogUri','setConfMenu','setErr', 'setErrTips','setErrFlag']),
-      handleError(error) {
-        let uri, tips
-        this.setErrFlag(true)
-        if (error.code == 401) {
-          uri = '认证失败，请重新登录'
-         this.setLogUri(uri)
-        } else {
-          tips = '哦,服务崩溃，稍后再试'
-          this.setErrTips(tips)
+      ...mapMutations(['setConfMenu','setErr', 'getGlbErr']),
+      handleError(obj) {
+        let uri, tips, err={
+         isFlag: true
         }
+        if (obj.error.code == 401) {
+        uri= err.loginUri = '认证失败，请重新登录'
+        } else {
+        tips =  err.tips = '哦,服务出错，稍后再试'
+        }
+        this.getGlbErr(err)
         Toast.create.negative({
           html:  tips|| uri,
           timeout: 3000
@@ -114,15 +110,11 @@ Quasar.start(() => {
       ...mapActions('auth', [
         'authenticate'
       ]),
-      setAuth() {
+      setAuth(obj) {
         let _self = this
         _self.authenticate().then((response) => {
-          /*  let redirect = decodeURIComponent(_self.$route.query.redirect || '/');
-          console.log('ok--from main!!!!!',redirect);
-              _self.$router.push(redirect)*/
         }).catch((error) => {
         //  _self.$router.push('/login')
-          console.log('Error--from main!!!!!', error);
         });
       },
       getAuth() {

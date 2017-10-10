@@ -157,7 +157,10 @@
     },
     name: 'list',
     computed: {
-      ...mapGetters(['getErrFlag', 'getTktCut']),
+      ...mapGetters(['getGlbErr', 'getCtCut']),
+      getErrFlag(){
+        return this.getGlbErr.isFlag
+      },
       ...mapGetters('tickets', {
         message: 'list',
       }),
@@ -165,6 +168,9 @@
         tktCrt: 'copy',
       }),
       ...mapState(['systemItems', '_system', 'tickets', 'stateItems']),
+      getTktCut(){
+        return this.getCtCut.tktCut
+      }
     },
     mounted() {
       this.$nextTick(() => {

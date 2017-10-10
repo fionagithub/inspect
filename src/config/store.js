@@ -21,17 +21,11 @@ let state = {
   _system: []
 }
 let getters = {
-  getErrFlag(state) {
-    return state.global_err_tips.isFlag
+  getGlbErr(state) {
+    return state.global_err_tips
   },
-  getLogUri(state) {
-    return state.global_err_tips.loginUri
-  },
-  getErrTips(state) {
-    return state.global_err_tips.tips
-  },
-  getTktCut(state){
-    return state.add_count.tktCut
+  getCtCut(state){
+    return state.add_count
   },
 }
 
@@ -46,14 +40,10 @@ let mutations = {
   setError(state){
     state._error = null
   },
-  setErrFlag(state, flag) {
-    state.global_err_tips.isFlag = flag
-  },
-  setLogUri(state, uri) {
-    state.global_err_tips.loginUri = uri
-  },
-  setErrTips(state, tips) {
-    state.global_err_tips.tips = tips
+  getGlbErr(state, obj) {
+    for (let i in obj){
+        state.global_err_tips[i]=obj[i]
+    }
   },
   setConfMenu(state, obj) {
     for (let i in obj){
