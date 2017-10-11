@@ -172,12 +172,12 @@
     mounted() {
       this.$nextTick(() => {
         this.getApi()
-        feathers.service('tickets').on('created', res => {
+        Win_tickets_.on('created', res => {
           this.tktCut += 1
           this.setAddCount({tktCut: this.tktCut})
           this.filterTkt([res])
         });
-        feathers.service('tickets').on('patched', res => {
+        Win_tickets_.on('patched', res => {
           console.log('--!!!!!patched!!!!!==', res)
         })
       })

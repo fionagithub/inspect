@@ -107,11 +107,11 @@
     mounted() {
       this.getApi() //请求初始数据 
       this.$nextTick(() => {
-        feathers.service('devices').on('patched', res => {
+        Win_devices_.on('patched', res => {
           console.log('--!!!!!!!!!!==', res)
           this.ptdDV(res)
         })
-        feathers.service('devices').on('created', res => {
+        Win_devices_.on('created', res => {
           this.dvCut += 1       
           this.setAddCount({dvCut: this.dvCut})
           this.filterDV([res])
