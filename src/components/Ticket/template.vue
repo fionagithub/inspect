@@ -139,9 +139,7 @@
         tktCut:0,
         isTipsHG: false,
         isFinished: true,
-        _isKey: false,
         total: null,
-        isDone: false,
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
@@ -260,7 +258,6 @@
         this.setFilters()
       },
       searchKey() {
-        //  this._isKey=true
         this.setFilters()
       },
       getMore() {
@@ -299,7 +296,7 @@
         }
   
           console.log('--==-', _query)
-      _self.findMessages({
+        _self.findMessages({
           query: _query
         }).then((res) => {
           if (res.total == 0) {
@@ -307,7 +304,7 @@
           } else {
             _self.isTipsHG = false
           }
-          let _perct = Math.pow(10, 2) / res.total
+          let _perct = Math.ceil(Math.pow(10, 2) / res.total)
           _self.total = res.total - _self.message.length
           console.log('-=-', _perct)
           _self.progressBtn = _self.message.length * _perct
