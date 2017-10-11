@@ -1,17 +1,17 @@
 <template>
     <div class="layout-view" >
       <div class="layout-padding ">
-        <err v-if="getErrFlag"/>
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">系统:</div>
-            <q-select class="full-width" type="list" v-model="system" :options="systemItems"></q-select>
+            <q-select class="full-width" type="list" v-model="systemSlt" :options="getConfMenu.system"></q-select>
           </div>
         </div>
         <div class="item">
           <div class="item-content row items-center wrap">
             <div class="item-label">优先级:</div>
-            <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
+            <q-rating class="orange n-rating " v-model="pty" :max="priorityMax"></q-rating>
+            <span class="n-tx"> {{pty|tran(getConfMenu.priority) }} </span>
           </div>
         </div>
         <div class="item multiple-lines">
@@ -29,7 +29,8 @@
         </div>
       <!--  <pre>$v: {{ $v.description }}</pre>-->
         <div class="add-btn">
-          <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+         <!--  <pre>{{flag }}  $v: {{ $v.$dirty==$v.$invalid==false }}</pre>-->
+          <button class="teal full-width" @click="add()" :disabled="flag==true||$v.$dirty==$v.$invalid==false">提交</button>
         </div>
       </div>
     </div>
@@ -57,6 +58,7 @@
     name: "new",
     data() {
       let _dt = {
+        flag:false,
         stateTime: moment().format(),
       }
       return Object.assign(_dt, _new)
@@ -67,8 +69,8 @@
     mounted(){
     },
     computed:{
-      ...mapState(['systemItems','priorityMax', 'stateItems']),
-      ...mapGetters(['getGlbErr']),
+      ...mapState(['priorityMax']),
+      ...mapGetters(['getConfMenu','getGlbErr']),
       getErrFlag(){
         return this.getGlbErr.isFlag
       },
@@ -82,14 +84,16 @@
         createMessages: 'create',
       }),
       add() {
+        this.flag=true
         let data = {
-          "priority": parseInt(this.priority),
-          "system": this.system,
+          "priority": parseInt(this.pty),
+          "system": this.systemSlt,
           "reportTime": this.stateTime,
           "description": this.description,
         }
         this.createMessages(data)
           .then(res => {
+            this.flag=false
             Toast.create('提交成功.')
             this.$router.go(-1)
             // console.log('-=-=', res)
@@ -118,9 +122,11 @@
   .add-btn {
     margin-top: 50px;
   }
-
   .new-desc {
     height: 80px;
   }
-
+  .n-tx{
+    flex: 1;
+    text-align: right;
+  }
 </style>

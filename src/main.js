@@ -72,7 +72,7 @@ Quasar.start(() => {
         this.getGlbErr(err)
         Toast.create.negative({
           html:  tips|| uri,
-          timeout: 3000
+          timeout: 5000
         }) 
       },
       ...mapActions('metadata', {
@@ -80,7 +80,7 @@ Quasar.start(() => {
       }),
       getConf() {
         this.findStateItems().then(res => {
-          let _array, sum = {},obj={}
+          let _array, sum = {}
           for (var item in res) {
             let data = res[item]
             let _list = data['is']
@@ -90,21 +90,18 @@ Quasar.start(() => {
                 value: 'ALL',
                 label: '全部状态'
               }]
-              obj.stateItems = _list.concat(_array)
+              sum._state_ = _list.concat(_array)
             }
             if (data['id'] == 'system') {
               _array = [{
                 value: 'ALL',
                 label: '全部系统'
               }]
-              obj._system = _list.concat(_array)
+              sum._system_ = _list.concat(_array)
             }
           }
           console.log('[-!!!--]', sum)
-          obj._state = sum.state
-          obj._priority = sum.priority
-          obj.systemItems = sum.system
-          this.setConfMenu(obj)
+          this.setConfMenu(sum)
         })
       },
       ...mapActions('auth', [

@@ -9,7 +9,7 @@ export const _list = {
 }
 export const _new = {
   description: "",
-  system: '弱电',
+  systemSlt: '弱电',
   priority: 1,
   priorityMax: 3,
   clrLabel: '清空',

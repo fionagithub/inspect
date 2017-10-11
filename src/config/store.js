@@ -14,11 +14,14 @@ let state = {
     tips: null,
   },
   priorityMax: 3,
-  stateItems: [],
-  systemItems: [],
-  _priority: [],
-  _state: [],
-  _system: []
+  confMenu:{
+    source: [],
+    system: [],
+    _system_: [],
+    priority: [],
+    state: [],
+    _state_: [],
+  }
 }
 let getters = {
   getGlbErr(state) {
@@ -26,6 +29,9 @@ let getters = {
   },
   getCtCut(state){
     return state.add_count
+  },
+  getConfMenu(state){
+    return state.confMenu
   },
 }
 
@@ -41,17 +47,17 @@ let mutations = {
     state._error = null
   },
   getGlbErr(state, obj) {
-    for (let i in obj){
+    for (let i in state.global_err_tips){
         state.global_err_tips[i]=obj[i]
     }
   },
   setConfMenu(state, obj) {
-    for (let i in obj){
-      state[i]=obj[i]
+    for (let i in state.confMenu){
+      state.confMenu[i]=obj[i]
     }
   },
   setAddCount(state, obj){
-    for (let i in obj){
+    for (let i in state.add_count){
       state.add_count[i]=obj[i]
     }
   }

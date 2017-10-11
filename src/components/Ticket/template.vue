@@ -33,10 +33,10 @@
         </a>
           <div class="row wrap justify-stretch content-center text-center list-filters ">
             <div class="auto">
-              <q-select class=" list-btn" type="list" v-model="selectSys" :options="_system"></q-select>
+              <q-select class=" list-btn" type="list" v-model="selectSys" :options="getConfMenu._system_"></q-select>
             </div>
             <div class="auto filter-padding">
-              <q-select class=" list-btn" type="list" v-model="selectType" :options="stateItems"></q-select>
+              <q-select class=" list-btn" type="list" v-model="selectType" :options="getConfMenu._state_"></q-select>
             </div>
             <div class="auto ">
               <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
@@ -48,7 +48,7 @@
                 <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
                 <div class="item-content has-secondary list-content ">
                   <div>
-                    {{item.system|tran(systemItems)}} ({{ item.state[0].name|tran(stateItems) }})
+                    {{item.system|tran(getConfMenu.system)}} ({{ item.state[0].name|tran(getConfMenu._state_) }})
                   </div>
                   <div class="list-desc">
                     {{item.description}}
@@ -157,7 +157,7 @@
     },
     name: 'list',
     computed: {
-      ...mapGetters(['getGlbErr', 'getCtCut']),
+      ...mapGetters(['getGlbErr','getConfMenu', 'getCtCut']),
       getErrFlag(){
         return this.getGlbErr.isFlag
       },
@@ -167,7 +167,6 @@
       ...mapState('tickets', {
         tktCrt: 'copy',
       }),
-      ...mapState(['systemItems', '_system', 'tickets', 'stateItems']),
       getTktCut(){
         return this.getCtCut.tktCut
       }

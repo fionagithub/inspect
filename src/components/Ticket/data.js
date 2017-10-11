@@ -21,8 +21,8 @@
  }
  export const _new = {
    description: "",
-   system: '100',
-   priority: 1,
+   systemSlt: '100',
+   pty: 1,
    clrLabel: '清空',
    cclLabel: '取消',
    okLabel: '设置',
