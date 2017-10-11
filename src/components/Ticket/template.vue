@@ -298,7 +298,7 @@
         }).then((res) => {
           _self.total = res.total
           _self.isTipsHG = res.total ? false : true
-          let _perct = Math.ceil(Math.pow(10, 2) / res.total)
+          let _perct = Math.floor(Math.pow(10, 2) / res.total)
           let msg = _self.message.length
           _self.progressBtn = msg * _perct
           if (res.data.length == 0 && msg == 0) {
