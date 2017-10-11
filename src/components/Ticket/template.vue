@@ -28,8 +28,8 @@
       </div>
       <div class="layout-view">
         <div class="layout-padding list-padding">
-          <a class="animate-pop refresh-message" v-if="getTktCut" @click='getNewMsg()'>
-          <span>+{{ getTktCut }} </span>  
+          <a class="animate-pop refresh-message" v-if="getCtCut.tktCut" @click='getNewMsg()'>
+          <span>+{{ getCtCut.tktCut }} </span>  
         </a>
           <div class="row wrap justify-stretch content-center text-center list-filters ">
             <div class="auto">
@@ -62,11 +62,11 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&surplus)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
                 :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
-                <err v-if='getErrFlag' />
+                <err v-if='getGlbErr.isFlag' />
               </div>
             </div>
           </q-pull-to-refresh>
@@ -181,9 +181,6 @@
     name: 'list',
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu', 'getCtCut']),
-      getErrFlag() {
-        return this.getGlbErr.isFlag
-      },
       surplus() {
         return this.total - this.message.length
       },
@@ -192,10 +189,7 @@
       }),
       ...mapState('tickets', {
         tktCrt: 'copy',
-      }),
-      getTktCut() {
-        return this.getCtCut.tktCut
-      }
+      })
     },
     mounted() {
       this.$nextTick(() => {

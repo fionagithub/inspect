@@ -70,10 +70,7 @@
     },
     computed:{
       ...mapState(['priorityMax']),
-      ...mapGetters(['getConfMenu','getGlbErr']),
-      getErrFlag(){
-        return this.getGlbErr.isFlag
-      },
+      ...mapGetters(['getConfMenu']),
     },
     methods: { 
       ...mapMutations(['setError']),
