@@ -1,23 +1,9 @@
- let _time = [{
-     value: 'NOW',
-     label: '今天'
-   }, {
-     value: 'WEEK',
-     label: '最近七天'
-   }, {
-     value: 'MONTH',
-     label: '最近一个月'
-   }, {
-     value: 'ALL',
-     label: '全部时间'
-   }]
+
  export const _list = {
    tips: null,
    isLoading: true,
-   searchModel: '',
    limit: 10,
    skip: 0,
-   items_time: _time,
  }
  export const _new = {
    description: "",

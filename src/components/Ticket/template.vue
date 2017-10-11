@@ -15,7 +15,7 @@
               <div class="item">
                 <div class="item-content"  >
                 <label>
-                   按优先级排序 <q-toggle v-model="prird"></q-toggle>
+                   按优先级排序 <q-toggle v-model="search_dtl.prird"></q-toggle>
                 </label>
                 </div>
               </div>
@@ -24,7 +24,7 @@
         </button>
       </div>
       <div slot="header" class="toolbar">
-        <q-search class="full-width" v-model="searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
+        <q-search class="full-width" v-model=" w_search_dtl.searchModel   " @enter='searchKey()' placeholder="搜索..."></q-search>
       </div>
       <div class="layout-view">
         <div class="layout-padding list-padding">
@@ -33,13 +33,13 @@
         </a>
           <div class="row wrap justify-stretch content-center text-center list-filters ">
             <div class="auto">
-              <q-select class=" list-btn" type="list" v-model="selectSys" :options="getConfMenu._system_"></q-select>
+              <q-select class=" list-btn" type="list" v-model="search_dtl.selectSys" :options="getConfMenu._system_"></q-select>
             </div>
             <div class="auto filter-padding">
-              <q-select class=" list-btn" type="list" v-model="selectType" :options="getConfMenu._state_"></q-select>
+              <q-select class=" list-btn" type="list" v-model="search_dtl.selectType" :options="getConfMenu._state_"></q-select>
             </div>
             <div class="auto ">
-              <q-select class=" list-btn" type="list" v-model="selectTime" :options="items_time"></q-select>
+              <q-select class=" list-btn" type="list" v-model="search_dtl.selectTime" :options="items_time"></q-select>
             </div>
           </div>
           <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
@@ -62,11 +62,11 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&total)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
-                :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
+              <q-progress-button v-if="(isFinished&&surplus)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
+                :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
-                <err v-if='getErrFlag'/>
+                <err v-if='getErrFlag' />
               </div>
             </div>
           </q-pull-to-refresh>
@@ -116,7 +116,7 @@
     Toast
   }
   from 'quasar'
-  
+
   import popover from '../layout/popover'
   import detail from './detail'
   import nnew from './new'
@@ -129,35 +129,63 @@
       WEEK: _moment.subtract(7, 'days').toISOString(),
       MONTH: _moment.subtract(1, 'months').toISOString(),
     };
+  let _time = [{
+    value: timeMap['NOW'],
+    label: '今天'
+  }, {
+    value: timeMap['WEEK'],
+    label: '最近七天'
+  }, {
+    value: timeMap['MONTH'],
+    label: '最近一个月'
+  }, {
+    value: 'ALL',
+    label: '全部时间'
+  }]
   import filtersStorage from '../conf/storage'
-
   export default {
     data() {
       let _dt = {
-        tipsMsg:null,
+        items_time: _time,
+        tipsMsg: null,
         pgmsg: '',
-        tktCut:0,
+        tktCut: 0,
         isTipsHG: false,
         isFinished: true,
-        total: null,
+        total: 0,
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
         progressBtn: 0,
         isCreated: false,
         isEdit: false,
-        selectType: filtersStorage('selectType') || '0',
-        selectTime: filtersStorage('selectTime') || 'NOW',
-        prird: filtersStorage('prird') || false,
-        selectSys: filtersStorage('system') || 'ALL',
+        search_dtl: {
+          selectType: filtersStorage('selectType') || '0',
+          selectTime: filtersStorage('selectTime') || timeMap['NOW'],
+          prird: filtersStorage('prird') || false,
+          selectSys: filtersStorage('system') || 'ALL',
+        },
+        w_search_dtl: {
+          searchModel: '',
+        },
+        mapFld: {
+          system: 'selectSys',
+          state: 'selectType',
+          $search: 'searchModel',
+          $$start: 'selectTime',
+        },
+        selectFld: ['reportTime', 'system', 'state', 'priority', 'description', 'id'],
       }
       return Object.assign(_dt, _list)
     },
     name: 'list',
     computed: {
-      ...mapGetters(['getGlbErr','getConfMenu', 'getCtCut']),
-      getErrFlag(){
+      ...mapGetters(['getGlbErr', 'getConfMenu', 'getCtCut']),
+      getErrFlag() {
         return this.getGlbErr.isFlag
+      },
+      surplus() {
+        return this.total - this.message.length
       },
       ...mapGetters('tickets', {
         message: 'list',
@@ -165,7 +193,7 @@
       ...mapState('tickets', {
         tktCrt: 'copy',
       }),
-      getTktCut(){
+      getTktCut() {
         return this.getCtCut.tktCut
       }
     },
@@ -174,48 +202,15 @@
         this.getApi()
         Win_tickets_.on('created', res => {
           this.tktCut += 1
-          this.setAddCount({tktCut: this.tktCut})
+          this.setAddCount({
+            tktCut: this.tktCut
+          })
           this.filterTkt([res])
         });
         Win_tickets_.on('patched', res => {
           console.log('--!!!!!patched!!!!!==', res)
         })
       })
-    },
-    watch: {
-      searchModel(cc, pp) {
-        if (cc == '') {
-          this.setFilters()
-        }
-      },
-      selectSys(c, p) {
-        filtersStorage({
-          key: "system",
-          value: c
-        }, "save")
-        this.setFilters()
-      },
-      selectType(c, p) {
-        filtersStorage({
-          key: "selectType",
-          value: c
-        }, "save")
-        this.setFilters()
-      },
-      selectTime(c, p) {
-        filtersStorage({
-          key: "selectTime",
-          value: c
-        }, "save")
-        this.setFilters()
-      },
-      prird(c, p) {
-        filtersStorage({
-          key: "prird",
-          value: c
-        }, "save")
-        this.setFilters()
-      },
     },
     components: {
       popover,
@@ -243,11 +238,29 @@
         }
       }
     },
+    watch: {
+      search_dtl: {
+        handler: function (val, oldVal) {
+          let self = this
+          for (let _key in val) {
+            let _storage = {
+              key: _key,
+              value: val[_key]
+            }
+            filtersStorage(_storage, "save")
+          }
+          self.setFilters()
+        },
+        deep: true
+      },
+    },
     methods: {
       ...mapMutations(['setAddCount']),
       setFilters(sus) {
         this.tktCut = 0
-        this.setAddCount({tktCut:0})
+        this.setAddCount({
+          tktCut: 0
+        })
         this.clear()
         this.isFinished = false
         this.progressBtn = 0
@@ -268,68 +281,49 @@
         let _self = this
         _self.isLoading = true
         _self.tipsMsg = null
+        let _sort = {},
+          _sortFld = _self.search_dtl.prird ? 'priority' : 'reportTime'
+        _sort[_sortFld] = -1
         let _query = {
+          $sort: _sort,
           $skip: _self.skip,
           $limit: _self.limit,
-          $select: ['reportTime', 'system', 'state', 'priority', 'description', 'id']
+          $select: _self.selectFld
         }
-        if (_self.searchModel !== '') {
-          _query['$search'] = _self.searchModel
-        }
-        if (_self.selectType !== 'ALL') {
-          _query['state'] = _self.selectType
-        }
-        if (_self.selectSys !== 'ALL') {
-          _query['system'] = _self.selectSys
-        }
-        if (_self.prird) {
-          _query['$sort'] = {
-            priority: -1
-          }
-        } else {
-          _query['$sort'] = {
-            reportTime: -1
+        let _searchFld = Object.assign(_self.search_dtl, _self.w_search_dtl)
+        for (let key in _self.mapFld) {
+          let val = _self.mapFld[key]
+          let _search = _searchFld[val]
+          if (_search !== 'ALL' && _search) {
+            _query[key] = _search
           }
         }
-        if (_self.selectTime !== 'ALL') {
-          _query['$$start'] = timeMap[_self.selectTime]
-        }
-  
-          console.log('--==-', _query)
+        console.log('--=qqq=-', _query)
         _self.findMessages({
           query: _query
         }).then((res) => {
-          if (res.total == 0) {
-            _self.isTipsHG = true
-          } else {
-            _self.isTipsHG = false
-          }
+          _self.total = res.total
+          _self.isTipsHG = res.total ? false : true
           let _perct = Math.ceil(Math.pow(10, 2) / res.total)
-          _self.total = res.total - _self.message.length
-          console.log('-=-', _perct)
-          _self.progressBtn = _self.message.length * _perct
-          if (res.data.length == 0 && _self.message.length == 0) {
-            _self.tipsMsg = '＞﹏＜...空空如也.'
-            console.log('-=[sdf]')
+          let msg = _self.message.length
+          _self.progressBtn = msg * _perct
+          if (res.data.length == 0 && msg == 0) {
+            let _model = _self.w_search_dtl.searchModel
             _self.isFinished = false
-            if (_self.searchModel) {
-              console.log('-search--=1-')
-              _self.tipsMsg = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
-            }
             _self.progressBtn = 100
+            // console.log('-=[sdf]')
+            let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
+            let n_tips = '＞﹏＜...空空如也.'
+            _self.tipsMsg = _model ? s_tips : n_tips
           } else {
-            if (_self.total == 0) {
-              _self.tipsMsg = '没有更多数据了.'
-            }
+            if(_self.surplus==0){
+               _self.tipsMsg = '没有更多数据了.'
+            } 
           }
-          if (res.data.length < _self.limit) {
-            _self.isFinished = false
-          } else {
-            _self.isFinished = true
-          }
+          _self.isFinished = res.data.length < _self.limit ? false : true
           _self.isLoading = false
           done instanceof Function ? done() : '';
-          console.log('-=res--', _self.tipsMsg, res.data)
+          // console.log('-=res--', _self.tipsMsg, res.data)
         })
       },
       loadMore(done) {
@@ -452,7 +446,8 @@
 
   .tips-height {
     min-height: 60vh;
-  } 
+  }
+
   .fix-add {
     right: 18px;
     justify-content: center;
