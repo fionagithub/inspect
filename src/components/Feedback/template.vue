@@ -19,7 +19,9 @@
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
         <div class="add-btn">
-          <button class="teal full-width" @click="add()" :disabled="unAddBtn">提交</button>
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="add()" indeterminate class="teal full-width">
+            提交
+          </q-progress-button>
         </div>
       </div>
     </div>
@@ -44,6 +46,7 @@
     data() {
       return {
         flag: false,
+        progressBtn:0,
         description: '',
       }
     },
@@ -59,6 +62,7 @@
             _disabled= this.description.length<4 ?true:false
           }
         } else {
+           this.progressBtn=0
             _disabled= this.description.length<4 ?true:false
         }
         return _disabled
@@ -74,6 +78,7 @@
         })
       },
       add() {
+        this.progressBtn=1
         this.flag = true
         // console.log(this.user)
         let data = {
@@ -85,6 +90,7 @@
         this.createMessages(data)
           .then(res => {
             this.flag = false
+            this.progressBtn=0
             Toast.create('提交成功.')
             this.$router.push({
               path: '/'

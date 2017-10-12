@@ -30,7 +30,9 @@
       <!--  <pre>$v: {{ $v.description }}</pre>-->
         <div class="add-btn">
           <!--<pre>{{flag }} {{ description.length==4}}</pre>-->
-          <button class="teal full-width" @click="add()" :disabled="unAddBtn">提交</button>
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="add()" indeterminate class="teal full-width">
+            提交
+          </q-progress-button>
         </div>
       </div>
     </div>
@@ -59,6 +61,7 @@
     data() {
       let _dt = {
         flag:false,
+        progressBtn:0,
         stateTime: moment().format(),
       }
       return Object.assign(_dt, _new)
@@ -80,6 +83,7 @@
             _disabled= this.description.length<4 ?true:false
           }
         }else{
+            this.progressBtn=0
             _disabled=this.description.length<4? true :false
         }
         return _disabled
@@ -95,6 +99,7 @@
       }),
       add() {
         this.flag=true
+        this.progressBtn=1
         let data = {
           "priority": parseInt(this.pty),
           "system": this.systemSlt,
@@ -104,6 +109,7 @@
         this.createMessages(data)
           .then(res => {
             this.flag=false
+            this.progressBtn=1
             Toast.create('提交成功.')
             this.$router.go(-1)
             // console.log('-=-=', res)

@@ -50,7 +50,9 @@
             </div>
           </div>
           <!--<pre>{{flag }} {{ status.length==0}}</pre>-->
-          <button class="d-add-btn teal full-width" :disabled="unAddBtn" @click="updateDB(tktDtl.id)">提交</button>
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="updateDB(tktDtl.id)" indeterminate class="d-add-btn teal full-width">
+            提交
+          </q-progress-button>
           <p class="caption">处理记录:</p>
           <div class="timeline">
             <div class="timeline-item" v-for="n in tktDtl.state">
@@ -98,6 +100,7 @@
     name: "detail",
     data() {
       return {
+        progressBtn: 0,
         stateDesc: '',
         flag: false,
         status: '',
@@ -114,16 +117,17 @@
           return parseInt(this.tktDtl.priority)
         }
       },
-      unAddBtn(){
+      unAddBtn() {
         let _disabled
-        if (this.getGlbErr.isFlag==false){
-          if(this.flag==true){
-            _disabled= true
-          }else{
-            _disabled= this.status.length==0? true :false
+        if (this.getGlbErr.isFlag == false) {
+          if (this.flag == true) {
+            _disabled = true
+          } else {
+            _disabled = this.status.length == 0 ? true : false
           }
-        }else{
-            _disabled= this.status.length==0? true :false
+        } else {
+          this.progressBtn = 0
+          _disabled = this.status.length == 0 ? true : false
         }
         return _disabled
       },
@@ -139,12 +143,14 @@
       }),
       updateDB(id) {
         this.flag = true
+        this.progressBtn = 1
         this.patchTkt([id, {
           state: parseInt(this.status),
           stateComment: this.stateDesc
         }]).then(res => {
           this.flag = false
           this.status = ''
+          this.progressBtn = 0
           this.stateDesc = ''
           Toast.create('提交成功.')
           console.log('-patch-success-', this.tktDtl)

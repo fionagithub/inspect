@@ -62,7 +62,7 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
+              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" @click.native='getMore()'
                 class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
@@ -148,7 +148,6 @@
       let _dt = {
         items_time: _time,
         tipsMsg: null,
-        pgmsg: '',
         tktCut: 0,
         isTipsHG: false,
         isFinished: true,
