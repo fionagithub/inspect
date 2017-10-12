@@ -163,7 +163,7 @@
           selectType: filtersStorage('selectType') || '0',
           selectTime: timeMap[filtersStorage('selectTime') || 'NOW'],
           prird: filtersStorage('prird') || false,
-          selectSys: filtersStorage('system') || 'ALL',
+          selectSys: filtersStorage('selectSys') || 'ALL',
         },
         w_search_dtl: {
           searchModel: '',
@@ -234,7 +234,7 @@
     },
     watch: {
       search_dtl: {
-        handler: function (val, oldVal) {
+        handler(val, oldVal) {
           let self = this
           for (let _key in val) {
              let _val = val[_key]
@@ -260,7 +260,7 @@
       },
     },
     methods: {
-      ...mapMutations(['setAddCount']),
+      ...mapMutations(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
@@ -355,6 +355,7 @@
       notify() {
         this.isCreated = false
         this.isEdit = false
+        this.setError()
         this.$refs.layoutModal.close();
         this.clearCrt()
       },

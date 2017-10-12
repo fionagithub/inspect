@@ -49,8 +49,8 @@
               <textarea class="full-width desc" v-model="stateDesc"> </textarea>
             </div>
           </div>
-         <!-- <pre>{{flag }}  {{ status.length==0}}</pre>-->
-          <button class="d-add-btn teal full-width" :disabled="flag==true||status.length==0" @click="updateDB(tktDtl.id)">提交</button>
+          <!--<pre>{{flag }} {{ status.length==0}}</pre>-->
+          <button class="d-add-btn teal full-width" :disabled="unAddBtn" @click="updateDB(tktDtl.id)">提交</button>
           <p class="caption">处理记录:</p>
           <div class="timeline">
             <div class="timeline-item" v-for="n in tktDtl.state">
@@ -104,7 +104,7 @@
       }
     },
     computed: {
-      ...mapGetters(['getConfMenu']),
+      ...mapGetters(['getGlbErr', 'getConfMenu']),
       ...mapGetters('tickets', {
         tktDtl: 'current',
       }),
@@ -113,7 +113,20 @@
         if (this.tktDtl) {
           return parseInt(this.tktDtl.priority)
         }
-      }
+      },
+      unAddBtn(){
+        let _disabled
+        if (this.getGlbErr.isFlag==false){
+          if(this.flag==true){
+            _disabled= true
+          }else{
+            _disabled= this.status.length==0? true :false
+          }
+        }else{
+            _disabled= this.status.length==0? true :false
+        }
+        return _disabled
+      },
     },
     filters: {
       priortity(data) {

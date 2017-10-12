@@ -70,7 +70,7 @@
       let _dt = {
         dvCut: 0,
         w_search_dtl: {
-          searchModel:'',
+          searchModel: '',
         },
         isFinished: true,
         isTipsHG: false,
@@ -86,7 +86,7 @@
       return Object.assign(_dt, _list)
     },
     computed: {
-      ...mapGetters(['getGlbErr', 'getCtCut']),
+      ...mapGetters(['getGlbErr', 'getCtCut', 'setError']),
       ...mapGetters('devices', {
         message: 'list',
       }),
@@ -136,6 +136,7 @@
       }),
       notify() {
         this.isEdit = false
+        this.setError()
         this.$refs.layoutModal.close();
         this.clearCrt()
       },

@@ -1,25 +1,25 @@
 <template>
   <q-layout>
     <div slot="header" class="toolbar">
-        <button class="head_goback" @click="goback()">
+      <button class="head_goback" @click="goback()">
           <i>arrow_back</i>
-        </button> 
-        <q-toolbar-title :padding="1">
-          反馈 
-        </q-toolbar-title>
-      </div>
-    <div class="layout-view" >
+        </button>
+      <q-toolbar-title :padding="1">
+        反馈
+      </q-toolbar-title>
+    </div>
+    <div class="layout-view">
       <div class="layout-padding ">
         <div class="item multiple-lines">
           <div class="item-content">
             <div class="item-label">我要反馈:</div>
             <textarea class="full-width new-desc" v-model='description'> </textarea>
-              <div class="form-group--error" v-if="!$v.description.minLength">至少{{ $v.description.$params.minLength.min }}位...</div>
-           </div>
+            <div class="form-group--error" v-if="!$v.description.minLength">至少{{ $v.description.$params.minLength.min }}位...</div>
+          </div>
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
         <div class="add-btn">
-            <button class="teal full-width" @click="add()" :disabled="flag==true||$v.$dirty==$v.$invalid==false">提交</button>
+          <button class="teal full-width" @click="add()" :disabled="unAddBtn">提交</button>
         </div>
       </div>
     </div>
@@ -29,49 +29,70 @@
 <script>
   import {
     mapActions,
-    mapState
+    mapState,
+    mapGetters
   } from 'vuex'
   import {
     required,
     minLength
   } from 'vuelidate/lib/validators'
-  import {Toast} from 'quasar'
+  import {
+    Toast
+  } from 'quasar'
   export default {
     name: "new",
     data() {
       return {
-        flag:false,
-        description:'',
+        flag: false,
+        description: '',
       }
-    }, 
-    computed:{
-      ...mapState('auth',['user'])
     },
-    methods: { 
+    computed: {
+      ...mapGetters(['getGlbErr']),
+      ...mapState('auth', ['user']),
+      unAddBtn() {
+        let _disabled
+        if (this.getGlbErr.isFlag == false) {
+          if (this.flag == true) {
+            _disabled = true
+          } else {
+            _disabled= this.description.length<4 ?true:false
+          }
+        } else {
+            _disabled= this.description.length<4 ?true:false
+        }
+        return _disabled
+      },
+    },
+    methods: {
       ...mapActions('feedback', {
         createMessages: 'create',
       }),
-      goback(){
-        this.$router.push({path:'/'})
+      goback() {
+        this.$router.push({
+          path: '/'
+        })
       },
       add() {
-          this.flag = true
-          // console.log(this.user)
+        this.flag = true
+        // console.log(this.user)
         let data = {
-          _tenantId :  this.user._tenantId,
+          _tenantId: this.user._tenantId,
           "username": this.user.name,
           _userId: this.user.id,
           "content": this.description,
         }
         this.createMessages(data)
           .then(res => {
-          this.flag = false
+            this.flag = false
             Toast.create('提交成功.')
-            this.$router.push({path:'/'})
+            this.$router.push({
+              path: '/'
+            })
           })
       }
     },
-    plugins: ['vuelidate'], 
+    plugins: ['vuelidate'],
     destroyed: function () {
       console.log("已销毁");
     },
@@ -82,6 +103,7 @@
       }
     }
   }
+
 </script>
 <style>
   .add-btn {
@@ -104,4 +126,5 @@
     display: block;
     color: #CC3333;
   }
+
 </style>

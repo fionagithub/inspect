@@ -29,8 +29,8 @@
         </div>
       <!--  <pre>$v: {{ $v.description }}</pre>-->
         <div class="add-btn">
-         <!--  <pre>{{flag }}  $v: {{ $v.$dirty==$v.$invalid==false }}</pre>-->
-          <button class="teal full-width" @click="add()" :disabled="flag==true||$v.$dirty==$v.$invalid==false">提交</button>
+          <!--<pre>{{flag }} {{ description.length==4}}</pre>-->
+          <button class="teal full-width" @click="add()" :disabled="unAddBtn">提交</button>
         </div>
       </div>
     </div>
@@ -70,7 +70,20 @@
     },
     computed:{
       ...mapState(['priorityMax']),
-      ...mapGetters(['getConfMenu']),
+      ...mapGetters(['getConfMenu','getGlbErr' ]),
+      unAddBtn(){
+        let _disabled
+        if (this.getGlbErr.isFlag==false){
+          if(this.flag){
+            _disabled = true
+          }else{
+            _disabled= this.description.length<4 ?true:false
+          }
+        }else{
+            _disabled=this.description.length<4? true :false
+        }
+        return _disabled
+      },
     },
     methods: { 
       ...mapMutations(['setError']),
