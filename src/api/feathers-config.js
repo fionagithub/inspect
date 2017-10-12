@@ -7,7 +7,7 @@ import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
 //  const API_HOST = 'http://api-beta.laputacloud.com'
- const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3030' : window.location.origin.replace(/:\/\/m\./g, '://api-beta.')
+ const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3030' : ''
 const socket = io(API_HOST, {
   transports: ['websocket']
 })
