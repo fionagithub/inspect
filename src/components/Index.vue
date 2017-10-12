@@ -69,7 +69,7 @@
     name: "index",
     data() {
       return {
-        verson: '0.4.7 070929',
+        verson: '0.4.8 071012',
         isEdit: false,
         tktCut: filtersStorage('tktCut') || null,
         items: [{
