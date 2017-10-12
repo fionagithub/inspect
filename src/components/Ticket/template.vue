@@ -62,8 +62,8 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
-                :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
+              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
+                class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
                 <err v-if='getGlbErr.isFlag' />
@@ -161,7 +161,7 @@
         isEdit: false,
         search_dtl: {
           selectType: filtersStorage('selectType') || '0',
-          selectTime: filtersStorage('selectTime') || timeMap['NOW'],
+          selectTime: timeMap[filtersStorage('selectTime') || 'NOW'],
           prird: filtersStorage('prird') || false,
           selectSys: filtersStorage('system') || 'ALL',
         },
@@ -237,9 +237,20 @@
         handler: function (val, oldVal) {
           let self = this
           for (let _key in val) {
+             let _val = val[_key]
+            if (_key == 'selectTime') {
+                let _time
+                for (let time in timeMap) {
+                  if( val[_key] == timeMap[time]){
+                      _time = time
+                  }
+                }
+                _val = _time|| 'NOW'
+              }
+
             let _storage = {
               key: _key,
-              value: val[_key]
+              value: _val
             }
             filtersStorage(_storage, "save")
           }
@@ -304,15 +315,15 @@
           if (res.data.length == 0 && msg == 0) {
             let _model = _self.w_search_dtl.searchModel
             _self.isFinished = false
-            _self.progressBtn = 100
+            // _self.progressBtn = 100
             // console.log('-=[sdf]')
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
             _self.tipsMsg = _model ? s_tips : n_tips
           } else {
-            if(_self.surplus==0){
-               _self.tipsMsg = '没有更多数据了.'
-            } 
+            if (_self.surplus == 0) {
+              _self.tipsMsg = '没有更多数据了.'
+            }
           }
           _self.isFinished = res.data.length < _self.limit ? false : true
           _self.isLoading = false
