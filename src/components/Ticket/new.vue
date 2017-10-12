@@ -29,8 +29,10 @@
         </div>
       <!--  <pre>$v: {{ $v.description }}</pre>-->
         <div class="add-btn">
-         <!--  <pre>{{flag }}  $v: {{ $v.$dirty==$v.$invalid==false }}</pre>-->
-          <button class="teal full-width" @click="add()" :disabled="flag==true||$v.$dirty==$v.$invalid==false">提交</button>
+          <!--<pre>{{flag }} {{ description.length==4}}</pre>-->
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="add()" indeterminate class="teal full-width">
+            提交
+          </q-progress-button>
         </div>
       </div>
     </div>
@@ -59,6 +61,7 @@
     data() {
       let _dt = {
         flag:false,
+        progressBtn:0,
         stateTime: moment().format(),
       }
       return Object.assign(_dt, _new)
@@ -70,7 +73,21 @@
     },
     computed:{
       ...mapState(['priorityMax']),
-      ...mapGetters(['getConfMenu']),
+      ...mapGetters(['getConfMenu','getGlbErr' ]),
+      unAddBtn(){
+        let _disabled
+        if (this.getGlbErr.isFlag==false){
+          if(this.flag){
+            _disabled = true
+          }else{
+            _disabled= this.description.length<4 ?true:false
+          }
+        }else{
+            this.progressBtn=0
+            _disabled=this.description.length<4? true :false
+        }
+        return _disabled
+      },
     },
     methods: { 
       ...mapMutations(['setError']),
@@ -82,6 +99,7 @@
       }),
       add() {
         this.flag=true
+        this.progressBtn=1
         let data = {
           "priority": parseInt(this.pty),
           "system": this.systemSlt,
@@ -91,6 +109,7 @@
         this.createMessages(data)
           .then(res => {
             this.flag=false
+            this.progressBtn=1
             Toast.create('提交成功.')
             this.$router.go(-1)
             // console.log('-=-=', res)

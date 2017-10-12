@@ -49,8 +49,10 @@
               <textarea class="full-width desc" v-model="stateDesc"> </textarea>
             </div>
           </div>
-         <!-- <pre>{{flag }}  {{ status.length==0}}</pre>-->
-          <button class="d-add-btn teal full-width" :disabled="flag==true||status.length==0" @click="updateDB(tktDtl.id)">提交</button>
+          <!--<pre>{{flag }} {{ status.length==0}}</pre>-->
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="updateDB(tktDtl.id)" indeterminate class="d-add-btn teal full-width">
+            提交
+          </q-progress-button>
           <p class="caption">处理记录:</p>
           <div class="timeline">
             <div class="timeline-item" v-for="n in tktDtl.state">
@@ -98,13 +100,14 @@
     name: "detail",
     data() {
       return {
+        progressBtn: 0,
         stateDesc: '',
         flag: false,
         status: '',
       }
     },
     computed: {
-      ...mapGetters(['getConfMenu']),
+      ...mapGetters(['getGlbErr', 'getConfMenu']),
       ...mapGetters('tickets', {
         tktDtl: 'current',
       }),
@@ -113,7 +116,21 @@
         if (this.tktDtl) {
           return parseInt(this.tktDtl.priority)
         }
-      }
+      },
+      unAddBtn() {
+        let _disabled
+        if (this.getGlbErr.isFlag == false) {
+          if (this.flag == true) {
+            _disabled = true
+          } else {
+            _disabled = this.status.length == 0 ? true : false
+          }
+        } else {
+          this.progressBtn = 0
+          _disabled = this.status.length == 0 ? true : false
+        }
+        return _disabled
+      },
     },
     filters: {
       priortity(data) {
@@ -126,12 +143,14 @@
       }),
       updateDB(id) {
         this.flag = true
+        this.progressBtn = 1
         this.patchTkt([id, {
           state: parseInt(this.status),
           stateComment: this.stateDesc
         }]).then(res => {
           this.flag = false
           this.status = ''
+          this.progressBtn = 0
           this.stateDesc = ''
           Toast.create('提交成功.')
           console.log('-patch-success-', this.tktDtl)

@@ -62,7 +62,7 @@
             </div>
 
             <div class="row justify-center " style="margin: 5px 0;">
-              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
+              <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" @click.native='getMore()'
                 class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
               <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
                 <span v-if='tipsMsg'>  {{tipsMsg}} </span>
@@ -148,7 +148,6 @@
       let _dt = {
         items_time: _time,
         tipsMsg: null,
-        pgmsg: '',
         tktCut: 0,
         isTipsHG: false,
         isFinished: true,
@@ -163,7 +162,7 @@
           selectType: filtersStorage('selectType') || '0',
           selectTime: timeMap[filtersStorage('selectTime') || 'NOW'],
           prird: filtersStorage('prird') || false,
-          selectSys: filtersStorage('system') || 'ALL',
+          selectSys: filtersStorage('selectSys') || 'ALL',
         },
         w_search_dtl: {
           searchModel: '',
@@ -234,7 +233,7 @@
     },
     watch: {
       search_dtl: {
-        handler: function (val, oldVal) {
+        handler(val, oldVal) {
           let self = this
           for (let _key in val) {
              let _val = val[_key]
@@ -260,7 +259,7 @@
       },
     },
     methods: {
-      ...mapMutations(['setAddCount']),
+      ...mapMutations(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
@@ -355,6 +354,7 @@
       notify() {
         this.isCreated = false
         this.isEdit = false
+        this.setError()
         this.$refs.layoutModal.close();
         this.clearCrt()
       },

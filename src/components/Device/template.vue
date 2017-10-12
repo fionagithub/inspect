@@ -70,7 +70,7 @@
       let _dt = {
         dvCut: 0,
         w_search_dtl: {
-          searchModel:'',
+          searchModel: '',
         },
         isFinished: true,
         isTipsHG: false,
@@ -112,6 +112,7 @@
       })
     },
     methods: {
+      ...mapMutations(['setError']),
       getMore() {
         this.skip = this.message.length
         this.getApi()
@@ -136,6 +137,7 @@
       }),
       notify() {
         this.isEdit = false
+        this.setError()
         this.$refs.layoutModal.close();
         this.clearCrt()
       },
