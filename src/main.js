@@ -14,9 +14,13 @@ import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import moment from 'moment'
+import err from './components/Error'
+Vue.component('err', err);
+
 import {
   mapActions,
-  mapState
+  mapMutations,
+ mapState
 } from 'vuex'
 moment.locale('zh-cn');
 
@@ -25,26 +29,9 @@ Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
 window.feathers = feathersClient
-
-feathers.hooks({
-  error: {
-    all: [
-      function (hook) {
-        console.log('======hook=======>', hook)
-        errorHandle(hook.error)
-      }
-    ]
-  }
-})
-
-
-
-function errorHandle(err) {
-  console.log('=XXX=>', err)
-  if (err.code === 401) {
-    console.log('登录过期，重新登录？')
-  }
-}
+window.Win_tickets_ = feathers.service('tickets')
+window.Win_devices_ = feathers.service('devices')
+import {Toast} from 'quasar'
 
 Quasar.start(() => {
   /* eslint-disable no-new */
@@ -52,15 +39,19 @@ Quasar.start(() => {
     el: '#q-app',
     computed: {
       ...mapState('auth', ['payload']),
+      ...mapState(['_error']),
     },
     created() {
-      let token = localStorage.getItem('feathers-jwt')
-      if (token) {
-        console.log('---mmm--cc---')
-        this.setAuth()
-      }
+      this.setAuth()
     },
     watch: {
+      _error(error) {
+        if(error){
+         this.handleError(error)
+        }else{
+          this.setErr()
+        }
+      }, 
       payload(obj) {
         if (obj) {
           this.getAuth()
@@ -69,6 +60,22 @@ Quasar.start(() => {
       }
     },
     methods: {
+      ...mapMutations(['setConfMenu','setErr', 'getGlbErr']),
+      handleError(obj) {
+        let uri, tips, err={
+         isFlag: true
+        }
+        if (obj.error.code == 401) {
+        uri= err.loginUri = '认证失败，请重新登录'
+        } else {
+        tips =  err.tips = '哦,服务出错，稍后再试'
+        }
+        this.getGlbErr(err)
+        Toast.create.negative({
+          html:  tips|| uri,
+          timeout: 5000
+        }) 
+      },
       ...mapActions('metadata', {
         findStateItems: 'find',
       }),
@@ -84,34 +91,28 @@ Quasar.start(() => {
                 value: 'ALL',
                 label: '全部状态'
               }]
-              this.$store.state.stateItems = _list.concat(_array)
+              sum._state_ = _list.concat(_array)
             }
             if (data['id'] == 'system') {
               _array = [{
                 value: 'ALL',
                 label: '全部系统'
               }]
-              this.$store.state._system = _list.concat(_array)
+              sum._system_ = _list.concat(_array)
             }
           }
           console.log('[-!!!--]', sum)
-          this.$store.state._state = sum.state
-          this.$store.state._priority = sum.priority
-          this.$store.state.systemItems = sum.system
+          this.setConfMenu(sum)
         })
       },
       ...mapActions('auth', [
         'authenticate'
       ]),
-      setAuth() {
+      setAuth(obj) {
         let _self = this
         _self.authenticate().then((response) => {
-          /*  let redirect = decodeURIComponent(_self.$route.query.redirect || '/');
-          console.log('ok--from main!!!!!',redirect);
-              _self.$router.push(redirect)*/
         }).catch((error) => {
-          _self.$router.push('/login')
-          console.log('Error--from main!!!!!', error);
+        //  _self.$router.push('/login')
         });
       },
       getAuth() {

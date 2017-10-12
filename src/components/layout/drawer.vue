@@ -62,7 +62,6 @@
       },
       getDetail() {
         console.log('---dre')
-        this.$store.state._feedback=true
       },
       login_out() {
         this.logout().then(() => {

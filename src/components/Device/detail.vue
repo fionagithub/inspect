@@ -31,35 +31,35 @@
             <div class="card-content list no-border highlight">
               <div class="item multiple-lines d-lines ">
                 <div class="item-content row items-center">
-                  <div class="item-label">安装位置</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">安装位置</div>
+                  <div class="item-title dd-title">
                     {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
 
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">当前状态</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">当前状态</div>
+                  <div class="item-title dd-title">
                     {{'正常' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label"> 指标读数</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label"> 指标读数</div>
+                  <div class="item-title dd-title">
                     <div v-for='mtr in message.monitors'  >
                     {{mtr.name+':'+ mtr.value+mtr.unit }}
                     </div>
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">更新时间</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">更新时间</div>
+                  <div class="item-title dd-title">
                     {{message._modifyTime |date('HH:mm:ss') }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">维修记录</div>
-                  <a class="item-title"  @click="setTab()">
+                  <div class="item-label dd-label">维修记录</div>
+                  <a class="item-title dd-title"  @click="setTab()">
 
                     {{'8次' }}</a>
                 </div>
@@ -83,56 +83,56 @@
             <div class="card-content list no-border highlight">
               <div class="item multiple-lines d-lines content">
                 <div class="item-content row items-center">
-                  <div class="item-label">生产商</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">生产商</div>
+                  <div class="item-title dd-title">
                     {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">设备品牌</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">设备品牌</div>
+                  <div class="item-title dd-title">
                     {{'正常' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label"> 规格型号</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label"> 规格型号</div>
+                  <div class="item-title dd-title">
                     {{' A:999 B:888 C:333' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">设备重量</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">设备重量</div>
+                  <div class="item-title dd-title">
                     {{'正常' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label"> 设计寿命</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label"> 设计寿命</div>
+                  <div class="item-title dd-title">
                     {{' A:999 B:888 C:333' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">出厂日期</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">出厂日期</div>
+                  <div class="item-title dd-title">
                     {{'正常' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label"> 供应商</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label"> 供应商</div>
+                  <div class="item-title dd-title">
                     {{' A:999 B:888 C:333' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label"> 安装单位</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label"> 安装单位</div>
+                  <div class="item-title dd-title">
                     {{' A:999 B:888 C:333' }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label">安装时间</div>
-                  <div class="item-title">
+                  <div class="item-label dd-label">安装时间</div>
+                  <div class="item-title dd-title">
                     {{message._modifyTime |date('HH:mm:ss') }}
                   </div>
                 </div>
@@ -155,9 +155,8 @@
 
         </div>
       </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-        <router-link to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
+    <div class="row justify-center" style="margin-bottom: 50px;">
+        <err v-if="getGlbErr.isFlag"/>
       </div>
     </div>
   </q-layout>
@@ -177,12 +176,11 @@
     name: "detail",
     data() {
       return {
-        tips: null,
-        Islogined:false,
-         tabNo:'tab-1'
+        tabNo:'tab-1'
       }
     },
     computed: {
+     ...mapGetters(['getGlbErr']),
       ...mapGetters('devices', {
         message: 'current',
       }),
@@ -218,20 +216,7 @@
       getMessage() {
         let _self = this
         const id = _self.$route.params.id
-        _self.findMessages(id).catch(err => {
-          let type = error.errorType
-          error = Object.assign({}, error)
-          error.message = (type === 'uniqueViolated') ?
-            'That is unavailable.' :
-            'An error prevented sign.'
-          console.log('-=:[]', error)
-          this.Islogined=error.code==401?true:false
-          this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-          Toast.create.negative({
-            html:this.tips ,
-            timeout: 3000
-          })
-        })
+        _self.findMessages(id)
       }
     },
     destroyed: function () {
@@ -254,10 +239,10 @@
 .d-lines{
   width: 100%;
 }
-.item-label{
+ .dd-label{
   flex: 1;
 }
-.item-title{
+.dd-title{
   flex:2;
   font-size: 16px;
   font-weight: 400;

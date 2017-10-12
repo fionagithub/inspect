@@ -51,18 +51,21 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  if (store.state._error) {
+    store.state._error = null
+  }
   if (to.matched.some(record => record.meta.requiresAuth)) {
     let token = localStorage.getItem('feathers-jwt')
-     feathers.passport.verifyJWT(token).then(res=>{
-        next()
-     }).catch(error=>{
-        next({
-            path: '/login',
-            query: {
-                 redirect: to.fullPath
-            }
-        })
-     }) 
+    feathers.passport.verifyJWT(token).then(res => {
+      next()
+    }).catch(error => {
+      next({
+        path: '/login',
+        query: {
+          redirect: to.fullPath
+        }
+      })
+    })
   } else {
     next() // 确保一定要调用 next()
   }

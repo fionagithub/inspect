@@ -1,20 +1,17 @@
 <template>
     <div class="layout-view" >
-      <div class="row justify-center" v-if="tips">
-        <router-link class="text-red" to='/login' v-if='Islogined'> {{tips}} </router-link>
-        <span v-else>  {{tips}} </span>
-      </div>
       <div class="layout-padding ">
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">系统:</div>
-            <q-select class="full-width" type="list" v-model="system" :options="systemItems"></q-select>
+            <q-select class="full-width" type="list" v-model="systemSlt" :options="getConfMenu.system"></q-select>
           </div>
         </div>
         <div class="item">
           <div class="item-content row items-center wrap">
             <div class="item-label">优先级:</div>
-            <q-rating class="orange n-rating " v-model="priority" :max="priorityMax"></q-rating>
+            <q-rating class="orange n-rating " v-model="pty" :max="priorityMax"></q-rating>
+            <span class="n-tx"> {{pty|tran(getConfMenu.priority) }} </span>
           </div>
         </div>
         <div class="item multiple-lines">
@@ -32,7 +29,10 @@
         </div>
       <!--  <pre>$v: {{ $v.description }}</pre>-->
         <div class="add-btn">
-          <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+          <!--<pre>{{flag }} {{ description.length==4}}</pre>-->
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="add()" indeterminate class="teal full-width">
+            提交
+          </q-progress-button>
         </div>
       </div>
     </div>
@@ -51,7 +51,7 @@
     mapGetters,
     mapState
   } from 'vuex'
-   import popover from '../layout/popover'
+  import popover from '../layout/popover'
  import {
     Toast
   } from 'quasar'
@@ -60,21 +60,37 @@
     name: "new",
     data() {
       let _dt = {
+        flag:false,
+        progressBtn:0,
         stateTime: moment().format(),
-        tips: null,
-        Islogined: false
       }
       return Object.assign(_dt, _new)
     },
     created() {
+      this.setError()
     },
     mounted(){
     },
     computed:{
-      ...mapState(['systemItems','priorityMax', 'stateItems']),
-
+      ...mapState(['priorityMax']),
+      ...mapGetters(['getConfMenu','getGlbErr' ]),
+      unAddBtn(){
+        let _disabled
+        if (this.getGlbErr.isFlag==false){
+          if(this.flag){
+            _disabled = true
+          }else{
+            _disabled= this.description.length<4 ?true:false
+          }
+        }else{
+            this.progressBtn=0
+            _disabled=this.description.length<4? true :false
+        }
+        return _disabled
+      },
     },
     methods: { 
+      ...mapMutations(['setError']),
       ...mapMutations('tickets', {
         clear: 'clearCurrent'
       }),
@@ -82,31 +98,21 @@
         createMessages: 'create',
       }),
       add() {
+        this.flag=true
+        this.progressBtn=1
         let data = {
-          "priority": parseInt(this.priority),
-          "system": this.system,
+          "priority": parseInt(this.pty),
+          "system": this.systemSlt,
           "reportTime": this.stateTime,
           "description": this.description,
         }
         this.createMessages(data)
           .then(res => {
+            this.flag=false
+            this.progressBtn=1
             Toast.create('提交成功.')
             this.$router.go(-1)
             // console.log('-=-=', res)
-          })
-          .catch(error => {
-            let type = error.errorType
-            error = Object.assign({}, error)
-            error.message = (type === 'uniqueViolated') ?
-              'That is unavailable.' :
-              'An error prevented sign.'
-            console.log('-=:[]', error)
-            this.Islogined=error.code==401?true:false
-            this.tips =error.code==401? '认证失败，请重新登录': '哦,服务崩溃，稍后再试'
-            Toast.create.negative({
-              html: this.tips,
-              timeout: 3000
-            })
           })
       }
     },
@@ -115,6 +121,7 @@
       popover
     },
     destroyed: function () {
+      this.setError()
       this.clear() // 置空ticket-vuex      
       console.log("已销毁");
     },
@@ -131,9 +138,11 @@
   .add-btn {
     margin-top: 50px;
   }
-
   .new-desc {
     height: 80px;
   }
-
+  .n-tx{
+    flex: 1;
+    text-align: right;
+  }
 </style>

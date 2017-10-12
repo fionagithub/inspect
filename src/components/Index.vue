@@ -44,7 +44,7 @@
     {{verson}}
   </div>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <feed-back v-if='isEdit'/>
+    <feed-back v-if='isEdit' />
   </q-modal>
   </div>
 </template>
@@ -100,8 +100,8 @@
       }
     },
     watch: {
-       '$route'(to, from) {
-        console.log('[][', to,from )
+      '$route' (to, from) {
+        console.log('[][', to, from)
         if (to.query._modal) {
           this[to.query._modal]()
         }
@@ -113,15 +113,18 @@
       } else {
         this.setCut(this.tktCut)
       }
-      console.log('[=]', this)
-      if(this.$route.query){
-        this.$router.push({path:'/',query:{}})
+      if (this.$route.query) {
+        this.$router.push({
+          path: '/',
+          query: {}
+        })
       }
     },
     methods: {
       ...mapActions('tickets', {
         findTkt: 'find',
       }),
+      ...mapMutations(['setError']),
       getFd() {
         this.isEdit = true
         this.$refs.layoutModal.open()
@@ -135,6 +138,7 @@
       },
       notify() {
         this.isEdit = false
+        this.setError()
         this.$refs.layoutModal.close();
       },
       getTktCunt() {
