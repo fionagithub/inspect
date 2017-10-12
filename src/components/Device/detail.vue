@@ -156,7 +156,7 @@
         </div>
       </div>
     <div class="row justify-center" style="margin-bottom: 50px;">
-        <err v-if="getErrFlag"/>
+        <err v-if="getGlbErr.isFlag"/>
       </div>
     </div>
   </q-layout>
@@ -181,9 +181,6 @@
     },
     computed: {
      ...mapGetters(['getGlbErr']),
-      getErrFlag(){
-        return this.getGlbErr.isFlag
-      },
       ...mapGetters('devices', {
         message: 'current',
       }),

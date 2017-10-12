@@ -19,7 +19,7 @@
         </div>
         <!--<pre>$v: {{ $v }}</pre>-->
         <div class="add-btn">
-            <button class="teal full-width" @click="add()" :disabled="$v.$dirty==$v.$invalid==false">提交</button>
+            <button class="teal full-width" @click="add()" :disabled="flag==true||$v.$dirty==$v.$invalid==false">提交</button>
         </div>
       </div>
     </div>
@@ -40,7 +40,8 @@
     name: "new",
     data() {
       return {
-           description:''
+        flag:false,
+        description:'',
       }
     }, 
     computed:{
@@ -54,7 +55,8 @@
         this.$router.push({path:'/'})
       },
       add() {
-        console.log(this.user)
+          this.flag = true
+          // console.log(this.user)
         let data = {
           _tenantId :  this.user._tenantId,
           "username": this.user.name,
@@ -63,6 +65,7 @@
         }
         this.createMessages(data)
           .then(res => {
+          this.flag = false
             Toast.create('提交成功.')
             this.$router.push({path:'/'})
           })

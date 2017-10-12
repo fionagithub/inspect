@@ -29,7 +29,8 @@ Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
 window.feathers = feathersClient
-
+window.Win_tickets_ = feathers.service('tickets')
+window.Win_devices_ = feathers.service('devices')
 import {Toast} from 'quasar'
 
 Quasar.start(() => {

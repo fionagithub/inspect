@@ -9,12 +9,12 @@
       </q-toolbar-title>
     </div>
     <div slot="header" class="toolbar">
-      <q-search class="full-width" disable v-model="searchModel" @enter='setFilters()' placeholder="搜索..."></q-search>
+      <q-search class="full-width" disable v-model="w_search_dtl.searchModel" @enter='setFilters()' placeholder="搜索..."></q-search>
     </div>
     <div class="layout-view">
       <div class="layout-padding">
-        <a class="animate-pop refresh-message" v-if="getDvCut" @click='setFilters()'>
-          <span>+{{ getDvCut }} </span>  
+        <a class="animate-pop refresh-message" v-if="getCtCut.dvCut" @click='setFilters()'>
+          <span>+{{ getCtCut.dvCut }} </span>  
         </a>
         <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
@@ -32,18 +32,18 @@
             </div>
           </div>
           <div class="row justify-center " style="margin: 5px 0;">
-            <q-progress-button v-if="(isFinished&&total)&&getErrFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load "
-              :percentage="progressBtn" dark-filler> 加载更多(剩余{{total}}条) </q-progress-button>
+            <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
+              class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
             <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
-              <span v-if='tips'> {{tips}} </span> 
-              <err v-if='getErrFlag'/>
+              <span v-if='tips'> {{tips}} </span>
+              <err v-if='getGlbErr.isFlag' />
             </div>
           </div>
         </q-pull-to-refresh>
       </div>
     </div>
     <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-      <dv-detail v-if='isEdit'/>
+      <dv-detail v-if='isEdit' />
     </q-modal>
   </q-layout>
 </template>
@@ -68,57 +68,50 @@
     name: 'device',
     data() {
       let _dt = {
-        dvCut:0,
+        dvCut: 0,
+        w_search_dtl: {
+          searchModel:'',
+        },
         isFinished: true,
         isTipsHG: false,
         pgmsg: '',
-        total: null,
+        total: 0,
         progressBtn: 0,
         isEdit: false,
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
+        selectFld: ['location', 'name', 'id'],
       }
       return Object.assign(_dt, _list)
     },
     computed: {
-      ...mapGetters(['getGlbErr','getCtCut']),
-      getErrFlag(){
-        return this.getGlbErr.isFlag
-      }, 
-      getDvCut(){
-        return this.getCtCut.dvCut
-      },
+      ...mapGetters(['getGlbErr', 'getCtCut']),
       ...mapGetters('devices', {
         message: 'list',
       }),
+      surplus() {
+        return this.total - this.message.length
+      },
     },
-    created() {
-    },
-    watch: {
-      searchModel(c, o) {
-        if (c == '') {
-          this.clear()
-          this.skip = 0
-          this.getApi()
-        }
-      }
-    },
+    created() {},
     mounted() {
       this.getApi() //请求初始数据 
       this.$nextTick(() => {
-        feathers.service('devices').on('patched', res => {
+        Win_devices_.on('patched', res => {
           console.log('--!!!!!!!!!!==', res)
           this.ptdDV(res)
         })
-        feathers.service('devices').on('created', res => {
-          this.dvCut += 1       
-          this.setAddCount({dvCut: this.dvCut})
+        Win_devices_.on('created', res => {
+          this.dvCut += 1
+          this.setAddCount({
+            dvCut: this.dvCut
+          })
           this.filterDV([res])
         });
       })
     },
-    methods: { 
+    methods: {
       getMore() {
         this.skip = this.message.length
         this.getApi()
@@ -153,53 +146,41 @@
         let _query = {
           $limit: _self.limit,
           $skip: _self.skip,
-          $select: ['location', 'name', 'id']
-        }
-        if (_self.searchModel !== '') {
-          _query['$search'] = _self.searchModel
+          $select: _self.selectFld
         }
         console.log('--==-', _query)
 
         _self.findMessages({
-            query: _query
-          }).then((res) => {
-
-            if (res.total == 0) {
-              _self.isTipsHG = true
-            } else {
-              _self.isTipsHG = false
+          query: _query
+        }).then((res) => {
+          _self.total = res.total
+          _self.isTipsHG = res.total ? false : true
+          let _perct = Math.floor(Math.pow(10, 2) / res.total)
+          let msg = _self.message.length
+          _self.progressBtn = msg * _perct
+          if (res.data.length == 0 && msg == 0) {
+            _self.isFinished = false
+            let _model = _self.w_search_dtl.searchModel
+            let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
+            let n_tips = '＞﹏＜...空空如也.'
+            _self.tips = _model ? s_tips : n_tips
+            // _self.progressBtn = 100
+          } else {
+            if (_self.surplus == 0) {
+              _self.tips = '没有更多数据了.'
             }
-            let _perct = Math.pow(10, 2) / res.total
-            _self.total = res.total - _self.message.length
-            console.log('-=-', _perct)
-            _self.progressBtn = _self.message.length * _perct
-            if (res.data.length == 0 && _self.message.length == 0) {
-              _self.isFinished = false
-              _self.tips = '＞﹏＜...空空如也.'
-              console.log('-=[sdf]')
-              if (_self.searchModel) {
-                console.log('-search--=1-')
-                _self.tips = '很抱歉，没有找到与\"' + _self.searchModel + '\"相关的数据.'
-              }
-              _self.progressBtn = 100
-            } else {
-              if (_self.total == 0) {
-                _self.tips = '没有更多数据了.'
-              }
-            }
-            if (res.data.length < _self.limit) {
-              _self.isFinished = false
-            } else {
-              _self.isFinished = true
-            }
-            _self.isLoading = false
-            done instanceof Function ? done() : '';
-            console.log('-=res--', _self.tips, res.data)
-          })
+          }
+          _self.isLoading = false
+          _self.isFinished = res.data.length < _self.limit ? false : true
+          done instanceof Function ? done() : '';
+          //  console.log('-=res--', _self.tips, res.data)
+        })
       },
       setFilters(sus) {
         this.dvCut = 0
-        this.setAddCount({dvCut:0})
+        this.setAddCount({
+          dvCut: 0
+        })
         this.clear()
         this.isFinished = false
         this.progressBtn = 0

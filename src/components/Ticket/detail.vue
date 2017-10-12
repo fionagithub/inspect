@@ -133,7 +133,6 @@
           this.flag = false
           this.status = ''
           this.stateDesc = ''
-          this.tktDtl = res
           Toast.create('提交成功.')
           console.log('-patch-success-', this.tktDtl)
         })
