@@ -40,7 +40,7 @@
           <div class="item multiple-lines">
             <div class="item-content">
               <div class="item-label">当前状态:</div>
-              <q-select class="full-width" type="list" v-model="status" :options="getConfMenu.state"></q-select>
+              <q-select class="full-width add-state" type="list" v-model="status" :options="getConfMenu.state"></q-select>
             </div>
           </div>
           <div class="item multiple-lines">
@@ -165,7 +165,9 @@
     display: flex;
     padding: 10px 0;
   }
-
+  .add-state{
+    height: 34px;
+  }
   .d-label {
     color: #A6A6A6;
     font-size: 12px;
