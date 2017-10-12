@@ -1,85 +1,85 @@
 <template>
+
   <div class="layout-view">
-    <div class="layout-padding">
-      <div v-if="message">
-        <div class="card">
-          <div class="card-content">
+    <div class="layout-padding" v-if="tktDtl">
+      <div class="card">
+        <div class="card-content">
           <div class="item multiple-lines d-base">
-              <div class="d-label"> 系统 </div>
-              <div class="d-val">
-                {{ message.system }}</div>
+            <div class="d-label"> 系统 </div>
+            <div class="d-val">
+              {{ tktDtl.system|tran(getConfMenu.system) }}</div>
+          </div>
+          <div class="item multiple-lines d-base">
+            <div class="d-label"> 报障来源 </div>
+            <div class="d-val">
+              {{tktDtl.source.type|tran(getConfMenu.source) }}
             </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label"> 报障来源 </div>
-              <div class="d-val">
-                {{ message.source.type|typed }}</div>
+          </div>
+          <div class="item multiple-lines d-base">
+            <div class="d-label"> 优先级 </div>
+            <div class="d-val d-prty">
+              <q-rating class="orange n-rating " disable v-model="prty" :max="priorityMax"></q-rating>
+              <span> {{prty|tran(getConfMenu.priority) }} </span>
             </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label"> 优先级 </div>
-              <div class="d-val">
-                {{ message.priortity|priortity }}</div>
+          </div>
+          <div class="item multiple-lines d-base">
+            <div class="d-label"> 报障描述 </div>
+            <div class="d-val">
+              {{ tktDtl.description }}</div>
+          </div>
+          <div class="item multiple-lines d-base">
+            <div class="d-label">报障时间:</div>
+            <div class="d-val">
+              {{ tktDtl.reportTime |date('HH:mm') }}
             </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label"> 报障描述 </div>
-              <div class="d-val">
-                {{ message.description }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-content">
+          <div class="item multiple-lines">
+            <div class="item-content">
+              <div class="item-label">当前状态:</div>
+              <q-select class="full-width" type="list" v-model="status" :options="getConfMenu.state"></q-select>
             </div>
-            <div class="item multiple-lines d-base">
-              <div class="d-label">报障时间:</div>
-              <div class="d-val">
-                {{ message._createTime |date('HH:mm')  }}
+          </div>
+          <div class="item multiple-lines">
+            <div class="item-content">
+              <div class="item-label">补充说明:</div>
+              <textarea class="full-width desc" v-model="stateDesc"> </textarea>
+            </div>
+          </div>
+         <!-- <pre>{{flag }}  {{ status.length==0}}</pre>-->
+          <button class="d-add-btn teal full-width" :disabled="flag==true||status.length==0" @click="updateDB(tktDtl.id)">提交</button>
+          <p class="caption">处理记录:</p>
+          <div class="timeline">
+            <div class="timeline-item" v-for="n in tktDtl.state">
+              <div class="timeline-badge">
+                <i>alarm</i>
+              </div>
+              <div class="timeline-title">
+                {{n.name|tran(getConfMenu.state) }}
+              </div>
+              <div class="timeline-date text-italic d-date">
+                <div>
+                  {{n.time|date('HH:mm') }}
+                </div>
+              </div>
+              <div class="card-content timeline-content" v-if="n.stateComment">
+                <p>
+                  {{n.stateComment }}
+                </p>
+              </div>
+              <div class="timeline-date text-italic timeline-footer">
+                <div class="d-recorder">
+                  {{ n.recorder }}
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="card">
-          <div class="card-content">
-            <div class="item multiple-lines">
-              <div class="item-content">
-                <div class="item-label">当前状态:</div>
-                <q-select class="full-width" type="list" v-model="state" :options="selectState"></q-select>
-              </div>
-            </div>
-            <div class="item multiple-lines">
-              <div class="item-content">
-                <div class="item-label">补充说明:</div>
-                <textarea class="full-width desc" v-model="stateDesc"> </textarea>
-              </div>
-            </div>
-            <button class="d-add-btn teal full-width" :disabled='btnFlag' @click="updateDB(message.id)">提交</button>
-            <p class="caption">处理记录:</p>
-            <div class="timeline">
-              <div class="timeline-item" v-for="n in message.state">
-                <div class="timeline-badge">
-                  <i>alarm</i>
-                </div>
-                <div class="timeline-title">
-                  {{n.name}}
-                </div>
-                <div class="timeline-date text-italic d-date">
-                  <div>
-                     {{n.time|date('HH:mm') }} 
-                  </div>
-                </div>
-                  <div class="card-content timeline-content" v-if="n.stateComment" >
-                    <p>
-                    {{n.stateComment }}
-                    </p>
-                  </div>
-                <div class="timeline-date text-italic timeline-footer">
-                  <div class="d-recorder" >
-                     {{ n.recorder }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--<pre>$v: {{ $v }}</pre>-->
       </div>
-      <div class="row justify-center" style="margin-bottom: 50px;" v-if="tips">
-         <router-link to='/login'>   {{tips }} </router-link> 
-      </div>
+      <!--<pre>$v: {{ $v }}</pre>-->
     </div>
   </div>
 </template>
@@ -88,134 +88,56 @@
   import {
     mapGetters,
     mapMutations,
-    mapActions
+    mapActions,
+    mapState
   } from 'vuex'
-  import {Toast} from 'quasar'
-  import toolbar from 'components/layout/toolbar.vue'
+  import {
+    Toast
+  } from 'quasar'
   export default {
     name: "detail",
     data() {
       return {
         stateDesc: '',
-        flag:false,
-        btnFlag:true,
-        state: '',
-        selectState: [{
-          value: '未处理',
-          label: '待处理'
-        }, {
-          value: '处理中',
-          label: '处理中'
-        }, {
-          value: '已处理',
-          label: '已处理'
-        }],
-        tips: null,
+        flag: false,
+        status: '',
       }
     },
     computed: {
+      ...mapGetters(['getConfMenu']),
       ...mapGetters('tickets', {
-        message: 'current',
+        tktDtl: 'current',
       }),
-    },
-    watch:{
-      state(n,o){
-        if(n!==''){
-         this.btnFlag=false
-        }else{
-          this.btnFlag=true
+      ...mapState(['priorityMax']),
+      prty() {
+        if (this.tktDtl) {
+          return parseInt(this.tktDtl.priority)
         }
-        if(this.flag){
-          this.btnFlag=true
-        }
-        console.log('[]', n,  this.btnFlag)
       }
-
-    },
-    components: {
-      toolbar
-    },
-    created() {
-      this.setNavInfo()
-    },
-    mounted() {
-      this.getMessage()
     },
     filters: {
       priortity(data) {
-        var _map = {
-          1: '一般',
-          2: '紧急',
-          3: '非常紧急',
-        };
-        return _map[data]
+        return parseInt(data)
       },
-      typed(obj){
-        let _map={
-          manual:'人工填报',
-          system:'系统填报'
-        }
-        return _map[obj]
-      }
     },
     methods: {
-      ...mapMutations(['setNav']),
-      ...mapMutations('tickets', {
-        clear: 'clearAll'
-      }),
       ...mapActions('tickets', {
-        findMessages: 'get',
+        patchTkt: 'patch',
       }),
-      ...mapActions('tickets', {
-        patchMessages: 'patch',
-      }),
-      setNavInfo() {
-        let obj = {
-          title: '报障详情',
-          popover: '开发中',
-          show: {
-            bar: true,
-          },
-          direction: true
-        }
-        this.setNav(obj)
-      },
       updateDB(id) {
         this.flag = true
-        //  console.log(this.stateDesc)
-        this.patchMessages([id, {
-          state: this.state,
+        this.patchTkt([id, {
+          state: parseInt(this.status),
           stateComment: this.stateDesc
         }]).then(res => {
           this.flag = false
-          this.state = ''
+          this.status = ''
           this.stateDesc = ''
+          this.tktDtl = res
           Toast.create('提交成功.')
-          console.log('-patch-success-')
+          console.log('-patch-success-', this.tktDtl)
         })
       },
-      getMessage() {
-        let _self = this
-        const id = _self.$route.params.id
-        _self.findMessages(id).catch(err => {
-          let type = error.errorType
-          error = Object.assign({}, error)
-          error.message = (type === 'uniqueViolated') ?
-            'That is unavailable.' :
-            'An error prevented sign.'
-          console.log('-=:[]', error)
-          _self.fetched = false
-          _self.tips = '哦,服务开小差了，请重新登录'
-          Toast.create.negative({
-            html: '服务崩溃，稍后再试',
-            timeout: 1000
-          })
-        })
-      }
-    },
-    destroyed: function () {
-      this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
     },
   }
 
@@ -225,31 +147,38 @@
     display: flex;
     padding: 10px 0;
   }
-  
-  .d-val {
-    font-size: 14px;
-    font-weight: 300;
-    color: #606060;
-    line-height: 20px;
-    flex: 3;
-  }
-  .d-recorder{
-    align-self: flex-end;
-    font-size: .9rem;
-    color: #999;
-  }
-  .timeline-content{
-    padding: 8px 16px;
-  }
-  .timeline-footer{
-    min-height: .1rem;
-  }
+
   .d-label {
     color: #A6A6A6;
     font-size: 12px;
     flex: 1;
   }
-.d-state{
-  font-size: 14px;
-}
+
+  .d-prty {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .d-val {
+    font-size: 16px;
+    font-weight: 400;
+    color: #606060;
+    line-height: 20px;
+    flex: 3;
+  }
+
+  .d-recorder {
+    align-self: flex-end;
+    font-size: .9rem;
+    color: #999;
+  }
+
+  .timeline-content {
+    padding: 8px 16px;
+  }
+
+  .timeline-footer {
+    min-height: .1rem;
+  }
+
 </style>
