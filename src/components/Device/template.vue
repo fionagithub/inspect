@@ -86,7 +86,7 @@
       return Object.assign(_dt, _list)
     },
     computed: {
-      ...mapGetters(['getGlbErr', 'getCtCut', 'setError']),
+      ...mapGetters(['getGlbErr', 'getCtCut']),
       ...mapGetters('devices', {
         message: 'list',
       }),
@@ -112,6 +112,7 @@
       })
     },
     methods: {
+      ...mapMutations(['setError']),
       getMore() {
         this.skip = this.message.length
         this.getApi()
