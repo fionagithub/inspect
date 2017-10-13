@@ -101,7 +101,7 @@ Quasar.start(() => {
               sum._system_ = _list.concat(_array)
             }
           }
-          console.log('[-!!!--]', sum)
+         // console.log('[-!!!--]', sum)
           this.setConfMenu(sum)
         })
       },
@@ -121,9 +121,9 @@ Quasar.start(() => {
         let Exp_DAY = moment(parseInt(Exp_Date + '000')).subtract('minutes', 5)
         // let Exp_DAY = moment().add('seconds', 5)
         let time = Exp_DAY - moment()
-        console.log('--!!!import:::exp--', time)
+      //  console.log('--!!!import:::exp--', time)
         setTimeout(() => {
-          console.log('--!!!import:::setAuth--')
+       //   console.log('--!!!import:::setAuth--')
           this.setAuth()
         }, time);
       },

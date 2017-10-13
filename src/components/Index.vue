@@ -95,13 +95,13 @@
       },
       _modal() {
         let _pa = this.$route.query
-        console.log('---mm', _pa)
+      // console.log('---mm', _pa)
         return _pa
       }
     },
     watch: {
       '$route' (to, from) {
-        console.log('[][', to, from)
+      //  console.log('[][', to, from)
         if (to.query._modal) {
           this[to.query._modal]()
         }
@@ -149,7 +149,7 @@
             state: "0"
           }
         }).then(res => {
-          console.log('--res---;', res)
+       //   console.log('--res---;', res)
           filtersStorage({
             value: res.total,
             key: 'tktCut'

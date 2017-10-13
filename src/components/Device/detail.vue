@@ -200,17 +200,17 @@
         findMessages: 'get',
       }),
       getRcd(){
-        console.log('-rrr--id::::', this.message.tenantId )
+      //  console.log('-rrr--id::::', this.message.tenantId )
 
       },
       getMft(){
-        console.log('---id::::', this.message.manufacturerId )
+     //   console.log('---id::::', this.message.manufacturerId )
       },
       goTicket(){
       },
       setTab(){
         this.tabNo='tab-3'
-        console.log(this.setActiveTab)
+      //  console.log(this.setActiveTab)
 
       },
       getMessage() {
@@ -221,7 +221,7 @@
     },
     destroyed: function () {
       this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
+    //  console.log("已销毁");
     },
   }
 

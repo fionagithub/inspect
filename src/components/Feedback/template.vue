@@ -100,7 +100,7 @@
     },
     plugins: ['vuelidate'],
     destroyed: function () {
-      console.log("已销毁");
+     // console.log("已销毁");
     },
     validations: {
       description: {

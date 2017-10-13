@@ -153,7 +153,7 @@
           this.progressBtn = 0
           this.stateDesc = ''
           Toast.create('提交成功.')
-          console.log('-patch-success-', this.tktDtl)
+       //  console.log('-patch-success-', this.tktDtl)
         })
       },
     },

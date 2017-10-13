@@ -67,11 +67,11 @@
         }
         this.authenticate(user).then(response => {
          Toast.create( { html: '登录成功.',timeout: 500})
-          console.log('response:::', response)
+        //  console.log('response:::', response)
             this.$router.push('/')
        }).catch(function (error) {
          Toast.create.negative({html: '登录出错.',timeout:500 })
-          console.error('Error authenticating!', error);
+        //  console.error('Error authenticating!', error);
         });
       }
     }

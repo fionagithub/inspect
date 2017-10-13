@@ -99,7 +99,7 @@
       this.getApi() //请求初始数据 
       this.$nextTick(() => {
         Win_devices_.on('patched', res => {
-          console.log('--!!!!!!!!!!==', res)
+         // console.log('--!!!!!!!!!!==', res)
           this.ptdDV(res)
         })
         Win_devices_.on('created', res => {
@@ -150,7 +150,7 @@
           $skip: _self.skip,
           $select: _self.selectFld
         }
-        console.log('--==-', _query)
+      //  console.log('--==-', _query)
 
         _self.findMessages({
           query: _query
@@ -191,7 +191,7 @@
       },
       loadMore(done) {
         if (this.isLoading == false) {
-          console.log('-=loadMore=--')
+       //   console.log('-=loadMore=--')
           this.setFilters(done)
         }
       },
