@@ -124,7 +124,7 @@
       ...mapActions('tickets', {
         findTkt: 'find',
       }),
-      ...mapMutations(['setError']),
+      ...mapActions(['setError']),
       getFd() {
         this.isEdit = true
         this.$refs.layoutModal.open()

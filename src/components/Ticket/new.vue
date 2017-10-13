@@ -90,7 +90,7 @@
       },
     },
     methods: { 
-      ...mapMutations(['setError']),
+      ...mapActions(['setError']),
       ...mapMutations('tickets', {
         clear: 'clearCurrent'
       }),

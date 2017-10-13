@@ -6,8 +6,12 @@ import socketio from 'feathers-socketio'
 import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
 import store from '../config/store'
-//  const API_HOST = 'http://api-beta.laputacloud.com'
- const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3030' : ''
+import {
+  setError
+} from '../config/actions'
+
+//https://forum-archive.vuejs.org/topic/3635/make-an-ajax-request-everytime-route-changed/11
+const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3030' : ''
 const socket = io(API_HOST, {
   transports: ['websocket']
 })
@@ -33,15 +37,14 @@ feathersClient.service('/metadata')
 feathersClient.service('/feedback')
 
 feathersClient.hooks({
-  error(hook) {
-    //  console.log('-er--', hook)
-    store.state._error = hook
-  },
-  before(hook) {
-    store.state._error = null
-  },
+  error: function (hook) {
+    setError(this, hook)
+  }.bind(store),
+  before: function (hook) {
+    setError(this)
+  }.bind(store),
   after(hook) {
-   // setErr('af')
+    // console.log('af')
   }
 })
 

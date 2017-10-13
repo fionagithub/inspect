@@ -112,7 +112,7 @@
       })
     },
     methods: {
-      ...mapMutations(['setError']),
+      ...mapActions(['setError']),
       getMore() {
         this.skip = this.message.length
         this.getApi()

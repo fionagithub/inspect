@@ -60,7 +60,7 @@ Quasar.start(() => {
       }
     },
     methods: {
-      ...mapMutations(['setConfMenu','setErr', 'getGlbErr']),
+      ...mapActions(['setConfMenu','setErr', 'getGlbErr']),
       handleError(obj) {
         let uri, tips, err={
          isFlag: true

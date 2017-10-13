@@ -259,7 +259,7 @@
       },
     },
     methods: {
-      ...mapMutations(['setAddCount','setError' ]),
+      ...mapActions(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
