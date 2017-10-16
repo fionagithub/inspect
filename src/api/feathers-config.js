@@ -32,6 +32,7 @@ const feathersClient = feathers()
 
 feathersClient.service('/tickets')
 feathersClient.service('/devices')
+feathersClient.service('/system')
 
 feathersClient.service('/metadata')
 feathersClient.service('/feedback')

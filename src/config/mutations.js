@@ -19,17 +19,23 @@ export const mutations = {
   },
   [GETGLBERR](state, obj) {
     for (let i in state.global_err_tips){
+      if(obj[i]){
         state.global_err_tips[i]=obj[i]
+      }
     }
   },
   [SETCONFMENU](state, obj) {
     for (let i in state.confMenu){
-      state.confMenu[i]=obj[i]
+      if(obj[i]){
+        state.confMenu[i]=obj[i]
+      }
     }
   },
   [SETADDCOUNT](state, obj){
     for (let i in state.add_count){
-      state.add_count[i]=obj[i]
+      if(obj[i]){
+         state.add_count[i]=obj[i]
+       }
     }
   }
 }
