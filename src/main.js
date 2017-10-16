@@ -78,6 +78,9 @@ Quasar.start(() => {
           timeout: 5000
         })
       },
+      ...mapActions('system', {
+        findSystemItems: 'find',
+      }),
       ...mapActions('metadata', {
         findStateItems: 'find',
       }),
@@ -104,29 +107,12 @@ Quasar.start(() => {
             } 
           }
         //get system api
-          let obj = {
-            res: [{
-              "name": "弱电",
-              "id": "100"
-            }, {
-              "name": "强电",
-              "id": "200"
-            }, {
-              "name": "保洁",
-              "id": "300"
-            }, {
-              "name": "消防",
-              "id": "400"
-            }, {
-              "name": "给排水",
-              "id": "500"
-            }, {
-              "name": "其他",
-              "id": "000"
-            }]
-          }
-          let ress = obj.res
-          let system = []
+          this.setConfMenu(sum)
+        })
+        this.findSystemItems().then(data=>{
+          console.log('[]-=', data)
+          let ress = data.data
+          let system = [], sum = {}
           for (let s in ress) {
             let _ress = ress[s],
               _system = {}
@@ -141,7 +127,6 @@ Quasar.start(() => {
               value: 'ALL',
               label: '全部系统'
             }])
-           console.log('[-!!!--]', sum)
           this.setConfMenu(sum)
         })
       },
