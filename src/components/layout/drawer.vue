@@ -61,7 +61,7 @@
         })
       },
       getDetail() {
-        console.log('---dre')
+       // console.log('---dre')
       },
       login_out() {
         this.logout().then(() => {

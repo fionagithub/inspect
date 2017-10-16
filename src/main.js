@@ -20,7 +20,7 @@ Vue.component('err', err);
 import {
   mapActions,
   mapMutations,
- mapState
+  mapState
 } from 'vuex'
 moment.locale('zh-cn');
 
@@ -31,7 +31,9 @@ Vue.use(Quasar) // Install Quasar Framework
 window.feathers = feathersClient
 window.Win_tickets_ = feathers.service('tickets')
 window.Win_devices_ = feathers.service('devices')
-import {Toast} from 'quasar'
+import {
+  Toast
+} from 'quasar'
 
 Quasar.start(() => {
   /* eslint-disable no-new */
@@ -46,12 +48,12 @@ Quasar.start(() => {
     },
     watch: {
       _error(error) {
-        if(error){
-         this.handleError(error)
-        }else{
+        if (error) {
+          this.handleError(error)
+        } else {
           this.setErr()
         }
-      }, 
+      },
       payload(obj) {
         if (obj) {
           this.getAuth()
@@ -60,27 +62,34 @@ Quasar.start(() => {
       }
     },
     methods: {
-      ...mapMutations(['setConfMenu','setErr', 'getGlbErr']),
+      ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
       handleError(obj) {
-        let uri, tips, err={
-         isFlag: true
+        let uri, tips, err = {
+          isFlag: true
         }
         if (obj.error.code == 401) {
-        uri= err.loginUri = '认证失败，请重新登录'
+          uri = err.loginUri = '认证失败，请重新登录'
         } else {
-        tips =  err.tips = '哦,服务出错，稍后再试'
+          tips = err.tips = '哦,服务出错，稍后再试'
         }
         this.getGlbErr(err)
         Toast.create.negative({
-          html:  tips|| uri,
+          html: tips || uri,
           timeout: 5000
-        }) 
+        })
       },
       ...mapActions('metadata', {
         findStateItems: 'find',
       }),
       getConf() {
-        this.findStateItems().then(res => {
+        let query = {
+          query: {
+            id: {
+              $nin: ["system"]
+            }
+          }
+        }
+        this.findStateItems(query).then(res => {
           let _array, sum = {}
           for (var item in res) {
             let data = res[item]
@@ -92,16 +101,47 @@ Quasar.start(() => {
                 label: '全部状态'
               }]
               sum._state_ = _list.concat(_array)
-            }
-            if (data['id'] == 'system') {
-              _array = [{
-                value: 'ALL',
-                label: '全部系统'
-              }]
-              sum._system_ = _list.concat(_array)
-            }
+            } 
           }
-          console.log('[-!!!--]', sum)
+        //get system api
+          let obj = {
+            res: [{
+              "name": "弱电",
+              "id": "100"
+            }, {
+              "name": "强电",
+              "id": "200"
+            }, {
+              "name": "保洁",
+              "id": "300"
+            }, {
+              "name": "消防",
+              "id": "400"
+            }, {
+              "name": "给排水",
+              "id": "500"
+            }, {
+              "name": "其他",
+              "id": "000"
+            }]
+          }
+          let ress = obj.res
+          let system = []
+          for (let s in ress) {
+            let _ress = ress[s],
+              _system = {}
+            for (let k in _ress) {
+              let key = k == 'name' ? 'label' : 'value'
+              _system[key] = _ress[k]
+            }
+            system.push(_system)
+          }
+          sum.system = system
+          sum._system_ = system.concat([{
+              value: 'ALL',
+              label: '全部系统'
+            }])
+           console.log('[-!!!--]', sum)
           this.setConfMenu(sum)
         })
       },
@@ -110,9 +150,8 @@ Quasar.start(() => {
       ]),
       setAuth(obj) {
         let _self = this
-        _self.authenticate().then((response) => {
-        }).catch((error) => {
-        //  _self.$router.push('/login')
+        _self.authenticate().then((response) => {}).catch((error) => {
+          //  _self.$router.push('/login')
         });
       },
       getAuth() {
@@ -121,9 +160,9 @@ Quasar.start(() => {
         let Exp_DAY = moment(parseInt(Exp_Date + '000')).subtract('minutes', 5)
         // let Exp_DAY = moment().add('seconds', 5)
         let time = Exp_DAY - moment()
-        console.log('--!!!import:::exp--', time)
+        //  console.log('--!!!import:::exp--', time)
         setTimeout(() => {
-          console.log('--!!!import:::setAuth--')
+          //   console.log('--!!!import:::setAuth--')
           this.setAuth()
         }, time);
       },

@@ -201,7 +201,7 @@
           this.filterTkt([res])
         });
         Win_tickets_.on('patched', res => {
-          console.log('--!!!!!patched!!!!!==', res)
+       //   console.log('--!!!!!patched!!!!!==', res)
         })
       })
     },
@@ -259,7 +259,7 @@
       },
     },
     methods: {
-      ...mapMutations(['setAddCount','setError' ]),
+      ...mapActions(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
@@ -302,7 +302,7 @@
             _query[key] = _search
           }
         }
-        console.log('--=qqq=-', _query)
+       // console.log('--=qqq=-', _query)
         _self.findMessages({
           query: _query
         }).then((res) => {
@@ -332,7 +332,7 @@
       },
       loadMore(done) {
         if (this.isLoading == false) {
-          console.log('-=loadMore=--')
+       //   console.log('-=loadMore=--')
           this.setFilters(done)
         }
       },

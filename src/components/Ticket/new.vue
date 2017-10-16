@@ -90,7 +90,7 @@
       },
     },
     methods: { 
-      ...mapMutations(['setError']),
+      ...mapActions(['setError']),
       ...mapMutations('tickets', {
         clear: 'clearCurrent'
       }),
@@ -123,7 +123,7 @@
     destroyed: function () {
       this.setError()
       this.clear() // 置空ticket-vuex      
-      console.log("已销毁");
+     // console.log("已销毁");
     },
     validations: {
       description: {
