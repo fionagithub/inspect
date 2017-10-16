@@ -76,7 +76,7 @@
           title: '报障',
           uri: '/ticket',
         }, {
-          title: '故障',
+          title: '抄表',
           disabled: true,
           uri: '/device'
         }, {
