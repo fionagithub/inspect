@@ -23,12 +23,12 @@
           </div>
         </div>
         <div class="login-btn">
-          <button class="circular big teal" @click="login()">登录</button>
+          <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="login()" indeterminate class="teal circular big">
+            提交
+          </q-progress-button>
         </div>
-
       </div>
     </div>
-
     </div>
   </div>
 </template>
@@ -46,11 +46,17 @@
       return {
         users: 'jkr3',
         pwd: 'laputa',
-        showPsd:true
-        
+        showPsd:true,
+        flag:false,
+        progressBtn:0,
       }
     },
     created() {
+    },
+    computed:{
+      unAddBtn(){
+        return this.flag ==true ? true:false
+      }
     },
     methods: {
       ...mapActions('auth', [
@@ -60,18 +66,25 @@
         this.showPsd=!this.showPsd
       },
       login() {
+        let self =this
         let user = {
           strategy: 'local',
-          loginId: this.users,
-          password: this.pwd
+          loginId: self.users,
+          password: self.pwd
         }
-        this.authenticate(user).then(response => {
-         Toast.create( { html: '登录成功.',timeout: 500})
+        self.flag = true
+        self.progressBtn=1
+        self.authenticate(user).then(response => {
+          self.flag = false
+          self.progressBtn=0
+          Toast.create( { html: '登录成功.',timeout: 3000})
         //  console.log('response:::', response)
-            this.$router.push('/')
+            self.$router.push('/')
        }).catch(function (error) {
-         Toast.create.negative({html: '登录出错.',timeout:500 })
-        //  console.error('Error authenticating!', error);
+          self.flag = false
+          self.progressBtn=0
+         Toast.create.negative({html: '登录出错.',timeout:3000 })
+          console.error('Error [--authenticating!', error);
         });
       }
     }
