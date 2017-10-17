@@ -402,7 +402,6 @@
   .list-filters {
     position: relative;
     z-index: 9;
-    height: 40px;
     padding-top: 5px;
     background: white;
   }
@@ -457,7 +456,6 @@
     right: 18px;
     justify-content: center;
     bottom: 18px;
-    z-index: 9;
   }
 
 </style>
