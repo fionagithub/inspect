@@ -15,7 +15,7 @@
 
         </div>
         <div class="item two-lines">
-          <div class="item-content row items-center wrap">
+          <div class="item-content row items-center no-wrap">
             <div class="item-label">密码:</div>
             <input class="auto" v-model="pwd" type="password" v-if="showPsd" >
             <input class="auto" v-model="pwd" type="text" v-if="!showPsd" >

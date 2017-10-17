@@ -402,7 +402,6 @@
   .list-filters {
     position: relative;
     z-index: 9;
-    height: 40px;
     padding-top: 5px;
     background: white;
   }
