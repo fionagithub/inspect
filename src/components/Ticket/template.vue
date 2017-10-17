@@ -456,6 +456,7 @@
     right: 18px;
     justify-content: center;
     bottom: 18px;
+    z-index: 9;
   }
 
 </style>
