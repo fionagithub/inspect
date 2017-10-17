@@ -75,6 +75,7 @@
         items: [{
           title: '报障',
           uri: '/ticket',
+          count:0
         }, {
           title: '抄表',
           disabled: true,
@@ -97,7 +98,7 @@
         let _pa = this.$route.query
       // console.log('---mm', _pa)
         return _pa
-      }
+      },
     },
     watch: {
       '$route' (to, from) {
@@ -107,7 +108,7 @@
         }
       }
     },
-    created() {
+    mounted() {
       if (!this.tktCut) {
         this.getTktCunt()
       } else {
