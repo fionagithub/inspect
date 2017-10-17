@@ -24,7 +24,7 @@ export const mutations = {
   },
   [SETCONFMENU](state, obj) {
     for (let i in state.confMenu){
-      if(obj[i]){
+      if(i in obj){
         state.confMenu[i]=obj[i]
       }
     }
