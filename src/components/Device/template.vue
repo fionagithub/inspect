@@ -247,7 +247,7 @@
   .fix-add {
     right: 18px;
     bottom: 18px;
-    z-index: 99;
+    z-index: 9;
   }
 
 </style>
