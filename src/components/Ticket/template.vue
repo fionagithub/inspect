@@ -174,6 +174,7 @@
           $$start: 'selectTime',
         },
         selectFld: ['reportTime', 'system', 'state', 'priority', 'description', 'id'],
+        _fetchObject:{},
       }
       return Object.assign(_dt, _list)
     },
@@ -191,14 +192,17 @@
       })
     },
     mounted() {
+      let vm =this
       this.$nextTick(() => {
-        this.getApi()
+        vm.getApi()
         Win_tickets_.on('created', res => {
-          this.tktCut += 1
-          this.setAddCount({
-            tktCut: this.tktCut
+          vm.tktCut += 1
+          vm.setAddCount({
+            tktCut: vm.tktCut
           })
-          this.filterTkt([res])
+          vm._fetchObject={}
+          vm._fetchObject=res
+          vm.filterTkt([res])
         });
         Win_tickets_.on('patched', res => {
        //   console.log('--!!!!!patched!!!!!==', res)
@@ -272,6 +276,12 @@
         this.getApi(sus)
       },
       getNewMsg() {
+        this.w_search_dtl.searchModel=null
+        this.search_dtl.selectType="0"
+        if(this._fetchObject){
+        //  console.log('[]-=-[]', this._fetchObject)
+          this.search_dtl.selectSys=this._fetchObject.system
+        }
         this.setFilters()
       },
       searchKey() {
