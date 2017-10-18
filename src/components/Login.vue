@@ -49,8 +49,10 @@
   export default {
     data() {
       return {
-        users: 'jkr3',
-        pwd: 'laputa',
+       /* users: 'jkr3',
+        pwd: 'laputa',*/
+        users:'',
+        pwd:'',
         showPsd:true,
         flag:false,
         progressBtn:0,
