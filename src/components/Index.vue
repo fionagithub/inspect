@@ -171,8 +171,8 @@
 </script>
 <style>
   .index-menu {
-    padding: 3rem 2rem;
-    width: 100vw;
+    padding-top:1rem;
+    width: 80vw;
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -180,7 +180,6 @@
 
   .index-page .banner {
     width: 100vw;
-    height: 30vh;
   }
 
   .tb-btn {
@@ -190,8 +189,8 @@
 
   .index-img {
     width: 100vw;
-    position: absolute;
-    top: 0;
+    position: relative;
+    margin-top: -50px;
   }
 
   .bg-count {
