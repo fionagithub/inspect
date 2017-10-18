@@ -9,10 +9,15 @@
       <div class="card-content">
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
+            <div class="item-label">租户:</div>
+              <q-select class="auto" type="list" v-model="tenant" :options="getTenant"></q-select>
+          </div>
+        </div>
+        <div class="item two-lines">
+          <div class="item-content row items-center wrap">
             <div class="item-label">用户名:</div>
             <input class="auto" placeholder="user name" v-model="users">
           </div>
-
         </div>
         <div class="item two-lines">
           <div class="item-content row items-center no-wrap">
@@ -49,6 +54,11 @@
         showPsd:true,
         flag:false,
         progressBtn:0,
+        getTenant:[{
+          value: 'laputa',
+          label: 'laputa',
+        }],
+        tenant:'laputa',
       }
     },
     created() {
