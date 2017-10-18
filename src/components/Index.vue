@@ -1,23 +1,23 @@
 <template>
-  <div class="index-page window-height window-width column items-center no-wrap">
+  <div class="index-page window-height window-width column items-center">
     <div class="banner">
       <div class="toolbar tb-btn">
-        <button @click="leftDrawer.open()">
-          <i>menu</i>
+          <button @click="leftDrawer.open()">
+            <i>menu</i>
+          </button>
+          <button>
+            <i>more_vert</i>
+            <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
+              <div class="list highlight ">
+                <div class="item">
+                  <button class="defalut" @click="alert()">首页管理 </button>
+                </div>
+              </div>
+            </q-popover>
         </button>
-        <button>
-          <i>more_vert</i>
-          <q-popover ref="popover" anchor="top left" self="bottom left" class="bg-white text-black">
-            <div class="list highlight ">
-              <div class="item">
-                <button class="defalut" @click="alert()">首页管理 </button>
       </div>
+    <img class="index-img" src="../assets/bj_logo.png">
     </div>
-    </q-popover>
-    </button>
-  </div>
-  </div>
-  <img class="index-img" src="../assets/bj_logo.png">
   <div class="index-menu  text-center">
     <div class="row content-center text-center menu-row">
       <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
@@ -40,8 +40,8 @@
     </div>
 
   </div>
-  <div slot="footer">
-    {{verson}}
+  <div slot="footer" class="ftCon" >
+      {{verson}}
   </div>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
     <feed-back v-if='isEdit' />
@@ -180,17 +180,18 @@
 
   .index-page .banner {
     width: 100vw;
+    height: 30vh;
   }
 
   .tb-btn {
     z-index: 9;
-    color: white;
     background: transparent;
   }
 
   .index-img {
-    margin-top: -50px;
     width: 100vw;
+    position: absolute;
+    top: 0;
   }
 
   .bg-count {
@@ -210,5 +211,9 @@
     align-items: center;
     padding: 30px 10px;
   }
-
+.ftCon{
+    padding: 5px 0;
+    color: gray;
+    font-size: 10px;
+}
 </style>
