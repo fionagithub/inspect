@@ -31,6 +31,7 @@ export const mutations = {
   },
   [SETADDCOUNT](state, obj){
     for (let i in obj){
+      console.log('-=-', obj[i] )
       state.add_count[i]=obj[i]
     }
   }
