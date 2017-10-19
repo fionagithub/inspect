@@ -16,7 +16,7 @@
         <a class="animate-pop refresh-message" v-if="getCtCut.dvCut" @click='setFilters()'>
           <span>+{{ getCtCut.dvCut }} </span>  
         </a>
-        <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
+        <q-pull-to-refresh class="d-pull" :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
             <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
               <i class="item-primary item-icon">mail</i>
@@ -211,6 +211,9 @@
   .list-btn {
     width: 100%;
   }
+  .d-pull{
+    margin-top: -20px;
+  }
 
   .list-desc {
     color: #999;
@@ -244,7 +247,7 @@
   .fix-add {
     right: 18px;
     bottom: 18px;
-    z-index: 99;
+    z-index: 9;
   }
 
 </style>

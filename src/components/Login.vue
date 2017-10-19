@@ -9,13 +9,18 @@
       <div class="card-content">
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
-            <div class="item-label">用户名:</div>
-            <input class="auto" placeholder="user name" v-model="users">
+            <div class="item-label">租户:</div>
+              <q-select class="auto" type="list" v-model="tenant" :options="getTenant"></q-select>
           </div>
-
         </div>
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
+            <div class="item-label">用户名:</div>
+            <input class="auto" placeholder="user name" v-model="users">
+          </div>
+        </div>
+        <div class="item two-lines">
+          <div class="item-content row items-center no-wrap">
             <div class="item-label">密码:</div>
             <input class="auto" v-model="pwd" type="password" v-if="showPsd" >
             <input class="auto" v-model="pwd" type="text" v-if="!showPsd" >
@@ -44,11 +49,18 @@
   export default {
     data() {
       return {
-        users: 'jkr3',
-        pwd: 'laputa',
+       /* users: 'jkr3',
+        pwd: 'laputa',*/
+        users:'',
+        pwd:'',
         showPsd:true,
         flag:false,
         progressBtn:0,
+        getTenant:[{
+          value: 'laputa',
+          label: 'laputa',
+        }],
+        tenant:'laputa',
       }
     },
     created() {
