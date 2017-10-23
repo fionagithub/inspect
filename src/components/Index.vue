@@ -44,7 +44,8 @@
       {{verson}}
   </div>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <feed-back v-if='isEdit' />
+    <feed-back v-if='isFb' />
+    <setting v-if='isSetting' />
   </q-modal>
   </div>
 </template>
@@ -52,9 +53,8 @@
 <script>
   import 'src/assets/css/index.css'
   import feedBack from './Feedback/template'
+  import setting from './Setting/template'
   import Vue from 'vue'
-
-  Vue.component('feedBack', feedBack);
   import {
     mapGetters,
     mapMutations,
@@ -69,7 +69,8 @@
     data() {
       return {
         verson: '0.4.11 071018',
-        isEdit: false,
+        isSetting:false,
+        isFb: false,
         tktCut: filtersStorage('tktCut') || null,
         items: [{
           title: '报障',
@@ -125,8 +126,12 @@
         findTkt: 'find',
       }),
       ...mapActions(['setError']),
+      Setting(){
+        this.$refs.layoutModal.open()
+        this.isSetting=true
+      },
       getFd() {
-        this.isEdit = true
+        this.isFb = true
         this.$refs.layoutModal.open()
       },
       setCut(ttl) {
@@ -137,7 +142,7 @@
         })
       },
       notify() {
-        this.isEdit = false
+        this.isFb = false
         this.setError()
         this.$refs.layoutModal.close();
       },
@@ -164,6 +169,10 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
+    },
+    components: {
+      setting,
+      feedBack
     },
   }
 
