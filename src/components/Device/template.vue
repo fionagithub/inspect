@@ -49,7 +49,7 @@
 </template>
 <script>
   import Vue from 'vue'
-  import detail from './detail'
+  import dvDetail from './detail'
   import {
     _list
   } from './data'
@@ -63,7 +63,6 @@
     Toast
   }
   from 'quasar'
-  Vue.component('dvDetail', detail);
   export default {
     name: 'device',
     data() {
@@ -200,6 +199,9 @@
         this.isEdit = true
         this.$refs.layoutModal.open()
       }
+    },
+    components:{
+      dvDetail
     },
     destroyed: function () {
       this.clear()

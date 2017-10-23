@@ -96,7 +96,7 @@
             新增报障
           </q-toolbar-title>
         </div>
-        <new></new>
+        <dnew></dnew>
       </q-layout>
     </q-modal>
   </div>
@@ -118,11 +118,9 @@
   from 'quasar'
 
   import popover from '../layout/popover'
-  import detail from './detail'
-  import nnew from './new'
+  import tkDetail from './detail'
+  import dnew from './new'
   import Vue from 'vue'
-  Vue.component('new', nnew);
-  Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
     timeMap = {
       NOW: _moment.toISOString(),
@@ -210,6 +208,8 @@
     },
     components: {
       popover,
+      tkDetail,
+       dnew
     },
     filters: {
       gettktIcon(obj) {
