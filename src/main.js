@@ -15,6 +15,9 @@ import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import moment from 'moment'
 import err from './components/Error'
+import filtersStorage from './components/conf/storage'
+window.filtersStorage = filtersStorage
+
 Vue.component('err', err);
 
 import {
