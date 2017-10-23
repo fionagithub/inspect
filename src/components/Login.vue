@@ -10,7 +10,7 @@
         <div class="item two-lines">
           <div class="item-content row items-center wrap">
             <div class="item-label">租户:</div>
-              <q-select class="auto" type="list" v-model="tenant" :options="getTenant"></q-select>
+            <input class="auto" placeholder="tenant" v-model="tenant">
           </div>
         </div>
         <div class="item two-lines">
@@ -56,11 +56,11 @@
         showPsd:true,
         flag:false,
         progressBtn:0,
-        getTenant:[{
-          value: 'laputa',
-          label: 'laputa',
-        }],
-        tenant:'laputa',
+        tenant:filtersStorage('tenant')||'laputa' ,
+        tenant_uri:{
+          laputa: 'http://192.168.123.240:3030',
+          jk:'https://m.laputacloud.com'
+        }
       }
     },
     created() {
@@ -79,6 +79,15 @@
       },
       login() {
         let self =this
+        let io=feathers.io
+        io.io.uri= self.tenant_uri[self.tenant]
+        io.connect()
+        let _storage = {
+          key:'tenant',
+          value: self.tenant
+        }
+        filtersStorage(_storage, "save")
+       // console.log('[]', io)
         let user = {
           strategy: 'local',
           loginId: self.users,

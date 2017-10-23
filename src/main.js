@@ -15,6 +15,8 @@ import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import moment from 'moment'
 import err from './components/Error'
+import filtersStorage from './components/conf/storage'
+
 Vue.component('err', err);
 
 import {
@@ -29,6 +31,7 @@ Vue.use(Quasar) // Install Quasar Framework
 // window.screen.lockOrientation('portrait')
 // setInterval authenticate
 window.feathers = feathersClient
+window.filtersStorage=filtersStorage
 window.Win_tickets_ = feathers.service('tickets')
 window.Win_devices_ = feathers.service('devices')
 import {

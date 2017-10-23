@@ -202,6 +202,7 @@
       }
     },
     destroyed: function () {
+      this.clear()
       this.tips = null
     },
   }

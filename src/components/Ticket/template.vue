@@ -142,7 +142,6 @@
     value: 'ALL',
     label: '全部时间'
   }]
-  import filtersStorage from '../conf/storage'
   export default {
     data() {
       let _dt = {
@@ -386,6 +385,7 @@
       },
     },
     destroyed: function () {
+      this.clear()
       this.tipsMsg = null
     },
   }

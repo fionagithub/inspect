@@ -68,6 +68,7 @@
           this.$router.push({
             path: '/login'
           })
+          feathers.io.disconnect()
           this.$refs.leftDrawer.close()
         })
 

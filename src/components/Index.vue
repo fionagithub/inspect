@@ -50,7 +50,6 @@
 </template>
 
 <script>
-  import filtersStorage from './conf/storage'
   import 'src/assets/css/index.css'
   import feedBack from './Feedback/template'
   import Vue from 'vue'
