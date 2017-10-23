@@ -143,6 +143,7 @@
         })
       },
       notify() {
+        this.isSetting = false
         this.isFb = false
         this.setError()
         this.$refs.layoutModal.close();
