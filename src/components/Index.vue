@@ -43,6 +43,7 @@
   <div slot="footer" class="ftCon" >
       {{verson}}
   </div>
+  <drawer></drawer>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
     <feed-back v-if='isFb' />
     <setting v-if='isSetting' />
@@ -51,9 +52,9 @@
 </template>
 
 <script>
-  import 'src/assets/css/index.css'
   import feedBack from './Feedback/template'
   import setting from './Setting/template'
+  import drawer from './layout/drawer.vue'
   import Vue from 'vue'
   import {
     mapGetters,
@@ -92,7 +93,7 @@
     },
     computed: {
       leftDrawer() {
-        return this.$parent.$children[0].$refs.leftDrawer
+        return this.$children[5].$refs.leftDrawer
       },
       _modal() {
         let _pa = this.$route.query
@@ -172,7 +173,8 @@
     },
     components: {
       setting,
-      feedBack
+      feedBack,
+      drawer,
     },
   }
 
