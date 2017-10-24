@@ -141,6 +141,7 @@
     label: '全部时间'
   }]
   export default {
+    name: 'list',
     data() {
       let _dt = {
         items_time: _time,
@@ -175,7 +176,8 @@
       }
       return Object.assign(_dt, _list)
     },
-    name: 'list',
+    created(){
+    },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu', 'getCtCut']),
       surplus() {
@@ -192,6 +194,7 @@
       let vm =this
       this.$nextTick(() => {
         vm.getApi()
+      feathers.io.emit('subscribe', {"channel":"tickets"})
         Win_tickets_.on('created', res => {
           vm.tktCut += 1
           vm.setAddCount({
@@ -201,8 +204,9 @@
           vm._fetchObject=res
           vm.filterTkt([res])
         });
-        Win_tickets_.on('patched', res => {
-       //   console.log('--!!!!!patched!!!!!==', res)
+        Win_tickets_.on('patched', pes => {
+          vm.patchTkt(pes)
+          console.log('--!!!!!patched!!!!!==', pes)
         })
       })
     },
@@ -345,17 +349,20 @@
           this.setFilters(done)
         }
       },
-      ...mapMutations('tickets', {
-        clear: 'clearAll',
+      ...mapActions('tickets', {
+        patchTkt: 'patch',
       }),
-      ...mapMutations('tickets', {
-        filterTkt: 'removeItems',
+      ...mapActions('tickets', {
+        filterTkt: 'remove',
       }),
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
       ...mapActions('tickets', {
         getTkt: 'get',
+      }),
+      ...mapMutations('tickets', {
+        clear: 'clearAll',
       }),
       ...mapMutations('tickets', {
         clearCrt: 'clearCurrent'
@@ -386,6 +393,7 @@
     },
     destroyed: function () {
       this.clear()
+      feathers.io.emit('unsubscribe', {"channel":"tickets"})
       this.tipsMsg = null
     },
   }
