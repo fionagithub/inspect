@@ -112,9 +112,8 @@ Quasar.start(() => {
         //get system api
           this.setConfMenu(sum)
         })
-        this.findSystemItems().then(data=>{
-          console.log('[]-=', data)
-          let ress = data.data
+        this.findSystemItems().then(ress=>{
+         // console.log('[]-=', ress)
           let system = [], sum = {}
           for (let s in ress) {
             let _ress = ress[s],
