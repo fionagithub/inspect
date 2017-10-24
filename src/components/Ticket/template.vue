@@ -200,12 +200,12 @@
           vm.setAddCount({
             tktCut: vm.tktCut
           })
-          vm._fetchObject={}
           vm._fetchObject=res
+          console.log( vm._fetchObject,' -=-=-=' ,res  )
           vm.filterTkt([res])
         });
         Win_tickets_.on('patched', pes => {
-          vm.patchTkt(pes)
+          vm.patchTkt( pes)
           console.log('--!!!!!patched!!!!!==', pes)
         })
       })
@@ -349,11 +349,11 @@
           this.setFilters(done)
         }
       },
-      ...mapActions('tickets', {
-        patchTkt: 'patch',
+      ...mapMutations('tickets', {
+        patchTkt: 'addItem',
       }),
-      ...mapActions('tickets', {
-        filterTkt: 'remove',
+      ...mapMutations('tickets', {
+        filterTkt: 'removeItems',
       }),
       ...mapActions('tickets', {
         findMessages: 'find',
