@@ -11,7 +11,7 @@
           </div>
           <div class="item multiple-lines d-base">
             <div class="d-label"> 报障来源 </div>
-            <div class="d-val">
+            <div class="d-val" v-if='tktDtl.source.type' >
               {{tktDtl.source.type|tran(getConfMenu.source) }}
             </div>
           </div>
@@ -106,6 +106,9 @@
         status: '',
       }
     },
+    created() {
+      this.setError()
+    },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu']),
       ...mapGetters('tickets', {
@@ -138,7 +141,8 @@
       },
     },
     methods: {
-      ...mapActions('tickets', {
+      ...mapActions(['setError']),
+     ...mapActions('tickets', {
         patchTkt: 'patch',
       }),
       updateDB(id) {
@@ -156,6 +160,10 @@
        //  console.log('-patch-success-', this.tktDtl)
         })
       },
+    },
+    destroyed: function () {
+      this.setError()
+     // console.log("已销毁");
     },
   }
 
