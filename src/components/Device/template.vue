@@ -49,7 +49,7 @@
 </template>
 <script>
   import Vue from 'vue'
-  import detail from './detail'
+  import dvDetail from './detail'
   import {
     _list
   } from './data'
@@ -63,7 +63,6 @@
     Toast
   }
   from 'quasar'
-  Vue.component('dvDetail', detail);
   export default {
     name: 'device',
     data() {
@@ -96,50 +95,48 @@
     },
     created() {},
     mounted() {
-      this.getApi() //请求初始数据 
+      this.setFilters() //请求初始数据 
       this.$nextTick(() => {
-        Win_devices_.on('patched', res => {
+        feathers.io.emit('subscribe', {"channel":"devices"})
+       Win_devices_.on('patched', res => {
+          this.getDv(res.id)
          // console.log('--!!!!!!!!!!==', res)
-          this.ptdDV(res)
         })
         Win_devices_.on('created', res => {
           this.dvCut += 1
           this.setAddCount({
             dvCut: this.dvCut
           })
-          this.filterDV([res])
         });
       })
     },
     methods: {
-      ...mapActions(['setError']),
-      getMore() {
-        this.skip = this.message.length
-        this.getApi()
-      },
-      ...mapMutations('devices', {
-        ptdDV: 'updateItem'
-      }),
-      ...mapMutations('devices', {
-        clear: 'clearAll',
-      }),
-      ...mapMutations('devices', {
-        clearCrt: 'clearCurrent'
-      }),
-      ...mapMutations('devices', {
-        filterDV: 'removeItems',
-      }),
+      ...mapActions(['setAddCount','setError' ]),
       ...mapActions('devices', {
         findMessages: 'find',
       }),
       ...mapActions('devices', {
-        getTkt: 'get',
+        getDv: 'get',
       }),
-      notify() {
-        this.isEdit = false
-        this.setError()
-        this.$refs.layoutModal.close();
-        this.clearCrt()
+      setFilters(sus) {
+        this.dvCut = 0
+        this.setAddCount({
+          dvCut: 0
+        })
+        this.isFinished = false
+        this.progressBtn = 0
+        this.skip = 0
+        this.getApi(sus)
+      },
+      getMore() {
+        this.skip = this.message.length
+        this.getApi()
+      },
+      loadMore(done) {
+        if (this.isLoading == false) {
+       //   console.log('-=loadMore=--')
+          this.setFilters(done)
+        }
       },
       getApi(done) {
         let _self = this
@@ -150,8 +147,7 @@
           $skip: _self.skip,
           $select: _self.selectFld
         }
-      //  console.log('--==-', _query)
-
+          //  console.log('--==-', _query)
         _self.findMessages({
           query: _query
         }).then((res) => {
@@ -166,7 +162,7 @@
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
             _self.tips = _model ? s_tips : n_tips
-            // _self.progressBtn = 100
+           //  _self.progressBtn = 0
           } else {
             if (_self.surplus == 0) {
               _self.tips = '没有更多数据了.'
@@ -178,30 +174,21 @@
           //  console.log('-=res--', _self.tips, res.data)
         })
       },
-      setFilters(sus) {
-        this.dvCut = 0
-        this.setAddCount({
-          dvCut: 0
-        })
-        this.clear()
-        this.isFinished = false
-        this.progressBtn = 0
-        this.skip = 0
-        this.getApi(sus)
-      },
-      loadMore(done) {
-        if (this.isLoading == false) {
-       //   console.log('-=loadMore=--')
-          this.setFilters(done)
-        }
+      notify() {
+        this.isEdit = false
+        this.$refs.layoutModal.close();
       },
       getDetail(id) {
-        this.getTkt(id)
+        this.getDv(id)
         this.isEdit = true
         this.$refs.layoutModal.open()
       }
     },
+    components:{
+      dvDetail
+    },
     destroyed: function () {
+      feathers.io.emit('unsubscribe', {"channel":"devices"})
       this.tips = null
     },
   }

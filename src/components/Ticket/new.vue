@@ -94,6 +94,9 @@
       ...mapMutations('tickets', {
         clear: 'clearCurrent'
       }),
+      ...mapMutations('tickets', {
+        filterTkt: 'removeItem',
+      }),
       ...mapActions('tickets', {
         createMessages: 'create',
       }),
@@ -109,10 +112,11 @@
         this.createMessages(data)
           .then(res => {
             this.flag=false
-            this.progressBtn=1
+            this.progressBtn=0
+            this.filterTkt(res)
             Toast.create('提交成功.')
-            this.$router.go(-1)
-            // console.log('-=-=', res)
+             this.$router.go(-1)
+          // console.log('-=-=', res)
           })
       }
     },

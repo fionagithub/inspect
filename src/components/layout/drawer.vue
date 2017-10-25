@@ -14,7 +14,7 @@
         <q-drawer-link icon="tab" disabled to="/">
           我
         </q-drawer-link>
-        <q-drawer-link icon="compare_arrows" disabled to="/">
+        <q-drawer-link icon="compare_arrows" :to="{path: '/', query: { _modal: 'Setting' }}">
            设置
         </q-drawer-link>
         <q-drawer-link icon="compare_arrows" disabled to="/">
@@ -68,6 +68,7 @@
           this.$router.push({
             path: '/login'
           })
+          feathers.io.disconnect()
           this.$refs.leftDrawer.close()
         })
 
