@@ -193,20 +193,19 @@
     mounted() {
       let vm =this
       this.$nextTick(() => {
-        vm.getApi()
-      feathers.io.emit('subscribe', {"channel":"tickets"})
-        Win_tickets_.on('created', res => {
-          vm.tktCut += 1
-          vm.setAddCount({
-            tktCut: vm.tktCut
-          })
-          vm._fetchObject=res
-          console.log( vm._fetchObject,' -=-=-=' ,res  )
-          vm.filterTkt([res])
-        });
+        vm.setFilters()
+          feathers.io.emit('subscribe', {"channel":"tickets"})
+         Win_tickets_.on('created', res => {
+           vm.tktCut += 1
+            vm.setAddCount({
+              tktCut: vm.tktCut
+            }) 
+            vm._fetchObject=res
+          //  console.log(' -=-=-=' ,res  )
+          });
         Win_tickets_.on('patched', pes => {
           vm.patchTkt( pes)
-          console.log('--!!!!!patched!!!!!==', pes)
+        //  console.log('--!!!!!patched!!!!!==', pes)
         })
       })
     },
@@ -266,17 +265,16 @@
       },
     },
     methods: {
-      ...mapActions(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
           tktCut: 0
         })
-        this.clear()
         this.isFinished = false
         this.progressBtn = 0
         this.skip = 0
         this.getApi(sus)
+        this.search_dtl.selectSys=filtersStorage('selectSys') || 'ALL'
       },
       getNewMsg() {
         this.w_search_dtl.searchModel=null
@@ -327,7 +325,7 @@
           if (res.data.length == 0 && msg == 0) {
             let _model = _self.w_search_dtl.searchModel
             _self.isFinished = false
-            // _self.progressBtn = 100
+            // _self.progressBtn = 0
             // console.log('-=[sdf]')
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
@@ -349,11 +347,9 @@
           this.setFilters(done)
         }
       },
+      ...mapActions(['setAddCount','setError' ]),
       ...mapMutations('tickets', {
         patchTkt: 'addItem',
-      }),
-      ...mapMutations('tickets', {
-        filterTkt: 'removeItems',
       }),
       ...mapActions('tickets', {
         findMessages: 'find',
@@ -361,18 +357,10 @@
       ...mapActions('tickets', {
         getTkt: 'get',
       }),
-      ...mapMutations('tickets', {
-        clear: 'clearAll',
-      }),
-      ...mapMutations('tickets', {
-        clearCrt: 'clearCurrent'
-      }),
       notify() {
         this.isCreated = false
         this.isEdit = false
-        this.setError()
         this.$refs.layoutModal.close();
-        this.clearCrt()
       },
       getDetail(id) {
         this.getTkt(id)
@@ -392,7 +380,6 @@
       },
     },
     destroyed: function () {
-      this.clear()
       feathers.io.emit('unsubscribe', {"channel":"tickets"})
       this.tipsMsg = null
     },
