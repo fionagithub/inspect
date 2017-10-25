@@ -185,20 +185,14 @@
         message: 'current',
       }),
     },
-    components: {
-      popover
+    created() {
+      this.setError()
     },
-    created() {},
     mounted() {
-      this.getMessage()
+     // this.getMessage()
     },
     methods: {
-      ...mapMutations('devices', {
-        clear: 'clearCurrent'
-      }),
-      ...mapActions('devices', {
-        findMessages: 'get',
-      }),
+      ...mapActions(['setError']),
       getRcd(){
       //  console.log('-rrr--id::::', this.message.tenantId )
 
@@ -211,16 +205,15 @@
       setTab(){
         this.tabNo='tab-3'
       //  console.log(this.setActiveTab)
-
       },
-      getMessage() {
-        let _self = this
-        const id = _self.$route.params.id
-        _self.findMessages(id)
+      getMessage() {        
       }
     },
+    components: {
+      popover
+    },
     destroyed: function () {
-      this.clear() // 置空ticket-vuex      
+      this.setError()
     //  console.log("已销毁");
     },
   }

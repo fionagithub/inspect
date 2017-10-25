@@ -20,6 +20,13 @@ const router = new VueRouter({
       component: load('Index')
     },
     {
+      path: '/setting',
+      meta: {
+        requiresAuth: true
+      },
+      component: load('Setting/template')
+    },
+    {
       path: '/feedback',
       meta: {
         requiresAuth: true
