@@ -204,8 +204,8 @@
           //  console.log(' -=-=-=' ,res  )
           });
         Win_tickets_.on('patched', pes => {
-          vm.patchTkt( pes)
-        //  console.log('--!!!!!patched!!!!!==', pes)
+          vm.getTkt(pes.id)
+         // console.log('--!!!!!patched!!!!!==', pes)
         })
       })
     },
@@ -348,9 +348,6 @@
         }
       },
       ...mapActions(['setAddCount','setError' ]),
-      ...mapMutations('tickets', {
-        patchTkt: 'addItem',
-      }),
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
