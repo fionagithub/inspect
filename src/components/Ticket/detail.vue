@@ -11,7 +11,7 @@
           </div>
           <div class="item multiple-lines d-base">
             <div class="d-label"> 报障来源 </div>
-            <div class="d-val" v-if='tktDtl.source.type' >
+            <div class="d-val" v-if='tktDtl.source' >
               {{tktDtl.source.type|tran(getConfMenu.source) }}
             </div>
           </div>
@@ -109,6 +109,12 @@
     created() {
       this.setError()
     },
+    mounted(){
+      Win_tickets_.on('patched', pes => {
+        this.getTkt(pes.id)
+        // console.log('--!!!!!patched!!!!!==', pes)
+      })
+    },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu']),
       ...mapGetters('tickets', {
@@ -144,6 +150,9 @@
       ...mapActions(['setError']),
      ...mapActions('tickets', {
         patchTkt: 'patch',
+      }),
+      ...mapActions('tickets', {
+        getTkt: 'get',
       }),
       updateDB(id) {
         this.flag = true
