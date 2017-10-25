@@ -203,10 +203,6 @@
             vm._fetchObject=res
           //  console.log(' -=-=-=' ,res  )
           });
-        Win_tickets_.on('patched', pes => {
-          vm.getTkt(pes.id)
-         // console.log('--!!!!!patched!!!!!==', pes)
-        })
       })
     },
     components: {
@@ -222,7 +218,6 @@
           2: 'assignment_turned_in'
         }
         return map[obj]
-
       },
       getPrtColo(obj, src) {
         if (src == 2) {
@@ -272,6 +267,7 @@
         })
         this.isFinished = false
         this.progressBtn = 0
+        this.clear()
         this.skip = 0
         this.getApi(sus)
         this.search_dtl.selectSys=filtersStorage('selectSys') || 'ALL'
@@ -319,14 +315,13 @@
         }).then((res) => {
           _self.total = res.total
           _self.isTipsHG = res.total ? false : true
-          let _perct = Math.floor(Math.pow(10, 2) / res.total)
           let msg = _self.message.length
-          _self.progressBtn = msg * _perct
+          let _perct = (msg / res.total)*100
+          _self.progressBtn = 0<_perct<1 ? 1:Math.floor(_perct)
           if (res.data.length == 0 && msg == 0) {
             let _model = _self.w_search_dtl.searchModel
             _self.isFinished = false
             // _self.progressBtn = 0
-            // console.log('-=[sdf]')
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
             _self.tipsMsg = _model ? s_tips : n_tips
@@ -353,6 +348,9 @@
       }),
       ...mapActions('tickets', {
         getTkt: 'get',
+      }),
+      ...mapMutations('tickets', {
+        clear: 'clearAll',
       }),
       notify() {
         this.isCreated = false
