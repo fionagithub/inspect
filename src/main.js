@@ -44,10 +44,23 @@ Quasar.start(() => {
     el: '#q-app',
     computed: {
       ...mapState('auth', ['payload']),
-      ...mapState(['_error']),
+      ...mapState(['_error', 'tenant_uri' ]),
     },
     created() {
-      this.setAuth()
+      let tenant = filtersStorage('tenant')
+      if (tenant) {
+        let io = feathers.io
+        io.io.uri = this.tenant_uri[tenant]
+        io.connect()
+        this.$router.push({
+          path: '/'
+        })
+        this.setAuth()
+      } else {
+        this.$router.push({
+          path: '/login'
+        })
+      }
     },
     watch: {
       _error(error) {
@@ -107,13 +120,13 @@ Quasar.start(() => {
                 label: '全部状态'
               }]
               sum._state_ = _list.concat(_array)
-            } 
+            }
           }
-        //get system api
+          //get system api
           this.setConfMenu(sum)
         })
         this.findSystemItems().then(ress=>{
-         // console.log('[]-=', ress)
+          // console.log('[]-=', ress)
           let system = [], sum = {}
           for (let s in ress) {
             let _ress = ress[s],
@@ -126,9 +139,9 @@ Quasar.start(() => {
           }
           sum.system = system
           sum._system_ = system.concat([{
-              value: 'ALL',
-              label: '全部系统'
-            }])
+            value: 'ALL',
+            label: '全部系统'
+          }])
           this.setConfMenu(sum)
         })
       },
@@ -137,9 +150,10 @@ Quasar.start(() => {
       ]),
       setAuth(obj) {
         let _self = this
-        _self.authenticate().then((response) => {}).catch((error) => {
-          //  _self.$router.push('/login')
-        });
+          _self.authenticate().then((response) => {
+          }).catch((error) => {
+           //   _self.$router.push('/login')
+          });
       },
       getAuth() {
         let _self = this

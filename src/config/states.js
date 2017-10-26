@@ -9,6 +9,10 @@
     loginUri: null,
     tips: null,
   },
+  tenant_uri: {
+    laputa: 'http://192.168.123.240:3030',
+    jk: 'https://m.laputacloud.com'
+  },
   priorityMax: 3,
   confMenu:{
     source: [],

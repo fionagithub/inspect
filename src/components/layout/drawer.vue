@@ -4,8 +4,8 @@
       <div class="toolbar">
         <div class="user">
           <img src="../img/mountains.jpg">
-          <div class="name">
-            {{loguser}}
+          <div class="name" v-if='user' >
+            {{user.name}}
           </div>
         </div>
       </div>
@@ -41,13 +41,7 @@
   export default {
     name: "drawer", 
     computed: {
-      ...mapState({
-        loguser(state) {
-          if (state.auth.user) {
-            return state.auth.user.name
-          }
-        }
-      }), 
+      ...mapState('auth', ['user']),
     }, 
     methods: {
       ...mapActions('auth', [
@@ -68,7 +62,6 @@
           this.$router.push({
             path: '/login'
           })
-          feathers.io.disconnect()
           this.$refs.leftDrawer.close()
         })
 

@@ -51,22 +51,17 @@
   } from 'quasar'
   import {
     mapActions,
+    mapState
   } from 'vuex'
   export default {
     data() {
-      return {
-        /* users: 'jkr3',
-         pwd: 'laputa',*/
-        users: '',
-        pwd: '',
+      return { 
+        users: 'jkr3',
+         pwd: 'laputa',
         showPsd: true,
         flag: false,
         progressBtn: 0,
-        tenant: filtersStorage('tenant') || 'laputa',
-        tenant_uri: {
-          laputa: 'http://192.168.123.240:3030',
-          jk: 'https://m.laputacloud.com'
-        },
+        tenant: filtersStorage('tenant'),
         holderTitle: {
           tenant: '租户',
           user: '用户名',
@@ -76,6 +71,7 @@
     },
     created() {},
     computed: {
+      ...mapState(['tenant_uri']),
       unAddBtn() {
         return this.flag == true ? true : false
       }
@@ -89,14 +85,16 @@
       },
       login() {
         let self = this
-        let io = feathers.io
-        io.io.uri = self.tenant_uri[self.tenant]
-        io.connect()
-        let _storage = {
-          key: 'tenant',
-          value: self.tenant
+        if(self.tenant!== filtersStorage('tenant')){
+          let io = feathers.io
+          io.io.uri = self.tenant_uri[self.tenant]
+          io.connect()
+          let _storage = {
+            key: 'tenant',
+            value: self.tenant
+          }
+          filtersStorage(_storage, "save")
         }
-        filtersStorage(_storage, "save")
         // console.log('[]', io)
         let user = {
           strategy: 'local',

@@ -9,10 +9,7 @@ import store from '../config/store'
 import {
   setError
 } from '../config/actions'
-
-//https://forum-archive.vuejs.org/topic/3635/make-an-ajax-request-everytime-route-changed/11
-const API_HOST = process.env.NODE_ENV === 'development' ? 'http://192.168.123.240:3030' : 'https://m.laputacloud.com'
-const socket = io(API_HOST, {
+const socket = io({
   transports: ['websocket']
 })
 const feathersClient = feathers()
