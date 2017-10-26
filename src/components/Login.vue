@@ -6,7 +6,7 @@
         <div class="card-media">
           <img src="../assets/bj_logo.png">
         </div>
-        <div class="card-content">
+        <div class="card-content user">
           <div class="item two-lines">
             <div class="item-content row items-center nowrap">
               <div class="floating-label">
@@ -35,7 +35,7 @@
           </div>  
           <div class="login-btn">
             <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="login()" indeterminate class="teal circular big">
-              提交
+              登录
             </q-progress-button>
           </div>
         </div>
@@ -133,6 +133,11 @@
   .login {
     height: 100vh;
   }
+  
+  .login .user {
+    padding: 20px 50px;
+  }
+
 
   .login .card {
     height: 100vh;
@@ -153,8 +158,8 @@
     display: flex;
     justify-content: center;
   }
-.show-psd{
-  right: 4px;
-  left: auto!important;
-} 
+  .show-psd{
+    right: 4px;
+    left: auto!important;
+  } 
 </style>
