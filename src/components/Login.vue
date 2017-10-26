@@ -45,16 +45,15 @@
 </template>
 
 
-<script>
-  import {
-    Toast
-  } from 'quasar'
+<script> 
+  import { Platform,Toast } from 'quasar'
   import {
     mapActions,
   } from 'vuex'
   export default {
     data() {
       return {
+        platform: this.$q.platform.is,        
         /* users: 'jkr3',
          pwd: 'laputa',*/
         users: '',
@@ -74,7 +73,15 @@
         }
       }
     },
-    created() {},
+    created(){
+      if(!this.platform.mobile){
+        Toast.create({
+          html: '建议使用移动端浏览页面',
+          timeout: 5000
+        })
+        console.log(this.platform)
+      }
+    },
     computed: {
       unAddBtn() {
         return this.flag == true ? true : false
