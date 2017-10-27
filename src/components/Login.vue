@@ -63,7 +63,7 @@
         progressBtn: 0,
         tenant: filtersStorage('tenant'),
         holderTitle: {
-          tenant: '租户',
+          tenant: '企业',
           user: '用户名',
           pwd: '密码',
         }
@@ -86,15 +86,15 @@
       login() {
         let self = this
         if(self.tenant!== filtersStorage('tenant')){
-          let io = feathers.io
-          io.io.uri = self.tenant_uri[self.tenant]
-          io.connect()
           let _storage = {
             key: 'tenant',
             value: self.tenant
           }
           filtersStorage(_storage, "save")
         }
+          let io = feathers.io
+          io.io.uri = self.tenant_uri[self.tenant]
+          io.connect()
         // console.log('[]', io)
         let user = {
           strategy: 'local',
