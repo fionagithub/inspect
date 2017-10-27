@@ -13,7 +13,8 @@ function load(component) {
 
 const router = new VueRouter({
   routes: [{
-      path: '',
+      path: '/',
+      component: load('Auth')
     },{
       path: '/index',
       meta: {

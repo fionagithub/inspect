@@ -56,10 +56,10 @@
   export default {
     data() {
       return { 
-       /* users: 'jkr3',
-         pwd: 'laputa',*/  
-         users: '',
-         pwd: '',
+        users: 'jkr3',
+         pwd: 'laputa',  
+        /* users: '',
+         pwd: '',*/
         showPsd: true,
         flag: false,
         progressBtn: 0,
@@ -71,9 +71,9 @@
         }
       }
     },
-    created() {},
+    created() {
+    },
     computed: {
-      ...mapState(['tenant_uri']),
       unAddBtn() {
         return this.flag == true ? true : false
       }
@@ -87,6 +87,8 @@
       },
       login() {
         let self = this
+          let io = feathers.io
+            io.disconnect()
         if(self.tenant!== filtersStorage('tenant')){
           let _storage = {
             key: 'tenant',
@@ -94,8 +96,7 @@
           }
           filtersStorage(_storage, "save")
         }
-          let io = feathers.io
-          io.io.uri = self.tenant_uri[self.tenant]
+          io.io.uri ='http://'+ self.tenant+'.laputacloud.com'
           io.connect()
         // console.log('[]', io)
         let user = {
