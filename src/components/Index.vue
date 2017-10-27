@@ -117,7 +117,7 @@
       }
       if (this.$route.query) {
         this.$router.push({
-          path: '/',
+          path: '/index',
           query: {}
         })
       }

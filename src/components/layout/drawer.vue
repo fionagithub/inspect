@@ -14,13 +14,13 @@
         <q-drawer-link icon="tab" disabled to="/">
           我
         </q-drawer-link>
-        <q-drawer-link icon="compare_arrows" :to="{path: '/', query: { _modal: 'Setting' }}">
+        <q-drawer-link icon="compare_arrows" :to="{path: '/index', query: { _modal: 'Setting' }}">
            设置
         </q-drawer-link>
         <q-drawer-link icon="compare_arrows" disabled to="/">
            消息
         </q-drawer-link>
-        <q-drawer-link icon="build" :to="{path: '/', query: { _modal: 'getFd' }}"  >
+        <q-drawer-link icon="build" :to="{path: '/index', query: { _modal: 'getFd' }}"  >
         反馈
         </q-drawer-link>
       </div>
@@ -59,6 +59,7 @@
       },
       login_out() {
         this.logout().then(() => {
+          localStorage.clear()
           this.$router.push({
             path: '/login'
           })

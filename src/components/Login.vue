@@ -56,8 +56,10 @@
   export default {
     data() {
       return { 
-        users: 'jkr3',
-         pwd: 'laputa',
+       /* users: 'jkr3',
+         pwd: 'laputa',*/  
+         users: '',
+         pwd: '',
         showPsd: true,
         flag: false,
         progressBtn: 0,
@@ -111,7 +113,7 @@
             timeout: 3000
           })
           //  console.log('response:::', response)
-          self.$router.push('/')
+          self.$router.push('/index')
         }).catch(function (error) {
           self.flag = false
           self.progressBtn = 0

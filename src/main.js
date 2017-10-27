@@ -52,14 +52,10 @@ Quasar.start(() => {
         let io = feathers.io
         io.io.uri = this.tenant_uri[tenant]
         io.connect()
-        this.$router.push({
-          path: '/'
-        })
         this.setAuth()
-      } else {
-        this.$router.push({
-          path: '/login'
-        })
+        this.$router.push('/')
+      } else{
+        this.$router.push('/login')
       }
     },
     watch: {
@@ -151,8 +147,9 @@ Quasar.start(() => {
       setAuth(obj) {
         let _self = this
           _self.authenticate().then((response) => {
+              _self.$router.push('/index')
           }).catch((error) => {
-           //   _self.$router.push('/login')
+              _self.$router.push('/login')
           });
       },
       getAuth() {

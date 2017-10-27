@@ -24,7 +24,7 @@
         </button>
       </div>
       <div slot="header" class="toolbar">
-        <q-search class="full-width" v-model=" w_search_dtl.searchModel   " @enter='searchKey()' placeholder="搜索..."></q-search>
+        <q-search class="full-width" v-model=" w_search_dtl.searchModel" @enter='searchKey()' placeholder="搜索..."></q-search>
       </div>
       <div class="layout-view">
         <div class="layout-padding list-padding">

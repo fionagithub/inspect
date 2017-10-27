@@ -74,7 +74,7 @@
       }),
       goback() {
         this.$router.push({
-          path: '/'
+          path: '/index'
         })
       },
       add() {
@@ -93,7 +93,7 @@
             this.progressBtn=0
             Toast.create('提交成功.')
             this.$router.push({
-              path: '/'
+              path: '/index'
             })
           })
       }
