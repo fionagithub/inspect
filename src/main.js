@@ -37,9 +37,6 @@ Quasar.start(() => {
     created() {
       let tenant = filtersStorage('tenant')
       if (tenant) {
-        let io = feathers.io 
-        io.io.uri = 'https://' + tenant + '.laputacloud.com'
-        io.connect()
         this.$router.push('/')
       } else {
         console.log('--!!mmm!:::exp--')

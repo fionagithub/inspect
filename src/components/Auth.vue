@@ -28,6 +28,11 @@ export default {
       'authenticate'
     ]),
     setAuth(obj) {
+      let io = feathers.io 
+      io.disconnect()
+      let tenant = filtersStorage('tenant')
+      io.io.uri = 'https://' + tenant + '.laputacloud.com'
+      io.connect()
       let _self = this
       _self.authenticate().then((response) => {
         // console.log('--!!!:::exp--')

@@ -87,16 +87,17 @@
       },
       login() {
         let self = this
-        let io = feathers.io
         if(self.tenant!== filtersStorage('tenant')){
+          let io = feathers.io
+          io.disconnect()
           let _storage = {
             key: 'tenant',
             value: self.tenant
           }
           filtersStorage(_storage, "save")
+          io.io.uri ='https://'+ self.tenant+'.laputacloud.com'
+          io.connect()
         }
-        io.io.uri ='https://'+ self.tenant+'.laputacloud.com'
-        io.connect()
         // console.log('[]', io)
         let user = {
           strategy: 'local',
