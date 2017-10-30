@@ -35,13 +35,14 @@ Quasar.start(() => {
   new Vue({
     el: '#q-app',
     created() {
-      let io = feathers.io
       let tenant = filtersStorage('tenant')
       if (tenant) {
-        io.io.uri = 'http://' + tenant + '.laputacloud.com'
+        let io = feathers.io 
+        io.io.uri = 'https://' + tenant + '.laputacloud.com'
         io.connect()
         this.$router.push('/')
       } else {
+        console.log('--!!mmm!:::exp--')
         this.$router.push('/login')
       }
     },

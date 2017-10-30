@@ -9,7 +9,9 @@ import store from '../config/store'
 import {
   setError
 } from '../config/actions'
-const socket = io({
+
+const API_HOST = 'https://m.laputacloud.com'
+const socket = io(API_HOST, {
   transports: ['websocket']
 })
 const feathersClient = feathers()

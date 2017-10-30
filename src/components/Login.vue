@@ -87,8 +87,7 @@
       },
       login() {
         let self = this
-          let io = feathers.io
-            io.disconnect()
+        let io = feathers.io
         if(self.tenant!== filtersStorage('tenant')){
           let _storage = {
             key: 'tenant',
@@ -96,8 +95,8 @@
           }
           filtersStorage(_storage, "save")
         }
-          io.io.uri ='http://'+ self.tenant+'.laputacloud.com'
-          io.connect()
+        io.io.uri ='https://'+ self.tenant+'.laputacloud.com'
+        io.connect()
         // console.log('[]', io)
         let user = {
           strategy: 'local',
@@ -119,8 +118,8 @@
           self.flag = false
           self.progressBtn = 0
           Toast.create.negative({
-            html: '登录出错.',
-            timeout: 3000
+            html:error,
+            timeout: 13000
           })
           console.error('Error [--authenticating!', error);
         });
