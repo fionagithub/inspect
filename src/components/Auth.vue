@@ -2,11 +2,11 @@
   <div class="error-page window-height window-width bg-light column items-center">
     <div class="error-code teal flex items-center justify-center">
       <div class="error-card card bg-white column items-center justify-center">
-        <i class="text-grey-5">error_outline</i>
+       <spinner color="#2296a5"  name="bars" :size="30"></spinner>
         <p class="text-center group">
-          <h2>
+          <h5>
             认证中...
-          </h2>
+          </h5>
         </p>
       </div>
     </div>
@@ -28,11 +28,6 @@ export default {
       'authenticate'
     ]),
     setAuth(obj) {
-      let io = feathers.io 
-      io.disconnect()
-      let tenant = filtersStorage('tenant')
-      io.io.uri = 'https://' + tenant + '.laputacloud.com'
-      io.connect()
       let _self = this
       _self.authenticate().then((response) => {
         // console.log('--!!!:::exp--')
@@ -64,7 +59,7 @@ export default {
     i{
       font-size: 5rem ;
     }
-    h2{
+    h5{
       color: black;
     }
 </style>

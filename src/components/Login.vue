@@ -9,11 +9,12 @@
         <div class="card-content user">
           <div class="item two-lines">
             <div class="item-content row items-center nowrap">
-              <div class="floating-label">
-                <input required class="full-width" v-model="tenant">
+              <div class="stacked-label">
+                <input disabled class="full-width" v-model="tenant">
                 <label> {{holderTitle.tenant}}</label>
               </div>
             </div>
+              <i class="item-primary conf-icon " @click="setTenant">edit</i>
           </div> 
           <div class="item two-lines">
             <div class="item-content row items-center nowrap">
@@ -31,7 +32,7 @@
                 <label> {{holderTitle.pwd}}</label>
               </div>
             </div>
-              <i class="item-primary show-psd " @click="changePwd">visibility</i>
+              <i class="item-primary conf-icon " @click="changePwd">visibility</i>
           </div>  
           <div class="login-btn">
             <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="login()" indeterminate class="teal circular big">
@@ -44,8 +45,8 @@
   </div>
 </template>
 
-
 <script>
+  
   import {
     Toast
   } from 'quasar'
@@ -56,14 +57,14 @@
   export default {
     data() {
       return { 
-        users: 'jkr3',
-         pwd: 'laputa',  
-        /* users: '',
-         pwd: '',*/
+       /* users: 'jkr3',
+         pwd: 'laputa', */ 
+         users: '',
+         pwd: '',
         showPsd: true,
-        flag: false,
+        flag: false, 
         progressBtn: 0,
-        tenant: filtersStorage('tenant'),
+        tenant: filtersStorage('tenantid'),
         holderTitle: {
           tenant: '企业',
           user: '用户名',
@@ -71,10 +72,10 @@
         }
       }
     },
-    created() {
+    mounted() {
     },
     computed: {
-      unAddBtn() {
+      unAddBtn() { 
         return this.flag == true ? true : false
       }
     },
@@ -85,20 +86,12 @@
       changePwd() {
         this.showPsd = !this.showPsd
       },
+      setTenant(){
+        window.location.replace('setting.html')
+      },
       login() {
         let self = this
-        if(self.tenant!== filtersStorage('tenant')){
-          let io = feathers.io
-          io.disconnect()
-          let _storage = {
-            key: 'tenant',
-            value: self.tenant
-          }
-          filtersStorage(_storage, "save")
-          io.io.uri ='https://'+ self.tenant+'.laputacloud.com'
-          io.connect()
-        }
-        // console.log('[]', io)
+     //    console.log('[]', self)
         let user = {
           strategy: 'local',
           loginId: self.users,
@@ -116,13 +109,13 @@
           //  console.log('response:::', response)
           self.$router.push('/index')
         }).catch(function (error) {
-          self.flag = false
-          self.progressBtn = 0
-          Toast.create.negative({
-            html:error,
-            timeout: 13000
-          })
-          console.error('Error [--authenticating!', error);
+            self.flag = false
+            self.progressBtn = 0
+            Toast.create.negative({
+              html:error,
+              timeout: 13000
+            })
+            console.error('Error [--authenticating!', error);
         });
       }
     }
@@ -159,8 +152,9 @@
     display: flex;
     justify-content: center;
   }
-  .show-psd{
+  .conf-icon{
     right: 4px;
+    font-size: 1rem;
     left: auto!important;
   } 
 </style>

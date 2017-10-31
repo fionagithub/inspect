@@ -19,6 +19,7 @@ module.exports = {
   build: {
     env: require('./prod.env'),
     index: path.resolve(__dirname, '../dist/index.html'),
+    setting: path.resolve(__dirname, '../dist/setting.html'),
     publicPath: '',
     productionSourceMap: false,
 

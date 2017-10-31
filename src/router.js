@@ -68,11 +68,9 @@ router.beforeEach(function(to, from, next){
     feathers.passport.verifyJWT(token).then(res => {
       next()
     }).catch(error => {
+      console.log('[]-rrr')
       next({
-        path: '/login',
-        query: {
-          redirect: to.fullPath
-        }
+        path: '/login'
       })
     })
   } else {

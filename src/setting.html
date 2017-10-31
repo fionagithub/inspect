@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Settings</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    .setting {
+      background: rgba(178, 232, 243, 0.24);
+    }
+
+    .window-width {
+      margin-left: 0 !important;
+      margin-right: 0 !important;
+      width: 100vw !important;
+    }
+
+    .window-height {
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      height: 100vh !important;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .column {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .justify-center {
+      justify-content: center;
+    }
+
+    .login-btn .step {
+      right: 0;
+      position: fixed;
+      bottom: 0;
+      margin: 40px;
+    }
+
+    .login-btn .cancel {
+      left: 0;
+      position: fixed;
+      bottom: 0;
+      margin: 40px;
+    }
+
+    .floating-label {
+      position: relative;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .floating-label input {
+      padding-top: 1.45rem;
+    }
+
+    input:not(.no-style) {
+      background: 0 0;
+      font-size: .9rem;
+      max-width: 100%;
+      margin-bottom: 2px;
+      padding: 8px 0;
+      border: 0;
+      outline: 0;
+      transition: all .3s;
+      border-bottom: 2px solid #888;
+    }
+
+    .full-width {
+      width: 100%!important;
+      margin-left: 0!important;
+      margin-right: 0!important;
+    }
+
+    button {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      display: inline;
+      outline: 0;
+      border: 0;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+      font-style: normal;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      vertical-align: middle;
+      color: black;
+      background: 0 0;
+      line-height: 1;
+      transition: all .12s ease-in;
+      -webkit-appearance: button;
+      border-radius: 2px;
+      text-transform: uppercase;
+      margin: 0;
+      padding: 0 1rem;
+      min-height: 2.4rem;
+      font-weight: 500;
+      font-size: .85rem;
+    }
+
+    #error {
+      color: red;
+      font-size: .8rem;
+      margin: 4px;
+    }
+
+  </style>
+</head>
+
+<body class="window-height window-width column items-center justify-center setting">
+  <div class="card">
+    <div class="floating-label">
+      <label> 企业 </label>
+      <input id='tenantid' class="full-width" type="text">
+    </div>
+    <div id='error'> </div>
+
+    <div class="login-btn">
+      <button onclick="step()" class="outline big step">
+              下一步
+      </button>
+      <button onclick="cancel()" id="cancel" class="cancel">
+           返回
+      </button>
+    </div>
+  </div>
+  <script>
+    // setting 1. store tenatid to localstorage 2. replace to index.html
+    let tnt = window.localStorage.getItem('tenantid')
+    document.getElementById("cancel").style.display = tnt ? 'block' : 'none';
+
+    function step() {
+      let tt = document.getElementById("tenantid").value
+      if (tt) {
+        let tenantid = JSON.stringify(tt)
+       // console.log('[][', tenantid)
+        window.localStorage.setItem('tenantid', tenantid)
+        window.location.replace('index.html')
+      } else {
+        document.getElementById("error").innerHTML = '*请输入企业名称';
+      }
+    }
+    function cancel(){
+        window.location.replace('index.html')
+    }
+
+  </script>
+
+</body>
+
+</html>
