@@ -63,7 +63,12 @@
           this.$router.push({
             path: '/login'
           })
-          feathers.io.disconnect()
+
+          let _storage = {
+            key: 'tenantid' ,
+            value: window.__tenantId__ 
+          }
+          filtersStorage(_storage, "save")
           this.$refs.leftDrawer.close()
         })
 
