@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.jkinfo.laputaApp" version="0.5.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>LaputaApp</name>
+    <description>
+        A laputa cloud app
+    </description>
+    <author email="mxj@jkinfo.com.cn" href="http://www.jkinfo.com.cn">
+        JKR3 Team @ JKINFO
+    </author>
+    <content src="index.html" />
+    <access origin="m.laputacloud.com" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+        <preference name="DisallowOverscroll" value="true" />
+        <preference name="webviewbounce" value="false" />
+        <preference name="UIWebViewBounce" value="false" />
+        <preference name="StatusBarOverlaysWebView" value="true" />
+        <preference name="StatusBarCropsWebview" value="false" />
+    </platform>
+
+    <platform name="ios">
+        <!-- iPhone Spotlight and Settings Icon -->
+        <icon src="res/icon/ios/icon-20@2x-ipad.png" width="40" height="40" />
+        <icon src="res/icon/ios/icon-20-ipad.png" width="20" height="20" />
+        <icon src="res/icon/ios/icon-20@2x.png" width="40" height="40" />
+        <icon src="res/icon/ios/icon-20@3x.png" width="60" height="60" />
+
+        <icon src="res/icon/ios/icon-29.png" width="29" height="29" />
+        <icon src="res/icon/ios/icon-29@2x.png" width="58" height="58" />
+        <icon src="res/icon/ios/icon-29@3x.png" width="87" height="87" />
+        <icon src="res/icon/ios/icon-29-ipad.png" width="29" height="29" />
+        <icon src="res/icon/ios/icon-29@2x-ipad.png" width="58" height="58" />
+        <!-- iOS 6.1 -->
+        <!-- Spotlight Icon -->
+        <icon src="res/icon/ios/icon-40.png" width="40" height="40" />
+        <icon src="res/icon/ios/icon-40@2x.png" width="80" height="80" />
+        <icon src="res/icon/ios/icon-40@3x.png" width="120" height="120" />
+        <!-- iOS 7.0+ -->
+        <!-- iPhone / iPod Touch  -->
+        <icon src="res/icon/ios/icon-60.png" width="60" height="60" />
+        <icon src="res/icon/ios/icon-60@2x.png" width="120" height="120" />
+        <!-- iOS 8.0+ -->
+        <!-- iPhone 6 Plus  -->
+        <icon src="res/icon/ios/icon-60@3x.png" width="180" height="180" />
+        <!-- iPad Spotlight and Settings Icon -->
+        <icon src="res/icon/ios/icon-50.png" width="50" height="50" />
+        <icon src="res/icon/ios/icon-50@2x.png" width="100" height="100" />
+        <!-- iPhone / iPod Touch -->
+        <icon src="res/icon/ios/icon-57.png" width="57" height="57" />
+        <icon src="res/icon/ios/icon-57@2x.png" width="114" height="114" />
+        <!-- iPad -->
+        <icon src="res/icon/ios/icon-72.png" width="72" height="72" />
+        <icon src="res/icon/ios/icon-72@2x.png" width="144" height="144" />
+        <!-- iPad -->
+        <icon src="res/icon/ios/icon-76.png" width="76" height="76" />
+        <icon src="res/icon/ios/icon-76@2x.png" width="152" height="152" />
+        <icon src="res/icon/ios/icon-83.5@2x.png" width="167" height="167" />
+    <!-- 以下是欢迎页面，可根据需要进行添加 -->
+    
+    <splash src="res/screen/ios/Default320x480.png" width="320" height="480"/>  
+    <splash src="res/screen/ios/Default640x960.png" width="640" height="960"/>  
+    <splash src="res/screen/ios/Default640x1136.png" width="640" height="1136"/>  
+    <splash src="res/screen/ios/Default750x1334.png" width="750" height="1334"/>  
+    <splash src="res/screen/ios/Default768x1024.png" width="768" height="1024"/>  
+    <splash src="res/screen/ios/Default1024x768.png" width="1024" height="768"/>  
+    <splash src="res/screen/ios/Default1125x2436.png" width="1125" height="2436"/>  
+    <splash src="res/screen/ios/Default1242x2208.png" width="1242" height="2208"/>  
+    <splash src="res/screen/ios/Default1536x2048.png" width="1536" height="2048"/> 
+    <splash src="res/screen/ios/Default1920x1080.png" width="1920" height="1080"/> 
+    <splash src="res/screen/ios/Default2048x1536.png" width="2048" height="1536"/>  
+    <splash src="res/screen/ios/Default2208x1242.png" width="2208" height="1242"/> 
+    <splash src="res/screen/ios/Default2436x1125.png" width="2436" height="1125"/>
+    <splash src="res/screen/ios/Default3840x2160.png" width="3840" height="2160"/>
+    </platform>
+    <engine name="ios" spec="^4.5.2" />
+    <engine name="android" spec="^6.3.0" />
+    <plugin name="cordova-plugin-crosswalk-webview" spec="^2.3.0" />
+    <plugin name="cordova-plugin-whitelist" spec="^1.3.2" />
+    <plugin name="cordova-plugin-statusbar" spec="^2.2.3" />
+    <plugin name="cordova-plugin-ble-central" spec="^1.1.4">
+        <variable name="BLUETOOTH_USAGE_DESCRIPTION" value=" " />
+    </plugin>
+    <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
+    <plugin name="jpush-phonegap-plugin" spec="^3.2.10">
+        <variable name="APP_KEY" value="584ef4e3a949dc63b1186817" />
+    </plugin>
+</widget>

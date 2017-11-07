@@ -5,9 +5,10 @@ npm-debug.log.*
 selenium-debug.log
 test/unit/coverage
 test/e2e/reports
-cordova
 dist
 docker-image
+cordova/hooks
+cordova/www
 cordova/platforms
 cordova/plugins
 thumbs.db
