@@ -19,26 +19,16 @@
     <img class="index-img" src="../assets/bj_logo.png">
     </div>
   <div class="index-menu  text-center">
-    <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
-        <router-link :to="item.uri">
-          <button class="teal circular big " :disabled="item.disabled">
-            {{item.title}}
-            <span class="floating circular label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
-          </button>
-        </router-link>
-      </div>
-    </div>
-    <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
-        <router-link :to="item.uri">
-          <button class="teal circular big " :disabled="item.disabled">
-            {{item.title}}
-          </button>
-        </router-link>
-      </div>
-    </div>
 
+    <div class="row content-center text-center menu-row">
+      <div class="auto link-btn" v-for="menu in menus" >
+        <router-link :to="menu.uri">
+          <button class="teal circular big ">
+            {{menu.title}}
+          </button>
+        </router-link>
+      </div>
+    </div>
   </div>
   <div slot="footer" class="ftCon" >
       {{verson}}
@@ -73,6 +63,13 @@
         isSetting:false,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
+        menus: [{
+          title: '巡检',
+          uri: '/ble'
+        }, {
+          title: '曲线',
+          uri: '/echarts'
+        }],
         items: [{
           title: '报障',
           uri: '/ticket',
@@ -93,7 +90,8 @@
     },
     computed: {
       leftDrawer() {
-        return this.$children[5].$refs.leftDrawer
+        console.log(this.$children)
+        return this.$children[3].$refs.leftDrawer
       },
       _modal() {
         let _pa = this.$route.query
