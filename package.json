@@ -18,6 +18,7 @@
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "babel-runtime": "^6.0.0",
+    "echarts": "^3.7.2",
     "fastclick": "^1.0.6",
     "feathers": "^2.1.7",
     "feathers-authentication-client": "^0.3.3",
@@ -27,9 +28,11 @@
     "material-design-icons": "^3.0.1",
     "moment": "^2.18.1",
     "quasar-framework": "^0.13.4",
+    "query-string": "^5.0.1",
     "roboto-fontface": "^0.7.0",
     "socket.io-client": "^2.0.3",
     "vue": "2.3.4",
+    "vue-echarts-v3": "^1.0.5",
     "vue-router": "^2.0.0",
     "vuelidate": "^0.5.0",
     "vuex": "^2.3.1"

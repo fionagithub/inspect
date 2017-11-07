@@ -3,8 +3,8 @@
     <q-layout>
       <div slot="header" class="toolbar">
         <button class="head_goback" @click="$router.go(-1)">
-        <i>arrow_back</i>
-      </button>
+          <i>arrow_back</i>
+        </button>
         <q-toolbar-title :padding="1">
           报障清单
         </q-toolbar-title>

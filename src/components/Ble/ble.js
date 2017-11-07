@@ -48,10 +48,11 @@ function bleScan() {
             console.log("startScan failed", reason);
         })
 }
-/*
 function clearStickBuff() {
     logStickBuff.length = 0;
+    return logStickBuff;
 } 
+/*
 setTimeout(function () {
     ble.stopScan(
         function () {
@@ -69,4 +70,19 @@ function initialBLE() {
     log("----------initialBLE------------")
     window.open = cordova.InAppBrowser.open
 }
-export default initialBLE
+function stopScan(){
+    ble.stopScan(
+        function () {
+            log("======= BLE: Scan complete =======");
+            clearStickBuff();
+        },
+        function () {
+            log("====== BLE: Stop scan failed ======");
+        }
+    );
+}
+
+export const BLE={
+    initialBLE:initialBLE,
+    stopScan:stopScan
+}
