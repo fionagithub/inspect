@@ -11,9 +11,9 @@
     <div class="layout-view">
       <div class="layout-padding ">
         <div class="echarts">
-          <IEcharts :option="bar" :theme="theme"></IEcharts>
+          <IEcharts :option="bar"></IEcharts>
         
-          <!--<IEcharts :option="bar2" @ready="onReady2"></IEcharts>-->
+          <!--<IEcharts :option="bar2" :theme="theme" @ready="onReady2"></IEcharts>-->
         </div>
       </div>
     </div>
@@ -159,5 +159,6 @@
   .echarts {
     width: 400px;
     height: 400px;
+    margin:10px;
   }
 </style>
