@@ -68,7 +68,7 @@
           uri: '/ble'
         }, {
           title: '曲线',
-          uri: '/echarts'
+          uri: '/line'
         }],
         items: [{
           title: '报障',

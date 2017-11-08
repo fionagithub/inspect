@@ -45,6 +45,10 @@ const router = new VueRouter({
       component: load('Ble/echarts')
     },
     {
+      path: '/line',
+      component: load('Ble/device')
+    },
+    {
       path: '/login',
       component: load('Login')
     },
