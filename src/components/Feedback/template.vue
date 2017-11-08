@@ -73,9 +73,7 @@
         createMessages: 'create',
       }),
       goback() {
-        this.$router.push({
-          path: '/index'
-        })
+        this.$router.go(-1)
       },
       add() {
         this.progressBtn=1

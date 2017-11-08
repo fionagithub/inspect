@@ -44,9 +44,7 @@
     },
     methods: {
       goback() {
-        this.$router.push({
-          path: '/index'
-        })
+        this.$router.go(-1)
       },
     },
     destroyed: function () {
