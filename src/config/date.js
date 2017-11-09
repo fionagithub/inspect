@@ -107,6 +107,7 @@ function StringToTime(dt, t) {
   } else {
     _date = TranTime(new Date(parseInt(dt)), t)
   }
+  console.log('--')
   return _date;
 }
 export default StringToTime

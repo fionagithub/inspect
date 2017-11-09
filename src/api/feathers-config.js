@@ -11,8 +11,11 @@ import {
 } from '../config/actions'
 
 function feathersClient(uri) {
-  const socket = io(`https://${uri}.laputacloud.com` || window.location.origin, {
+  uri='http://192.168.123.189:3030'
+  
+  const socket = io(uri || window.location.origin, {
     transports: ['websocket']
+    
   })
   const client = feathers()
     .configure(hooks())
@@ -37,6 +40,8 @@ function feathersClient(uri) {
 
   client.service('/metadata')
   client.service('/feedback')
+  client.service('/smarttag')
+  client.service('/environment_chart')
 
   client.hooks({
     error: function (hook) {

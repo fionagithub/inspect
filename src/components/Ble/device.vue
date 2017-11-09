@@ -98,6 +98,19 @@
     created() {},
     mounted() {
       this.setFilters() //请求初始数据
+      this.$nextTick(() => {
+        feathers.io.emit('subscribe', {"channel":"devices"})
+       Win_devices_.on('patched', res => {
+          this.getDv(res.id)
+         // console.log('--!!!!!!!!!!==', res)
+        })
+        Win_devices_.on('created', res => {
+          this.dvCut += 1
+          this.setAddCount({
+            dvCut: this.dvCut
+          })
+        });
+      })
     },
     methods: {
       ...mapActions(['setAddCount', 'setError']),
@@ -160,7 +173,7 @@
           _self.isLoading = false
           _self.isFinished = res.data.length < _self.limit ? false : true
           done instanceof Function ? done() : '';
-          //  console.log('-=res--', _self.tips, res.data)
+       //   console.log('-=res--', _self.res)
         })
       },
       notify() {
@@ -168,6 +181,7 @@
         this.$refs.layoutModal.close();
       },
       getDetail(id) {
+        this.getDv(id)
         this.isEdit = true
         this.$refs.layoutModal.open()
       }

@@ -6,6 +6,8 @@ selenium-debug.log
 test/unit/coverage
 test/e2e/reports
 dist
+package-lock.json
+Login.vue
 docker-image
 cordova/hooks
 cordova/www

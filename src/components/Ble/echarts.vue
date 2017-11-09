@@ -9,9 +9,9 @@
       </q-toolbar-title>
     </div>
     <div class="layout-view">
-      <div class="layout-padding ">
-        <div class="echarts">
-          <IEcharts :option="bar"></IEcharts>
+      <div class="layout-padding " v-if='echartsArray.length'  >
+        <div class="echarts" v-for='chart in echartsArray' >
+          <IEcharts :option="chart"></IEcharts>
         
           <!--<IEcharts :option="bar2" :theme="theme" @ready="onReady2"></IEcharts>-->
         </div>
@@ -28,6 +28,7 @@
   import echarts from '../../config/echarts'
   import {
     mapState,
+    mapGetters,
     mapMutations,
     mapActions
   } from 'vuex'
@@ -40,10 +41,21 @@
           theme: 'dark',
           title: '曲线图',
           loading: true,
+          echartsArray:[],
           bar:{
             tooltip: {},
+            grid:{
+              left:50,
+            },
             xAxis: {
-              data:[]
+              data:[],
+              axisLabel:{
+                formatter(value,index){
+                   var date = new Date(value);
+                   let dt=(date.getMonth()+1)+'/'+date.getDate()+' '+  date.getHours() +':00'
+                    return  dt;
+                }
+              }
             },
             yAxis: {},
             series: []
@@ -51,99 +63,69 @@
           bar_conf:{
            'default' : { 
              name: 'Sales',
-              type: 'bar',
+              type: 'line',
               data:[]}
           },
-          loading2: false,
-          bar2: {
-            tooltip: {},
-            xAxis: {
-              data:[]
-             // data: ['Shirt', 'Sweater', 'Chiffon Shirt', 'Pants', 'High Heels', 'Socks']
-            },
-            yAxis: {},
-            series: [{
-              name: 'Sales',
-              type: 'bar',
-              data:[]
-           //   data: [5, 20, 36, 10, 10, 20]
-            }]
-          }
       }
     },
     computed:{
-      ...mapState('auth',['accessToken'] ),
-    
+      ...mapGetters('devices', {
+        echartCrt: 'current',
+      }),
     },
-    created(){
-     // this.getData()
-     this._getData()
+    mounted(){
+      let vm =this
+    },
+    watch:{
+      echartCrt:{
+        handler(val){
+          if(val){
+            // console.log('--cc--', val)
+            this._getData()
+          }
+        },
+        deep:true
+        
+      }
+
     },
     methods: {
+      ...mapActions('environment_chart', {
+        find: 'find',
+      }),
+      ...mapActions('environment_chart', {
+        get: 'get',
+      }),
+      ...mapMutations('environment_chart', {
+        clear: 'clearAll',
+      }),
       onReady(instance) {
       },
       _getData(){
-        let conf = this.bar_conf, opt = this.bar;
-        let _data = {
-          values: [{ "name": "时间",'data': [70, 23] }],
-          x: {"name": "时间", 'data': ['2017/10/23', '2017/10/24'] },
-          z: { 'data': ['温度'] },
-        };
-        this.bar=echarts.xparse(opt, _data, conf);
-        console.log('[00-=][]', conf, opt)
-      /*   let params = {
-          deviceId: 'asudia-asd',
-          monitorId: 'asdas-12sd',
-          end: _moment.toISOString(),
-          start: _moment.subtract(7, 'days').toISOString(),
-        }
-          let url =`${this.api}/?deviceId=${params.deviceId}&monitorId=${params.monitorId}&$$start=${params.start}&$$end=${params.end}`
-          fetch(url, { headers: { 'Authorization': this.accessToken }})
-          .then(response => response.json())
-          .then(data =>{
-              })
-          .catch(e => console.log("--=Oops, error=-=", e))*/
-      },
-      getData(){
-        let params= { 
-          deviceId:'asudia-asd',
-          monitorId:'asdas-12sd',
-          end:  _moment.toISOString(),
-          start: _moment.subtract(7, 'days').toISOString(),
-        }  
-          let url =`${this.api}/?deviceId=${params.deviceId}&monitorId=${params.monitorId}&$$start=${params.start}&$$end=${params.end}`
-          fetch(url, { headers: { 'Authorization': this.accessToken }})
-          .then(response => response.json())
-          .then(data =>{
-              data={
-                values:[{data:[70,23]}],
-                x:{data:['2017/10/23','2017/10/24']}
-              }
-              this.loading=false
-              this.bar2.xAxis.data= this.x_data=data.x.data
-              this.bar2.series[0].data =  this.s_data=data.values[0].data
-             })
-          .catch(e => console.log("Oops, error", e))
-      },
-      onReady2(instance) {
-       // console.log('[]-',instance)
-      },
-      doRandom() {
-        const that = this
-        let data = []
-        for (let i = 0, min = 5, max = 99; i < 6; i++) {
-          data.push(Math.floor(Math.random() * (max + 1 - min) + min))
-        }
-        that.loading = true
-        that.bar.xAxis.data = ['Shirt1', 'Sweater', 'Chiffon Shirt', 'Pants', 'High Heels', 'Socks']
-        that.bar.series[0].data = data
-        that.loading = false
-        setInterval(function () {
-          that.bar.series[0].data.shift()
-          that.bar.series[0].data.push(Math.random())
-          that.bar.xAxis.data.shift()
-          that.bar.xAxis.data.push(Math.random())
-        }, 2000)
+        let vm =this
+        let conf = vm.bar_conf, opt = vm.bar;
+        let _eid=vm.echartCrt.id
+         let params = {
+             deviceId:_eid,
+         }
+
+          let m_id=Object.keys(vm.echartCrt.monitors)
+          for(let i in m_id){
+            // console.log('--qq---', m_id)
+            (function(_mid){
+               vm.find({
+                  query: {
+                    deviceId: _eid,
+                    monitorId: _mid
+                  }
+               }).then(data =>{
+                    vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
+                    console.log('[00-=][]',  data)
+                 })  
+                 .catch(e => console.log("--=Oops, error=-=", e))
+            })(m_id[i])
+          }
+         // console.log('--echarts---', vm.echartsArray)
       },
       onClick(event, instance, echarts) {
      //   console.log(feathers.env_api)
@@ -159,6 +141,6 @@
   .echarts {
     width: 400px;
     height: 400px;
-    margin:10px;
+    padding-right:10px;
   }
 </style>

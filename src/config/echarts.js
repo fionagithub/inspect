@@ -1,4 +1,5 @@
 import cloneDeep from 'lodash.clonedeep'
+import StringToTime from './date'
 //判断数据不否存
 let ifDataNull = function (d) {
   return d === null ? '-' : d;
@@ -17,20 +18,20 @@ let dataNotExist = function (d) {
 };
 const echarts = {
   //标准型
-  xparse(opt, data, conf) {
+  xparse(opt, data, conf, _date) {
     opt = cloneDeep(opt)
     conf = cloneDeep(conf)
-
+    
     let _series = [],
-      values = data.values,
-      _lgd = data.z.data;
+    values = data.values,
+    _lgd = data.z.data;
     if ('legend' in opt) {
       opt.legend.data = _lgd;
     }
     values.forEach(function (v, i) {
       let _type = {},
-        _data = v.data,
-        _name = v.name;
+      _data = v.data,
+      _name = v.name;
       if (_name in conf) {
         _type = conf[_name];
       } else {
@@ -38,11 +39,15 @@ const echarts = {
         _type.name = _name;
       }
       // console.log('[];;;', _type)
-
+      
       _type.data = dataNotExist(_data);
       _series.push(_type);
     });
-    opt.xAxis.data = data.x.data;
+    if (_date) {
+      opt.xAxis.data = StringToTime(data.x.data, _date);
+    }else{
+      opt.xAxis.data = data.x.data;
+    }
     opt.series = _series;
     return opt;
   },
