@@ -34,7 +34,7 @@ export default {
     payload(obj) {
       if (obj) {
         this.getAuth()
-        this.getConf()
+  //  this.getConf()
       }
     }
   },
