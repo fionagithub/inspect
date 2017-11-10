@@ -98,6 +98,7 @@
     created() {},
     mounted() {
       this.setFilters() //请求初始数据
+      this.findMD()
       this.$nextTick(() => {
         feathers.io.emit('subscribe', {"channel":"devices"})
        Win_devices_.on('patched', res => {
@@ -117,9 +118,17 @@
       ...mapActions('devices', {
         findMessages: 'find',
       }),
+      ...mapActions('monitors', {
+        findMD: 'find',
+      }),
       ...mapActions('devices', {
         getDv: 'get',
       }),
+     /*  fetchMD(){
+        this.findMD
+
+      }, */
+      
       setFilters(sus) {
         this.dvCut = 0
         this.setAddCount({

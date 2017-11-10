@@ -41,6 +41,7 @@ function feathersClient(uri) {
   client.service('/metadata')
   client.service('/feedback')
   client.service('/smarttag')
+  client.service('/monitors')
   client.service('/environment_chart')
 
   client.hooks({
@@ -54,8 +55,6 @@ function feathersClient(uri) {
       // console.log('af')
     }
   }) 
-  // need refactory 
-  client.env_api='http://192.168.123.240:3030/environment/chart'
 
   return client;
 }

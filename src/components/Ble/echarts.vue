@@ -23,6 +23,7 @@
 </template>
 
 <script type="text/babel">
+
   import IEcharts from 'vue-echarts-v3/src/full.vue'
   import queryString from 'query-string'
   import dark from 'echarts/theme/dark'
@@ -38,16 +39,20 @@
     name: 'view',
     data(){
         return{
-          api: feathers.env_api,
           theme: 'dark',
           title: '历史曲线',
+          E_name:{},
           loading: true,
           echartsArray:[],
           bar:{
+            title: {
+                text: ''
+            },
             tooltip: {},
             grid:{
-              top:20,
+              top:50,
               left:50,
+              bottom: 50
             },
             xAxis: {
               data:[],
@@ -73,6 +78,9 @@
       ...mapGetters('devices', {
         echartCrt: 'current',
       }),
+      ...mapGetters('monitors', {
+        mtrMsg: 'list',
+      }),
     },
     mounted(){
       let vm =this
@@ -86,9 +94,7 @@
           }
         },
         deep:true
-        
       }
-
     },
     methods: {
       ...mapActions('environment_chart', {
@@ -110,6 +116,13 @@
              deviceId:_eid,
          }
 
+        for (var i in vm.mtrMsg ){
+          let _data_= vm.mtrMsg[i]
+          let _name =_data_.name||_data_.monitorUri
+          let _unit=_data_.unit
+          vm.E_name[_data_.id]=`${_name} ${(_unit)||''} ` 
+        }
+
           let m_id=Object.keys(vm.echartCrt.monitors)
           for(let i in m_id){
             // console.log('--qq---', m_id)
@@ -121,6 +134,7 @@
                     gap:10
                   }
                }).then(data =>{
+                 opt.title.text=vm.E_name[_mid]
                     vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
                     console.log('[00-=][]',  data)
                  })  
@@ -130,7 +144,6 @@
          // console.log('--echarts---', vm.echartsArray)
       },
       onClick(event, instance, echarts) {
-     //   console.log(feathers.env_api)
       }
     },
     components: {
