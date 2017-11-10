@@ -32,7 +32,6 @@
     mapMutations,
     mapActions
   } from 'vuex'
-  let _moment = moment(0, "h")
   export default {
     name: 'view',
     data(){
@@ -51,9 +50,8 @@
               data:[],
               axisLabel:{
                 formatter(value,index){
-                   var date = new Date(value);
-                   let dt=(date.getMonth()+1)+'/'+date.getDate()+' '+  date.getHours() +':00'
-                    return  dt;
+                   var date = moment(value).format('h:mm')
+                    return date;
                 }
               }
             },
@@ -116,7 +114,8 @@
                vm.find({
                   query: {
                     deviceId: _eid,
-                    monitorId: _mid
+                    monitorId: _mid,
+                    gap:10
                   }
                }).then(data =>{
                     vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
@@ -140,7 +139,7 @@
 <style scoped>
   .echarts {
     width: 400px;
-    height: 400px;
+    height: 250px;
     padding-right:10px;
   }
 </style>
