@@ -23,6 +23,7 @@
       <div class="card" v-if='crt_log.name'>
         <div class="card-title">
           <div>{{crt_log.name}} </div>
+
         </div>
         <div class="card-content">
           <div class="item d-info multiple-lines ">
@@ -34,24 +35,38 @@
           <div class="item d-info multiple-lines ">
             <div class="item-label d-label "> 温度 </div>
             <div class="d-val ">
-              {{ crt_log.data.temperature }}C
+              {{ crt_log.data.temperature }} ℃ 
               </div>
           </div>
           <div class="item d-info multiple-lines ">
-            {{crt_log.time}}
+            <div class="item-label d-label "> RSSI </div>
+            <div class="d-val " >
+              {{crt_log.rssi }}
+            </div>
+          </div>
+          <div class="item d-info multiple-lines ">
+            <div class="item-label d-label "> 更新时间 </div>
+            <div class="d-val " >
+                {{crt_log.time|date('HH:mm:ss') }}
+            </div>
           </div>
         </div>
       </div>
         <p>
           <ol v-if='smartLog.length' class="smart text-green-8">
-            <li v-for='log in smartLog'>
-              <a class='text-green-8' v-for='o in log'>{{o.name+': t:'+o.data.temperature+' h:'+o.data.humidity+o.time }} </a>
+            <li v-for='o in smartLog'>
+              <a class='text-green-8'>
+                {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'%'}} {{o.time|date('HH:mm:ss') }}
+<!-- 
+                              {{`${o.name} ${o.data.temperature} '℃' ${o.data.humidity} '%' ${ o.time|date('HH:mm:ss')}  `}}
+                 -->
+                </a>
             </li>
           </ol>
           <ol v-if='logStickBuff.length' class="stick text-yellow-8">
             <div>扫描中...</div>
-            <li v-for='buff in logStickBuff'>
-              <a class='text-yellow-8' v-for='bf in buff'>{{bf}} </a>
+            <li v-for='bf in logStickBuff'>
+              <a class='text-yellow-8' >{{bf}} </a>
             </li>
           </ol>
         </p>
@@ -78,12 +93,15 @@ export default {
       s_buff: {},
       crt_log:{},
       bleFlag: false,
-      isBle: false,
-      u_array:[]
+      isBle: true,
+      u_array:[],
+      t_obj:{},
     };
   },
   mounted() {
-    // this.back_upload()
+    this.bleScan()
+    
+   //  this.back_upload()
   },
   computed: {
     toggleBtn() {
@@ -107,10 +125,10 @@ export default {
     bleScan() {
       let vm = this;
       console.log('---start===')
-      ble.startScan([],function(device) {
-           console.log('-----start----', device)
-          let _id = device.id,
-            _name = device.name;
+      ble.startScanWithOptions([],{ reportDuplicates: true },function(_data_) {
+        //   console.log('-----start----', _data_)
+          let _id = _data_.id,
+            _name = _data_.name;
           if (_name) {
             if (/^SMARTAG/.test(_name.toUpperCase())) {
               let jkble = new JKBLE({
@@ -118,50 +136,47 @@ export default {
                 schemaVersion: "v1"
               });
               // analyze
-              let mdata = device.advertising && device.advertising.kCBAdvDataManufacturerData && jkble.analyze(device.advertising.kCBAdvDataManufacturerData);
-              let _device = {
-                //  phoneId: window.device.uuid,
-                phoneId: _id,
+              let mdata = _data_.advertising && _data_.advertising.kCBAdvDataManufacturerData && jkble.analyze(_data_.advertising.kCBAdvDataManufacturerData);
+              let __dess__ = {
+                phoneId: device.uuid,
                 name: _name,
                 data: mdata,
-                rssi: device.rssi,
-                time: new Date()
+                rssi: _data_.rssi,
+                time:Date.now(),
               };
-              vm.crt_log=_device
-              //need foreach
-                let ss_dd=cloneDeep(_device)
-                ss_dd.time=Date.now()
-                vm.u_array.push(ss_dd)
-              if (_name in vm.s_log) {
-                vm.smartLog[_id] = ss_dd;
-              } else {
-                let _dvc = {};
-                _dvc[_id] = ss_dd;
-                console.log('--dv--', _dvc)
-                vm.smartLog.push(_dvc);
-                vm.s_log[_name] = {};
+              if(_name in vm.t_obj ){
+                if(__dess__.rssi >vm.t_obj[_name].rssi ){
+                  vm.t_obj[_name]=__dess__
+                  console.log('----rrsssiii----')
+                }
+              }else{
+                  vm.t_obj[_name]=__dess__
               }
+              vm.s_log[_name]=__dess__
+              vm.smartLog=Object.values(vm.s_log)
+              
+            //  vm.smartLog.push(vm.t_obj)
+              vm.crt_log=__dess__
+
+              console.log("---buff---", vm.t_obj, vm.t_obj[_name],__dess__, vm.smartLog);
+
             } else {
               let _sdvc = _name + ":" + _id;
-              //need foreach
-              if (_name in vm.s_buff) {
-                vm.logStickBuff[_id] = _sdvc;
-              } else {
-                let _skf = {};
-                _skf[_id] = _sdvc;
-                vm.logStickBuff.push(_skf);
-                vm.s_buff[_name] = {};
-              }
-              if (vm.logStickBuff.length > 3) vm.logStickBuff.shift();
+              vm.logStickBuff.push(_sdvc)
+              if (vm.logStickBuff.length > 2) vm.logStickBuff.shift();
             }
           }
-          setInterval(vm.back_upload,5000)
-            console.log( "---buff---", vm.s_log, vm.smartLog, vm.s_buff, vm.logStickBuff );
         },
         function(reason) {
+          Toast.create({
+            html: reason,
+            timeout: 3000
+          });
           console.log("---startScan failed---", reason);
         }
       ); 
+
+     window.itvalFunc = setInterval(this.back_upload,5000)
      
       setTimeout(vm.stopScan, 30 * 1000 *60);
     },
@@ -173,18 +188,13 @@ export default {
     },
     back_upload() {
       let vm = this;
-      /* let _data = [{
-                //  phoneId: window.device.uuid,
-                phoneId: '123',
-                name: 'test',
-                data: [],
-                rssi: 123,
-                time: Date.now()
-              }]; */
-      let _data = vm.len ? vm.u_array.splice(0, 20) : null;
-      if (_data) {
-        console.log("--up--", _data);
-          vm.createMessages(_data)
+      let t_array=Object.values(vm.t_obj)
+   //   let _data = t_array.length ? t_array.splice(0, 20) : null;
+      if (t_array.length) {
+        console.log("--up--",vm.t_obj, t_array);
+         vm.t_obj={} 
+         vm.s_log={}
+          vm.createMessages(t_array)
           .then(() => {
             console.log("---updata--ok-");
           })
@@ -200,6 +210,8 @@ export default {
         function() {
           console.log("======= BLE: stop Scan complete =======");
           vm.smartLog = [];
+          vm.s_log={};
+          vm.crt_log={};
           vm.logStickBuff = [];
         },
         function() {
@@ -228,6 +240,7 @@ export default {
   },
   beforeDestroy() {
    // this.back_upload();
+     clearInterval(window.itvalFunc)
     this.stopScan();
     // updata splice array
   }
@@ -241,8 +254,8 @@ export default {
 }
 
 .smart {
-  height: 200px;
-  margin: 10px 0;
+  height: 140px;
+  margin: 5px 0;
   overflow: auto;
 }
 
@@ -250,10 +263,12 @@ export default {
   font-size: 12px;
   line-height: 14px;
   position: absolute;
+  height: 90px;
   bottom: 0;
 }
 .d-info{
   display: flex;
+  padding: 8px;
 }
  .d-label{
    flex: 1;
