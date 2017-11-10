@@ -56,7 +56,7 @@
           <ol v-if='smartLog.length' class="smart text-green-8">
             <li v-for='o in smartLog'>
               <a class='text-green-8'>
-                {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'%'}} {{o.time|date('HH:mm:ss') }}
+                {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'% ' +o.rssi}}  {{o.time|date('HH:mm:ss') }}
 <!-- 
                               {{`${o.name} ${o.data.temperature} '℃' ${o.data.humidity} '%' ${ o.time|date('HH:mm:ss')}  `}}
                  -->
@@ -125,6 +125,10 @@ export default {
     bleScan() {
       let vm = this;
       console.log('---start===')
+      vm.smartLog = [];
+      // vm.s_log={};
+      vm.crt_log={};
+      vm.logStickBuff = [];
       ble.startScanWithOptions([],{ reportDuplicates: true },function(_data_) {
         //   console.log('-----start----', _data_)
           let _id = _data_.id,
@@ -145,15 +149,15 @@ export default {
                 time:Date.now(),
               };
               if(_name in vm.t_obj ){
-                if(__dess__.rssi >vm.t_obj[_name].rssi ){
+                if(__dess__.rssi > vm.t_obj[_name].rssi && __dess__.rssi < 0 ){
                   vm.t_obj[_name]=__dess__
-                  console.log('----rrsssiii----')
+                  console.log('----rrsssiii----',__dess__.rssi , vm.t_obj[_name].rssi )
                 }
               }else{
                   vm.t_obj[_name]=__dess__
               }
-              vm.s_log[_name]=__dess__
-              vm.smartLog=Object.values(vm.s_log)
+            //  vm.s_log[_name]=__dess__
+              vm.smartLog=Object.values(vm.t_obj)
               
             //  vm.smartLog.push(vm.t_obj)
               vm.crt_log=__dess__
@@ -209,10 +213,7 @@ export default {
       ble.stopScan(
         function() {
           console.log("======= BLE: stop Scan complete =======");
-          vm.smartLog = [];
-          vm.s_log={};
-          vm.crt_log={};
-          vm.logStickBuff = [];
+   
         },
         function() {
           console.log("====== BLE: Stop scan failed ======");

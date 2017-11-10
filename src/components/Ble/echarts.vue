@@ -83,18 +83,15 @@
       }),
     },
     mounted(){
-      let vm =this
     },
     watch:{
-      echartCrt:{
-        handler(val){
-          if(val){
-            // console.log('--cc--', val)
+      echartCrt(val){
+        if(val){
             this._getData()
-          }
-        },
-        deep:true
+            console.log('----www---')
+        }
       }
+
     },
     methods: {
       ...mapActions('environment_chart', {
@@ -120,12 +117,12 @@
           let _data_= vm.mtrMsg[i]
           let _name =_data_.name||_data_.monitorUri
           let _unit=_data_.unit
-          vm.E_name[_data_.id]=`${_name} ${(_unit)||''} ` 
+          vm.E_name[_data_.id]=`${_name} (${_unit||''}) ` 
         }
 
           let m_id=Object.keys(vm.echartCrt.monitors)
           for(let i in m_id){
-            // console.log('--qq---', m_id)
+           //  console.log('--qq---', m_id)
             (function(_mid){
                vm.find({
                   query: {
@@ -138,7 +135,9 @@
                     vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
                     console.log('[00-=][]',  data)
                  })  
-                 .catch(e => console.log("--=Oops, error=-=", e))
+                 .catch(e =>{
+                   vm.echartsArray.push(echarts.error)
+                   console.log("--=Oops, error=-=", e)}) 
             })(m_id[i])
           }
          // console.log('--echarts---', vm.echartsArray)

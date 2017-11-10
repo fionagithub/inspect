@@ -60,7 +60,7 @@ const echarts = {
       z: 100,
       style: {
         fill: '#3f3f3f',
-        text: '服务器开小差，请稍后再试。',
+        text: '数据异常，请稍后再试',
         font: '16px Microsoft YaHei'
       }
     }],

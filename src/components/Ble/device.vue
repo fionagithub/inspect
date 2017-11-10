@@ -101,10 +101,10 @@
       this.findMD()
       this.$nextTick(() => {
         feathers.io.emit('subscribe', {"channel":"devices"})
-       Win_devices_.on('patched', res => {
+     /*   Win_devices_.on('patched', res => {
           this.getDv(res.id)
          // console.log('--!!!!!!!!!!==', res)
-        })
+        }) */
         Win_devices_.on('created', res => {
           this.dvCut += 1
           this.setAddCount({
