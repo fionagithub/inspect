@@ -10,6 +10,8 @@
     </div>
     <div class="layout-view">
       <div class="layout-padding " v-if='echartsArray.length'  >
+                  <p class="caption"> {{echartCrt.name}} </p>
+
         <div class="echarts" v-for='chart in echartsArray' >
           <IEcharts :option="chart"></IEcharts>
         
@@ -38,12 +40,13 @@
         return{
           api: feathers.env_api,
           theme: 'dark',
-          title: '曲线图',
+          title: '历史曲线',
           loading: true,
           echartsArray:[],
           bar:{
             tooltip: {},
             grid:{
+              top:20,
               left:50,
             },
             xAxis: {
