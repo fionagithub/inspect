@@ -34,7 +34,7 @@
           <div class="row justify-center " style="margin: 5px 0;">
             <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
             <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
-              <span v-if='tips'> {{tips}} </span>
+              <span v-if='tips&& getGlbErr.isFlag==false'> {{tips}} </span>
               <err v-if='getGlbErr.isFlag' />
             </div>
           </div>
@@ -98,7 +98,6 @@
     created() {},
     mounted() {
       this.setFilters() //请求初始数据
-      this.findMD()
       this.$nextTick(() => {
         feathers.io.emit('subscribe', {"channel":"devices"})
      /*   Win_devices_.on('patched', res => {
@@ -117,9 +116,6 @@
       ...mapActions(['setAddCount', 'setError']),
       ...mapActions('devices', {
         findMessages: 'find',
-      }),
-      ...mapActions('monitors', {
-        findMD: 'find',
       }),
       ...mapActions('devices', {
         getDv: 'get',
@@ -186,6 +182,7 @@
         })
       },
       notify() {
+        this.setError()
         this.isEdit = false
         this.$refs.layoutModal.close();
       },

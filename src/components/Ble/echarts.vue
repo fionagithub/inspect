@@ -71,6 +71,7 @@
            'default' : { 
              name: 'Sales',
               type: 'line',
+              smooth:true,
               data:[]}
           },
       }
@@ -84,12 +85,13 @@
       }),
     },
     mounted(){
+      this.findMD()
     },
     watch:{
       echartCrt(val){
         if(val){
             this._getData()
-            console.log('----www---')
+           // console.log('----www---')
         }
       }
 
@@ -103,6 +105,9 @@
       }),
       ...mapMutations('environment_chart', {
         clear: 'clearAll',
+      }),
+      ...mapActions('monitors', {
+        findMD: 'find',
       }),
       onReady(instance) {
       },
