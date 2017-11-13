@@ -51,8 +51,9 @@
             tooltip: {},
             grid:{
               top:50,
-              left:50,
-              bottom: 50
+              left:80,
+              bottom: 50,
+              right:50
             },
             xAxis: {
               data:[],
@@ -153,8 +154,7 @@
 
 <style scoped>
   .echarts {
-    width: 400px;
-    height: 250px;
-    padding-right:10px;
+    width: 100vw;
+    height: 30vh;
   }
 </style>
