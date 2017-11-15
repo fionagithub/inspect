@@ -16,7 +16,7 @@
               Ble
             </div>
             <div class="item-secondary">
-              <q-toggle v-model="isBle"></q-toggle>
+              <q-toggle v-model="isBleToggled"></q-toggle>
             </div>
           </div>
         </div>
@@ -53,17 +53,14 @@
         </div>
       </div>
         <p>
-          <ol v-if='bleDeviceList.length' class="smart text-green-8">
+          <ol v-if='bleDeviceList.length' class="smart">
             <li v-for='o in bleDeviceList' :key='o.id'>
               <a class='text-green-8'>
                 {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'% ' +o.rssi}}  {{o.time|date('HH:mm:ss') }}
-<!-- 
-                              {{`${o.name} ${o.data.temperature} '℃' ${o.data.humidity} '%' ${ o.time|date('HH:mm:ss')}  `}}
-                 -->
                 </a>
             </li>
           </ol>
-          <ol v-if='logStickBuff.length' class="stick text-yellow-8">
+          <ol v-if='logStickBuff.length' class="stick">
             <div>扫描中...</div>
             <li v-for='bf in logStickBuff' :key="bf.id">
               <a class='text-yellow-8' >{{bf}} </a>
@@ -76,11 +73,7 @@
 </template>
 
 <script>
-// import moment from 'moment'
 import JKBLE from "./ble"
-// import cloneDeep from 'lodash.clonedeep'
-
-// console.log("---jkble---", JKBLE);
 import { mapGetters, mapMutations, mapState, mapActions } from "vuex"
 import { Toast } from "quasar"
 export default {
@@ -89,45 +82,29 @@ export default {
       title: "巡检",
       bleDeviceList: [],
       logStickBuff: [],
-      s_log: {},
-      s_buff: {},
       closestBleDevice:{},
-      bleFlag: false,
-      isBle: true,
-      u_array:[],
+      isBleToggled: true,
       bleDeviceStack:{},
-      upLoadInterval: 5000
+      upLoadInterval: 5000,
+      scanTimeOut: 30*60*1000,
     };
   },
   mounted() {
     this.bleScan()
-    
-   //  this.back_upload()
-  },
-  computed: {
-    toggleBtn() {
-      return this.bleFlag;
-    },
-    len() {
-      return this.u_array.length;
-    }
   },
   watch:{
-    isBle(val,oldval){
+    isBleToggled(val,oldval){
       if (val==true) {
         this.bleScan();
       } else {
         this.stopScan();
       }
-      console.log('--vv--', val, oldval)
     }
   },
   methods: {
     bleScan() {
       let vm = this;
-      console.log('---start===')
       vm.bleDeviceList = [];
-      // vm.s_log={};
       vm.closestBleDevice={};
       vm.logStickBuff = [];
 
@@ -219,11 +196,11 @@ export default {
 
 
         // 上传数据
-        this.back_upload();
+        vm.bleUpload();
       }, vm.upLoadInterval)
      
       // 在最长 30 分钟后停止扫描
-      setTimeout(vm.stopScan, 30 * 1000 * 60);
+      setTimeout(vm.stopScan, vm.scanTimeOut);
     },
     ...mapActions("smarttag", {
       createMessages: "create"
@@ -231,15 +208,13 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    back_upload() {
+    bleUpload() {
       let vm = this;
-      let t_array=Object.values(vm.bleDeviceStack)
-   //   let _data = t_array.length ? t_array.splice(0, 20) : null;
-      if (t_array.length) {
-        console.log("--up--",vm.bleDeviceStack, t_array);
+      let bleList=Object.values(vm.bleDeviceStack)
+      if (bleList.length) {
+        console.log("--up--",vm.bleDeviceStack, bleList);
          vm.bleDeviceStack={} 
-         vm.s_log={}
-          vm.createMessages(t_array)
+          vm.createMessages(bleList)
           .then(() => {
             console.log("---updata--ok-");
             Toast.create({
@@ -275,24 +250,6 @@ export default {
           });
         }
       );
-    },
-    checkBle() {
-      let vm = this;
-      console.log("Bluetooth ----is checking");
-      ble.startStateNotifications(function(state) {
-        console.log("Bluetooth is ====" + state);
-        if (state == "on") {
-          vm.bleFlag = false;
-          console.log("-ok--", vm.bleFlag);
-        } else {
-          Toast.create({
-            html: "未能成功地打开蓝牙,请手动开启",
-            timeout: 3000
-          });
-          vm.bleFlag = true;
-          console.log("-err--", vm.bleFlag);
-        }
-      });
     },
   },
   beforeDestroy() {

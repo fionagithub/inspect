@@ -12,7 +12,7 @@
       <div class="layout-padding " v-if='echartsArray.length'  >
                   <p class="caption"> {{echartCrt.name}} </p>
 
-        <div class="echarts" v-for='chart in echartsArray' >
+        <div class="echarts" v-for='(chart, index) in echartsArray' :key="index" >
           <IEcharts :option="chart"></IEcharts>
         
           <!--<IEcharts :option="bar2" :theme="theme" @ready="onReady2"></IEcharts>-->
@@ -25,7 +25,6 @@
 <script type="text/babel">
 
   import IEcharts from 'vue-echarts-v3/src/full.vue'
-  import queryString from 'query-string'
   import dark from 'echarts/theme/dark'
   import moment from 'moment'
   import echarts from '../../config/echarts'
@@ -41,10 +40,10 @@
         return{
           theme: 'dark',
           title: '历史曲线',
-          E_name:{},
+          echartTitleConf:{},
           loading: true,
           echartsArray:[],
-          bar:{
+          echartOpt:{
             title: {
                 text: ''
             },
@@ -67,7 +66,7 @@
             yAxis: {},
             series: []
           },
-          bar_conf:{
+          echartConf:{
            'default' : { 
              name: 'Sales',
               type: 'line',
@@ -81,20 +80,18 @@
         echartCrt: 'current',
       }),
       ...mapGetters('monitors', {
-        mtrMsg: 'list',
+        mtrList: 'list',
       }),
     },
     mounted(){
-      this.findMD()
+      this.echartTitleMatch()
     },
     watch:{
       echartCrt(val){
         if(val){
-            this._getData()
-           // console.log('----www---')
+          this.getEchartData()
         }
       }
-
     },
     methods: {
       ...mapActions('environment_chart', {
@@ -107,46 +104,42 @@
         clear: 'clearAll',
       }),
       ...mapActions('monitors', {
-        findMD: 'find',
+        findMtrApi: 'find',
       }),
-      onReady(instance) {
-      },
-      _getData(){
-        let vm =this
-        let conf = vm.bar_conf, opt = vm.bar;
-        let _eid=vm.echartCrt.id
-         let params = {
-             deviceId:_eid,
-         }
-
-        for (var i in vm.mtrMsg ){
-          let _data_= vm.mtrMsg[i]
-          let _name =_data_.name||_data_.monitorUri
-          let _unit=_data_.unit
-          vm.E_name[_data_.id]=`${_name} (${_unit||''}) ` 
-        }
-
-          let m_id=Object.keys(vm.echartCrt.monitors)
-          for(let i in m_id){
-           //  console.log('--qq---', m_id)
-            (function(_mid){
-               vm.find({
-                  query: {
-                    deviceId: _eid,
-                    monitorId: _mid,
-                    gap:10
-                  }
-               }).then(data =>{
-                 opt.title.text=vm.E_name[_mid]
-                    vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
-                    console.log('[00-=][]',  data)
-                 })  
-                 .catch(e =>{
-                   vm.echartsArray.push(echarts.error)
-                   console.log("--=Oops, error=-=", e)}) 
-            })(m_id[i])
+      echartTitleMatch() {
+        this.findMtrApi().then(()=>{
+          for (var i in this.mtrList ){
+            let mtrStack= this.mtrList[i]
+            let mtrName =mtrStack.name||mtrStack.monitorUri
+            let mtrUnit=mtrStack.unit
+            this.echartTitleConf[mtrStack.id]=`${mtrName} (${mtrUnit||''}) ` 
           }
-         // console.log('--echarts---', vm.echartsArray)
+        })
+      },
+      getEchartData(){
+        let vm =this
+        let deviceId=vm.echartCrt.id
+        let mtrId=Object.keys(vm.echartCrt.monitors)
+        for(let i in mtrId){
+          //  console.log('--qq---', mtrId)
+          (function(id){
+            vm.find({
+              query: {
+                deviceId: deviceId,
+                  monitorId: id,
+                  gap:10
+                }
+              }).then(data =>{
+                let conf = vm.echartConf, opt = vm.echartOpt;
+                opt.title.text=vm.echartTitleConf[id]
+                  vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
+                  console.log('[00-=][]',  data)
+                })  
+                .catch(e =>{
+                  vm.echartsArray.push(echarts.error)
+                  console.log("--=Oops, error=-=", e)}) 
+          })(mtrId[i])
+        }
       },
       onClick(event, instance, echarts) {
       }
