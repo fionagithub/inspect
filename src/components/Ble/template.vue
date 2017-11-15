@@ -20,41 +20,41 @@
             </div>
           </div>
         </div>
-      <div class="card" v-if='crt_log.name'>
+      <div class="card" v-if='closestBleDevice.name'>
         <div class="card-title">
-          <div>{{crt_log.name}} </div>
+          <div>{{closestBleDevice.name}} </div>
 
         </div>
         <div class="card-content">
           <div class="item d-info multiple-lines ">
             <div class="item-label d-label "> 湿度 </div>
             <div class="d-val " >
-              {{crt_log.data.humidity }}%
+              {{closestBleDevice.data.humidity }}%
             </div>
           </div>
           <div class="item d-info multiple-lines ">
             <div class="item-label d-label "> 温度 </div>
             <div class="d-val ">
-              {{ crt_log.data.temperature }} ℃ 
+              {{ closestBleDevice.data.temperature }} ℃ 
               </div>
           </div>
           <div class="item d-info multiple-lines ">
             <div class="item-label d-label "> RSSI </div>
             <div class="d-val " >
-              {{crt_log.rssi }}
+              {{closestBleDevice.rssi }}
             </div>
           </div>
           <div class="item d-info multiple-lines ">
             <div class="item-label d-label "> 更新时间 </div>
             <div class="d-val " >
-                {{crt_log.time|date('HH:mm:ss') }}
+                {{closestBleDevice.time|date('HH:mm:ss') }}
             </div>
           </div>
         </div>
       </div>
         <p>
-          <ol v-if='smartLog.length' class="smart text-green-8">
-            <li v-for='o in smartLog'>
+          <ol v-if='bleDeviceList.length' class="smart text-green-8">
+            <li v-for='o in bleDeviceList' :key='o.id'>
               <a class='text-green-8'>
                 {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'% ' +o.rssi}}  {{o.time|date('HH:mm:ss') }}
 <!-- 
@@ -65,7 +65,7 @@
           </ol>
           <ol v-if='logStickBuff.length' class="stick text-yellow-8">
             <div>扫描中...</div>
-            <li v-for='bf in logStickBuff'>
+            <li v-for='bf in logStickBuff' :key="bf.id">
               <a class='text-yellow-8' >{{bf}} </a>
             </li>
           </ol>
@@ -76,9 +76,9 @@
 </template>
 
 <script>
-import moment from 'moment'
+// import moment from 'moment'
 import JKBLE from "./ble"
-import cloneDeep from 'lodash.clonedeep'
+// import cloneDeep from 'lodash.clonedeep'
 
 // console.log("---jkble---", JKBLE);
 import { mapGetters, mapMutations, mapState, mapActions } from "vuex"
@@ -87,15 +87,16 @@ export default {
   data() {
     return {
       title: "巡检",
-      smartLog: [],
+      bleDeviceList: [],
       logStickBuff: [],
       s_log: {},
       s_buff: {},
-      crt_log:{},
+      closestBleDevice:{},
       bleFlag: false,
       isBle: true,
       u_array:[],
-      t_obj:{},
+      bleDeviceStack:{},
+      upLoadInterval: 5000
     };
   },
   mounted() {
@@ -125,53 +126,76 @@ export default {
     bleScan() {
       let vm = this;
       console.log('---start===')
-      vm.smartLog = [];
+      vm.bleDeviceList = [];
       // vm.s_log={};
-      vm.crt_log={};
+      vm.closestBleDevice={};
       vm.logStickBuff = [];
-      ble.startScanWithOptions([],{ reportDuplicates: true },function(_data_) {
-        //   console.log('-----start----', _data_)
-          let _id = _data_.id,
-            _name = _data_.name;
-          if (_name) {
-            if (/^SMARTAG/.test(_name.toUpperCase())) {
-              let jkble = new JKBLE({
-                schemaType: "smartTag",
-                schemaVersion: "v1"
-              });
-              // analyze
-              let mdata = _data_.advertising && _data_.advertising.kCBAdvDataManufacturerData && jkble.analyze(_data_.advertising.kCBAdvDataManufacturerData);
-              let __dess__ = {
-                phoneId: device.uuid,
-                name: _name,
-                data: mdata,
-                rssi: _data_.rssi,
-                time:Date.now(),
-              };
-              if(_name in vm.t_obj ){
-                if(__dess__.rssi > vm.t_obj[_name].rssi && __dess__.rssi < 0 ){
-                  vm.t_obj[_name]=__dess__
-                  console.log('----rrsssiii----',__dess__.rssi , vm.t_obj[_name].rssi )
-                }
-              }else{
-                  vm.t_obj[_name]=__dess__
-              }
-            //  vm.s_log[_name]=__dess__
-              vm.smartLog=Object.values(vm.t_obj)
-              
-            //  vm.smartLog.push(vm.t_obj)
-              vm.crt_log=__dess__
 
-              console.log("---buff---", vm.t_obj, vm.t_obj[_name],__dess__, vm.smartLog);
+      // 开始扫描了
+      ble.startScanWithOptions(
+        [],
+        { reportDuplicates: true },
+        function onScanSuccess(bleDevice) {
 
-            } else {
-              let _sdvc = _name + ":" + _id;
-              vm.logStickBuff.push(_sdvc)
-              if (vm.logStickBuff.length > 2) vm.logStickBuff.shift();
+          let bleDeviceId = bleDevice.id;
+          let bleDeviceName = bleDevice.name;
+
+
+          if (bleDeviceName && /^SMARTAG/.test(bleDeviceName.toUpperCase())) {
+
+            // 忽略 rssi 值为正数的情况，正常情况向 rssi 值只可能是负数
+            if(bleDevice.rssi > 0) return;
+
+            // 初始化蓝牙模块
+            let jkble = new JKBLE({
+              schemaType: "smartTag",
+              schemaVersion: "v1"
+            });
+
+            // 解析 ble 数据包
+            let analysisResultData = bleDevice.advertising && 
+                                     bleDevice.advertising.kCBAdvDataManufacturerData && 
+                                     jkble.analyze(bleDevice.advertising.kCBAdvDataManufacturerData);
+            
+            // 忽略 数据不正确的情况
+            if(!analysisResultData || !analysisResultData.$verified) return;
+
+            // 准备上传用的数据格式
+            let currentBLeDevice = {
+              phoneId: window.device.uuid,
+              name: bleDeviceName,
+              data: analysisResultData,
+              rssi: bleDevice.rssi,
+              time: Date.now()
+            };
+
+            // rssi 均值算法，在一个周期内扫描到的相加取平均值，目的是防止由于信号漂移带来的误差
+            if(bleDeviceName in vm.bleDeviceStack ){
+              let previousRssi = vm.bleDeviceStack[bleDeviceName].rssi;
+              let currentRssi = currentBLeDevice.rssi;
+
+              // TODO 算法还需进一步优化，例如使用『众数』或『中位数』，待验证
+              currentBLeDevice.rssi = Math.round( (currentRssi + previousRssi) / 2 );
             }
+
+            vm.bleDeviceStack[bleDeviceName] = currentBLeDevice;
+
+            vm.bleDeviceList = Object.values(vm.bleDeviceStack);
+
+            // 改成更新『距离最近』标签的值，放入 5 秒定时任务
+            // vm.closestBleDevice = currentBLeDevice
+
+          } else {
+            // 调试信息输出，把不是 smartag 的蓝牙设备打印出来
+            let logLimit = 2;
+            vm.logStickBuff.push(bleDeviceName + ":" + bleDeviceId)
+            if (vm.logStickBuff.length > logLimit){
+              vm.logStickBuff.shift();
+            } 
           }
+
         },
-        function(reason) {
+        function onScanFailed(reason) {
           Toast.create({
             html: reason,
             timeout: 3000
@@ -180,9 +204,26 @@ export default {
         }
       ); 
 
-     window.itvalFunc = setInterval(this.back_upload,5000)
+      vm.uploadTimerId = setInterval( () => {
+      
+        // 通过 rssi 值获取当前距离最近的的 ble 设备
+        let bleDeviceList = Object.values(vm.bleDeviceStack);
+        let tempBleDevice = bleDeviceList[0];
+        for(let i = 1; i < bleDeviceList.length; i++){
+          let _device = bleDeviceList[i];
+          if(_device.rssi > tempBleDevice.rssi){
+            tempBleDevice = _device;
+          }
+        }
+        vm.closestBleDevice = tempBleDevice;
+
+
+        // 上传数据
+        this.back_upload();
+      }, vm.upLoadInterval)
      
-      setTimeout(vm.stopScan, 30 * 1000 *60);
+      // 在最长 30 分钟后停止扫描
+      setTimeout(vm.stopScan, 30 * 1000 * 60);
     },
     ...mapActions("smarttag", {
       createMessages: "create"
@@ -192,18 +233,26 @@ export default {
     },
     back_upload() {
       let vm = this;
-      let t_array=Object.values(vm.t_obj)
+      let t_array=Object.values(vm.bleDeviceStack)
    //   let _data = t_array.length ? t_array.splice(0, 20) : null;
       if (t_array.length) {
-        console.log("--up--",vm.t_obj, t_array);
-         vm.t_obj={} 
+        console.log("--up--",vm.bleDeviceStack, t_array);
+         vm.bleDeviceStack={} 
          vm.s_log={}
           vm.createMessages(t_array)
           .then(() => {
             console.log("---updata--ok-");
+            Toast.create({
+              html: 'BLE 数据上传成功',
+              timeout: 3000
+            });
           })
           .catch(err => {
             console.log("上传失败", err);
+             Toast.create({
+              html: 'BLE 数据上传失败',
+              timeout: 3000
+            });
           });
       }
     },
@@ -213,10 +262,17 @@ export default {
       ble.stopScan(
         function() {
           console.log("======= BLE: stop Scan complete =======");
-   
+          Toast.create({
+            html: '已经停止 BLE 扫描',
+            timeout: 3000
+          });
         },
         function() {
           console.log("====== BLE: Stop scan failed ======");
+          Toast.create({
+            html: '停止 BLE 扫描失败',
+            timeout: 3000
+          });
         }
       );
     },
@@ -240,10 +296,9 @@ export default {
     },
   },
   beforeDestroy() {
-   // this.back_upload();
-     clearInterval(window.itvalFunc)
+    // 清理工作
+    clearInterval(this.uploadTimerId);
     this.stopScan();
-    // updata splice array
   }
 };
 </script>

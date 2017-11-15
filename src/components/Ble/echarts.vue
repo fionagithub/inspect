@@ -71,7 +71,7 @@
            'default' : { 
              name: 'Sales',
               type: 'line',
-              smooth:true,
+              smooth: true,
               data:[]}
           },
       }
