@@ -53,8 +53,8 @@
         </div>
       </div>
         <p>
-          <ol v-if='smartLog.length' class="smart text-green-8">
-            <li v-for='o in smartLog'>
+          <ol v-if='bleDeviceList.length' class="smart text-green-8">
+            <li v-for='o in bleDeviceList' :key='o.id'>
               <a class='text-green-8'>
                 {{o.name+': '+o.data.temperature+'℃ '+o.data.humidity+'% ' +o.rssi}}  {{o.time|date('HH:mm:ss') }}
 <!-- 
@@ -65,7 +65,7 @@
           </ol>
           <ol v-if='logStickBuff.length' class="stick text-yellow-8">
             <div>扫描中...</div>
-            <li v-for='bf in logStickBuff'>
+            <li v-for='bf in logStickBuff' :key="bf.id">
               <a class='text-yellow-8' >{{bf}} </a>
             </li>
           </ol>
@@ -76,9 +76,9 @@
 </template>
 
 <script>
-import moment from 'moment'
+// import moment from 'moment'
 import JKBLE from "./ble"
-import cloneDeep from 'lodash.clonedeep'
+// import cloneDeep from 'lodash.clonedeep'
 
 // console.log("---jkble---", JKBLE);
 import { mapGetters, mapMutations, mapState, mapActions } from "vuex"
@@ -87,7 +87,7 @@ export default {
   data() {
     return {
       title: "巡检",
-      smartLog: [],
+      bleDeviceList: [],
       logStickBuff: [],
       s_log: {},
       s_buff: {},
@@ -96,6 +96,7 @@ export default {
       isBle: true,
       u_array:[],
       bleDeviceStack:{},
+      upLoadInterval: 5000
     };
   },
   mounted() {
@@ -125,7 +126,7 @@ export default {
     bleScan() {
       let vm = this;
       console.log('---start===')
-      vm.smartLog = [];
+      vm.bleDeviceList = [];
       // vm.s_log={};
       vm.closestBleDevice={};
       vm.logStickBuff = [];
@@ -152,13 +153,15 @@ export default {
             });
 
             // 解析 ble 数据包
-            let analysisResultData = bleDevice.advertising && bleDevice.advertising.kCBAdvDataManufacturerData && jkble.analyze(bleDevice.advertising.kCBAdvDataManufacturerData);
+            let analysisResultData = bleDevice.advertising && 
+                                     bleDevice.advertising.kCBAdvDataManufacturerData && 
+                                     jkble.analyze(bleDevice.advertising.kCBAdvDataManufacturerData);
             
             // 忽略 数据不正确的情况
             if(!analysisResultData || !analysisResultData.$verified) return;
 
             // 准备上传用的数据格式
-            let currentDevice = {
+            let currentBLeDevice = {
               phoneId: window.device.uuid,
               name: bleDeviceName,
               data: analysisResultData,
@@ -168,23 +171,19 @@ export default {
 
             // rssi 均值算法，在一个周期内扫描到的相加取平均值，目的是防止由于信号漂移带来的误差
             if(bleDeviceName in vm.bleDeviceStack ){
-              let prevRssi = vm.bleDeviceStack[bleDeviceName].rssi;
-              let currentRssi = currentDevice.rssi;
+              let previousRssi = vm.bleDeviceStack[bleDeviceName].rssi;
+              let currentRssi = currentBLeDevice.rssi;
 
               // TODO 算法还需进一步优化，例如使用『众数』或『中位数』，待验证
-              currentDevice.rssi = Math.round( (currentRssi + prevRssi) / 2 );
+              currentBLeDevice.rssi = Math.round( (currentRssi + previousRssi) / 2 );
             }
 
-            vm.bleDeviceStack[bleDeviceName] = currentDevice
+            vm.bleDeviceStack[bleDeviceName] = currentBLeDevice;
 
-            vm.smartLog = Object.values(vm.bleDeviceStack)
-            
-            //  vm.smartLog.push(vm.bleDeviceStack)
+            vm.bleDeviceList = Object.values(vm.bleDeviceStack);
 
             // 改成更新『距离最近』标签的值，放入 5 秒定时任务
-            // vm.closestBleDevice = currentDevice
-
-            // console.log("---buff---", vm.bleDeviceStack, vm.bleDeviceStack[bleDeviceName],currentDevice, vm.smartLog);
+            // vm.closestBleDevice = currentBLeDevice
 
           } else {
             // 调试信息输出，把不是 smartag 的蓝牙设备打印出来
@@ -221,9 +220,10 @@ export default {
 
         // 上传数据
         this.back_upload();
-     },5000)
+      }, vm.upLoadInterval)
      
-      setTimeout(vm.stopScan, 30 * 1000 *60);
+      // 在最长 30 分钟后停止扫描
+      setTimeout(vm.stopScan, 30 * 1000 * 60);
     },
     ...mapActions("smarttag", {
       createMessages: "create"
