@@ -73,6 +73,7 @@
 </template>
 
 <script>
+
 import JKBLE from "./ble"
 import { mapGetters, mapMutations, mapState, mapActions } from "vuex"
 import { Toast } from "quasar"
@@ -90,7 +91,7 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener('online',  bleContinueUpload);
+    window.addEventListener('online', this.bleContinueUpload);
   },
   created(){
     this.bleScan()
@@ -222,13 +223,19 @@ export default {
     },
     bleUpload(obj) {
       let vm = this;
-      let bleList=Object.values(vm.bleDeviceStack).concat(obj)
-      if (bleList.length>0) {
-        console.log("--up--",vm.bleDeviceStack, bleList);
-         vm.bleDeviceStack={} 
+      let bleList=[];
+      let bleStackList= Object.values(vm.bleDeviceStack)
+      if(JSON.stringify(vm.bleDeviceStack)=='{}'){
+          bleList=obj||[];
+      }else{
+          bleList = obj?bleStackList.concat(obj):bleStackList
+      }
+        console.log("--up--",bleStackList, bleList);
+      if (bleList.length) {
           vm.createMessages(bleList)
           .then(() => {
-          //  console.log("---updata--ok-");
+            vm.bleDeviceStack={} 
+            console.log("---updata--ok-",bleList);
             Toast.create({
               html: 'BLE 数据上传成功',
               timeout: 3000
@@ -240,8 +247,9 @@ export default {
               for(var x in localStorage){  
                  total += localStorage[x].length * 2;  
               }
+                total += bleList.length*2
               let bleSpace= Math.round(total/1024/1024,2)
-              if (bleSpace<2&&bleList){
+              if (bleSpace<2){
                 filtersStorage({
                       value: bleList,
                       key: 'ble'
