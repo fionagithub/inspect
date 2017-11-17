@@ -230,7 +230,7 @@ export default {
       }else{
           bleList = obj?bleStackList.concat(obj):bleStackList
       }
-        console.log("--up--",bleStackList, bleList);
+       console.log("--up--", bleList);
       if (bleList.length) {
           vm.createMessages(bleList)
           .then(() => {
@@ -243,15 +243,19 @@ export default {
           })
           .catch(err => {
            // console.log("上传失败", err);
-             var total = 0;
-              for(var x in localStorage){  
-                 total += localStorage[x].length * 2;  
+               var total= bleList.length*2
+              for(let x in localStorage){  
+                let l=localStorage[x].length * 2; 
+               // console.log('--ll---',l)
+                 total += isNaN( l)||0;
               }
-                total += bleList.length*2
-              let bleSpace= Math.round(total/1024/1024,2)
-              if (bleSpace<2){
+              let bleSpace=(total/1024/1024).toFixed(2)
+             // console.log('--ss---ll--',total, bleSpace)
+             // error about idField
+              if (bleSpace<3&& navigator.onLine!==true){
+                let bleLocalStorage=bleList.concat(filtersStorage('ble'))
                 filtersStorage({
-                      value: bleList,
+                      value: bleLocalStorage,
                       key: 'ble'
                     }, 'save')
               }
