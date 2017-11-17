@@ -90,7 +90,7 @@
     },
     computed: {
       leftDrawer() {
-        console.log(this.$children)
+        // console.log(this.$children)
         return this.$children[3].$refs.leftDrawer
       },
       _modal() {
