@@ -90,6 +90,9 @@ export default {
     };
   },
   mounted() {
+    window.addEventListener('online',  bleContinueUpload);
+  },
+  created(){
     this.bleScan()
   },
   watch:{
@@ -99,10 +102,12 @@ export default {
       } else {
         this.stopScan();
       }
+    //  console.log('--------wwww---', val)
     }
   },
   methods: {
     bleScan() {
+     // console.log('-----bbb---sss---')
       let vm = this;
       vm.bleDeviceList = [];
       vm.closestBleDevice={};
@@ -208,22 +213,40 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    bleUpload() {
+    bleContinueUpload(){
+      if('ble' in localStorage){
+        let bleStorageList=filtersStorage('ble')
+        console.log('-------bbss----', bleStorageList)
+        this.bleUpload(bleStorageList)
+      }
+    },
+    bleUpload(obj) {
       let vm = this;
-      let bleList=Object.values(vm.bleDeviceStack)
-      if (bleList.length) {
+      let bleList=Object.values(vm.bleDeviceStack).concat(obj)
+      if (bleList.length>0) {
         console.log("--up--",vm.bleDeviceStack, bleList);
          vm.bleDeviceStack={} 
           vm.createMessages(bleList)
           .then(() => {
-            console.log("---updata--ok-");
+          //  console.log("---updata--ok-");
             Toast.create({
               html: 'BLE 数据上传成功',
               timeout: 3000
             });
           })
           .catch(err => {
-            console.log("上传失败", err);
+           // console.log("上传失败", err);
+             var total = 0;
+              for(var x in localStorage){  
+                 total += localStorage[x].length * 2;  
+              }
+              let bleSpace= Math.round(total/1024/1024,2)
+              if (bleSpace<2&&bleList){
+                filtersStorage({
+                      value: bleList,
+                      key: 'ble'
+                    }, 'save')
+              }
              Toast.create({
               html: 'BLE 数据上传失败',
               timeout: 3000
@@ -233,17 +256,17 @@ export default {
     },
     stopScan() {
       let vm = this;
-      console.log('----stop--')
+   //   console.log('----stop--')
       ble.stopScan(
         function() {
-          console.log("======= BLE: stop Scan complete =======");
+         // console.log("======= BLE: stop Scan complete =======");
           Toast.create({
             html: '已经停止 BLE 扫描',
             timeout: 3000
           });
         },
         function() {
-          console.log("====== BLE: Stop scan failed ======");
+       //   console.log("====== BLE: Stop scan failed ======");
           Toast.create({
             html: '停止 BLE 扫描失败',
             timeout: 3000
@@ -255,7 +278,7 @@ export default {
   beforeDestroy() {
     // 清理工作
     clearInterval(this.uploadTimerId);
-    this.stopScan();
+   // this.stopScan();
   }
 };
 </script>
