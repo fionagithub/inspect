@@ -209,21 +209,14 @@ export default {
     goBack() {
       this.$router.go(-1);
     },
-    bleContinueUpload(){
-      if('ble' in localStorage){
-        let bleStorageList=filtersStorage('ble')
-        console.log('-------bbss----', bleStorageList)
-        this.bleUpload(bleStorageList)
-      }
-    },
-    bleUpload(obj) {
+    bleUpload() {
       let vm = this;
       let bleList=[];
       let bleStackList= Object.values(vm.bleDeviceStack)
       if(JSON.stringify(vm.bleDeviceStack)=='{}'){
-          bleList=obj||[];
+          bleList=[];
       }else{
-          bleList = obj?bleStackList.concat(obj):bleStackList
+          bleList =bleStackList
       }
       // console.log("--up--", bleList);
       if(bleList.length){
