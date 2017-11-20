@@ -108,11 +108,6 @@
       }
     },
     mounted() {
-      if (!this.tktCut) {
-        this.getTktCunt()
-      } else {
-        this.setCut(this.tktCut)
-      }
       if (this.$route.query) {
         this.$router.push({
           path: '/index',
@@ -121,9 +116,6 @@
       }
     },
     methods: {
-      ...mapActions('tickets', {
-        findTkt: 'find',
-      }),
       ...mapActions(['setError']),
       Setting(){
         this.$refs.layoutModal.open()
@@ -133,34 +125,11 @@
         this.isFb = true
         this.$refs.layoutModal.open()
       },
-      setCut(ttl) {
-        this.items.map(function (k, i) {
-          if (k.uri.indexOf('/ticket') == 0) {
-            k.count = ttl
-          }
-        })
-      },
       notify() {
         this.isSetting = false
         this.isFb = false
         this.setError()
         this.$refs.layoutModal.close();
-      },
-      getTktCunt() {
-        let self = this
-        this.findTkt({
-          query: {
-            $limit: 0,
-            state: "0"
-          }
-        }).then(res => {
-       //   console.log('--res---;', res)
-          filtersStorage({
-            value: res.total,
-            key: 'tktCut'
-          }, 'save')
-          self.setCut(res.total)
-        })
       },
       alert() {
         Dialog.create({
