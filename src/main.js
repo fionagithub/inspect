@@ -28,7 +28,6 @@ Vue.use(Vuelidate)
 Vue.use(Quasar) 
 
 window.feathers = feathersClient(window.__tenantId__)
-window.Win_tickets_ = feathers.service('tickets')
 window.Win_devices_ = feathers.service('devices')
 Quasar.start(() => {
   new Vue({
