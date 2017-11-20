@@ -90,9 +90,6 @@ export default {
       scanTimeOut: 30*60*1000,
     };
   },
-  mounted() {
-   // window.addEventListener('online', this.bleContinueUpload);
-  },
   created(){
     this.bleScan()
   },
@@ -199,8 +196,6 @@ export default {
           }
         }
         vm.closestBleDevice = tempBleDevice;
-
-
         // 上传数据
         vm.bleUpload();
       }, vm.upLoadInterval)
@@ -231,49 +226,14 @@ export default {
           bleList = obj?bleStackList.concat(obj):bleStackList
       }
       // console.log("--up--", bleList);
-      if (navigator.onLine) {
-        if(bleList.length){
-          vm.createMessages(bleList)
-          .then(() => {
-            vm.bleDeviceStack={} 
-            console.log("---updata--ok-",bleList);
-            Toast.create({
-              html: 'BLE 数据上传成功',
-              timeout: 3000
-            });
-          })
-           /*   .catch(err => {
-           // console.log("上传失败", err);
-            var total= bleList.length*2
-              for(let x in localStorage){  
-                let l=localStorage[x].length * 2; 
-                 total += isNaN( l)||0;
-              }
-              let bleSpace=(total/1024/1024).toFixed(2)
-              if (bleSpace<3&& navigator.onLine!==true){
-                let bleLocalStorage=bleList.concat(filtersStorage('ble'))
-                filtersStorage({
-                      value: bleLocalStorage,
-                      key: 'ble'
-                    }, 'save')
-              } 
-             Toast.create({
-              html: 'BLE 数据上传失败',
-              timeout: 3000
-            });
-          });*/
-        }
-      }else{
-        let storeObj=filtersStorage('stackData')
-        if(storeObj['smarttag']){
-          val= storeObj.smarttag.concat(bleList)
-        }else{
-          storeObj.smarttag=bleList
-        }
-        filtersStorage({
-          value: storeObj,
-          key: 'stackData'
-        }, 'save')
+      if(bleList.length){
+        vm.createMessages(bleList)
+        .then(() => {
+          vm.bleDeviceStack={} 
+          console.log("---updata--ok-",bleList);
+        }).catch(err=>{
+          console.log('--err---',err)
+        })
       }
     },
     stopScan() {
@@ -289,10 +249,10 @@ export default {
         },
         function() {
        //   console.log("====== BLE: Stop scan failed ======");
-          Toast.create({
+       /*    Toast.create({
             html: '停止 BLE 扫描失败',
             timeout: 3000
-          });
+          }); */
         }
       );
     },
