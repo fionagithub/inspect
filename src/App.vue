@@ -42,12 +42,6 @@ export default {
     ...mapActions('auth', [
       'authenticate'
     ]),
-    ...mapActions('system', {
-      findSystemItems: 'find',
-    }),
-    ...mapActions('metadata', {
-      findStateItems: 'find',
-    }),
     ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
     setAuth(obj) {
       let _self = this
@@ -82,53 +76,7 @@ export default {
         html: tips || uri,
         timeout: 5000
       })
-    },
-    getConf() {
-      let query = {
-        query: {
-          id: {
-            $nin: ["system"]
-          }
-        }
-      }
-      this.findStateItems(query).then(res => {
-        let _array, sum = {}
-        for (var item in res) {
-          let data = res[item]
-          let _list = data['is']
-          sum[data['id']] = _list
-          if (data['id'] == 'state') {
-            _array = [{
-              value: 'ALL',
-              label: '全部状态'
-            }]
-            sum._state_ = _list.concat(_array)
-          }
-        }
-        //get system api
-        this.setConfMenu(sum)
-      })
-      this.findSystemItems().then(ress => {
-        // console.log('[]-=', ress)
-        let system = [],
-          sum = {}
-        for (let s in ress) {
-          let _ress = ress[s],
-            _system = {}
-          for (let k in _ress) {
-            let key = k == 'name' ? 'label' : 'value'
-            _system[key] = _ress[k]
-          }
-          system.push(_system)
-        }
-        sum.system = system
-        sum._system_ = system.concat([{
-          value: 'ALL',
-          label: '全部系统'
-        }])
-        this.setConfMenu(sum)
-      })
-    },
+    }, 
   },
 }
 </script>
