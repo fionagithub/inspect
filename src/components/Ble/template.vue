@@ -91,7 +91,7 @@ export default {
     };
   },
   mounted() {
-    window.addEventListener('online', this.bleContinueUpload);
+   // window.addEventListener('online', this.bleContinueUpload);
   },
   created(){
     this.bleScan()
@@ -230,8 +230,9 @@ export default {
       }else{
           bleList = obj?bleStackList.concat(obj):bleStackList
       }
-       console.log("--up--", bleList);
-      if (bleList.length) {
+      // console.log("--up--", bleList);
+      if (navigator.onLine) {
+        if(bleList.length){
           vm.createMessages(bleList)
           .then(() => {
             vm.bleDeviceStack={} 
@@ -241,29 +242,38 @@ export default {
               timeout: 3000
             });
           })
-          .catch(err => {
+           /*   .catch(err => {
            // console.log("上传失败", err);
-               var total= bleList.length*2
+            var total= bleList.length*2
               for(let x in localStorage){  
                 let l=localStorage[x].length * 2; 
-               // console.log('--ll---',l)
                  total += isNaN( l)||0;
               }
               let bleSpace=(total/1024/1024).toFixed(2)
-             // console.log('--ss---ll--',total, bleSpace)
-             // error about idField
               if (bleSpace<3&& navigator.onLine!==true){
                 let bleLocalStorage=bleList.concat(filtersStorage('ble'))
                 filtersStorage({
                       value: bleLocalStorage,
                       key: 'ble'
                     }, 'save')
-              }
+              } 
              Toast.create({
               html: 'BLE 数据上传失败',
               timeout: 3000
             });
-          });
+          });*/
+        }
+      }else{
+        let storeObj=filtersStorage('stackData')
+        if(storeObj['smarttag']){
+          val= storeObj.smarttag.concat(bleList)
+        }else{
+          storeObj.smarttag=bleList
+        }
+        filtersStorage({
+          value: storeObj,
+          key: 'stackData'
+        }, 'save')
       }
     },
     stopScan() {

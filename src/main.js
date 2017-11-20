@@ -17,6 +17,7 @@ import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import err from './components/Error'
+import stackUpdata from './config/stack'
 
 Vue.component('err', err);
 
@@ -26,6 +27,8 @@ import {
 
 Vue.use(Vuelidate)
 Vue.use(Quasar) 
+
+window.addEventListener('online', stackUpdata);
 
 window.feathers = feathersClient(window.__tenantId__)
 window.Win_tickets_ = feathers.service('tickets')

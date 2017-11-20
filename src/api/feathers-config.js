@@ -11,8 +11,8 @@ import {
 } from '../config/actions'
 
 function feathersClient(uri) {
-  uri='http://192.168.123.189:3030'
-  
+ // uri='http://192.168.123.189:3030'
+  uri = 'http://shtower.laputacloud.com'
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     
@@ -47,6 +47,16 @@ function feathersClient(uri) {
   client.hooks({
     error: function (hook) {
       setError(this, hook)
+      if (hook.method=='create'){
+        let storageObj={};
+        storageObj[hook.path]=hook.data
+        let val = localStorage['stackData']? Object.assign(filtersStorage('stackData'), storageObj):storageObj;
+        filtersStorage({
+          value: val,
+          key: 'stackData'
+        }, 'save')
+        console.log('[====ct====]',hook)
+      }
     }.bind(store),
     before: function (hook) {
       setError(this)
