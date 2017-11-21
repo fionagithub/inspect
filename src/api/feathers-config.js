@@ -46,12 +46,12 @@ function feathersClient(uri) {
   client.hooks({
     error: function (hook) {
       setError(this, hook)
+       console.log('--ff--hh--', hook)
     }.bind(store),
     before: function (hook) {
       setError(this)
     }.bind(store),
     after(hook) {
-      // console.log('af')
     }
   }) 
 
