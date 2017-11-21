@@ -10,7 +10,7 @@
     tips: null,
   },
   echartTitleConf:{},
-  
+  bleToggled:true,
   priorityMax: 3,
   confMenu:{
     source: [],

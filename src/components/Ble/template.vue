@@ -16,7 +16,7 @@
               Ble
             </div>
             <div class="item-secondary">
-              <q-toggle v-model="isBleToggled"></q-toggle>
+              <q-toggle v-model="isBleToggled" ></q-toggle>
             </div>
           </div>
         </div>
@@ -84,14 +84,26 @@ export default {
       bleDeviceList: [],
       logStickBuff: [],
       closestBleDevice:{},
-      isBleToggled: true,
       bleDeviceStack:{},
       upLoadInterval: 5000,
       scanTimeOut: 30*60*1000,
     };
   },
   created(){
-    this.bleScan()
+    if(this.bleToggled){
+        this.bleScan()
+    }
+  },
+  computed:{
+  ...mapState(['bleToggled']),
+    isBleToggled: {
+      get () {
+        return this.bleToggled;
+      },
+      set (value) {
+        this.setBleToggled(value)
+      }
+    }
   },
   watch:{
     isBleToggled(val,oldval){
@@ -104,6 +116,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['setBleToggled']),
     bleScan() {
      // console.log('-----bbb---sss---')
       let vm = this;
