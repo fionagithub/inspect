@@ -145,6 +145,7 @@
                         data:[]
                       }
                     }
+                  opt.title.text=vm.echartTitleConf[id]
                    vm.echartsArray.push(echarts.xparse(opt, data , conf));
                /*    if(JSON.stringify(e)=='{}'){
                   }else{
@@ -166,8 +167,7 @@
 
 <style scoped>
   .monitor-title{
-    padding: 1.5rem .5rem;
-
+    margin: 1.5rem .5rem;
   }
   .chart-padding{
     padding: 0;
