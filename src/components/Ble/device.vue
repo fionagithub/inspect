@@ -83,6 +83,7 @@
         limit: 10,
         skip: 0,
         SearchLabel: '搜索...',
+
       }
       return _dt
     },
@@ -91,14 +92,18 @@
       ...mapGetters('devices', {
         message: 'list',
       }),
+      ...mapGetters('monitors', {
+        mtrList: 'list',
+      }),
       surplus() {
         return this.total - this.message.length
       },
     },
     created() {},
     mounted() {
-      this.setFilters() //请求初始数据
       this.$nextTick(() => {
+      this.echartTitleMatch()
+      this.setFilters() //请求初始数据
         feathers.io.emit('subscribe', {"channel":"devices"})
      /*   Win_devices_.on('patched', res => {
           this.getDv(res.id)
@@ -113,18 +118,28 @@
       })
     },
     methods: {
-      ...mapActions(['setAddCount', 'setError']),
+      ...mapActions('monitors', {
+        findMtrApi: 'find',
+      }),
+      ...mapActions(['setAddCount','setEchartConf', 'setError']),
+      echartTitleMatch() {
+        this.findMtrApi().then(()=>{
+          let echartTitleConf={}
+          for (var i in this.mtrList ){
+            let mtrStack= this.mtrList[i]
+            let mtrName =mtrStack.name||mtrStack.monitorUri
+            let mtrUnit=mtrStack.unit
+            echartTitleConf[mtrStack.id]=`${mtrName} (${mtrUnit||''}) ` 
+          }
+          this.setEchartConf(echartTitleConf)
+        })
+      },
       ...mapActions('devices', {
         findMessages: 'find',
       }),
       ...mapActions('devices', {
         getDv: 'get',
       }),
-     /*  fetchMD(){
-        this.findMD
-
-      }, */
-      
       setFilters(sus) {
         this.dvCut = 0
         this.setAddCount({

@@ -9,6 +9,8 @@
     loginUri: null,
     tips: null,
   },
+  echartTitleConf:{},
+  
   priorityMax: 3,
   confMenu:{
     source: [],

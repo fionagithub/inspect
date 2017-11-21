@@ -40,7 +40,6 @@
         return{
           theme: 'dark',
           title: '历史曲线',
-          echartTitleConf:{},
           loading: true,
           echartsArray:[],
           echartOpt:{
@@ -78,12 +77,9 @@
       ...mapGetters('devices', {
         echartCrt: 'current',
       }),
-      ...mapGetters('monitors', {
-        mtrList: 'list',
-      }),
+      ...mapState(['echartTitleConf'])
     },
     mounted(){
-      this.echartTitleMatch()
     },
     watch:{
       echartCrt(val){
@@ -102,26 +98,12 @@
       ...mapMutations('environment_chart', {
         clear: 'clearAll',
       }),
-      ...mapActions('monitors', {
-        findMtrApi: 'find',
-      }),
-      echartTitleMatch() {
-        this.findMtrApi().then(()=>{
-          for (var i in this.mtrList ){
-            let mtrStack= this.mtrList[i]
-            let mtrName =mtrStack.name||mtrStack.monitorUri
-            let mtrUnit=mtrStack.unit
-            this.echartTitleConf[mtrStack.id]=`${mtrName} (${mtrUnit||''}) ` 
-          }
-        })
-      },
       getEchartData(){
         let vm =this
         let deviceId=vm.echartCrt.id
         let mtrId=Object.keys(vm.echartCrt.monitors)
         let conf = vm.echartConf, opt = vm.echartOpt;
         for(let i in mtrId){
-          //  console.log('--qq---', mtrId)
           (function(id){
             vm.find({
               query: {
@@ -132,6 +114,7 @@
               }).then(data =>{
                 opt.title.text=vm.echartTitleConf[id]
                   vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
+                   console.log('--qq---', opt.title)
                  // console.log('[00-=][]',  data)
                 })  
                 .catch(e =>{
