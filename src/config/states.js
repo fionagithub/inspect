@@ -9,6 +9,7 @@
     loginUri: null,
     tips: null,
   },
+  bleToggled:true,
   priorityMax: 3,
   confMenu:{
     source: [],

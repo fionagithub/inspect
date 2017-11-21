@@ -16,7 +16,7 @@
               Ble
             </div>
             <div class="item-secondary">
-              <q-toggle v-model="isBleToggled"></q-toggle>
+              <q-toggle v-model="isBleToggled" @input="upsetBleToggled" ></q-toggle>
             </div>
           </div>
         </div>
@@ -104,6 +104,9 @@ export default {
     }
   },
   methods: {
+    upsetBleToggled(){
+
+    },
     bleScan() {
      // console.log('-----bbb---sss---')
       let vm = this;
