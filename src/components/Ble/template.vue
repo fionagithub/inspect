@@ -223,9 +223,9 @@ export default {
         vm.createMessages(bleList)
         .then(() => {
           vm.bleDeviceStack={} 
-          console.log("---updata--ok-",bleList);
+        //  console.log("---updata--ok-");
         }).catch(err=>{
-          console.log('--err---',err)
+        //  console.log('--err---',err, typeof(err))
         })
       }
     },

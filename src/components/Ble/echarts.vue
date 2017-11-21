@@ -9,7 +9,7 @@
       </q-toolbar-title>
     </div>
     <div class="layout-view">
-      <div class="layout-padding " v-if='echartsArray.length'  >
+      <div class="layout-padding chart-padding" v-if='echartsArray.length'  >
                   <p class="caption"> {{echartCrt.name}} </p>
 
         <div class="echarts" v-for='(chart, index) in echartsArray' :key="index" >
@@ -50,7 +50,7 @@
             tooltip: {},
             grid:{
               top:50,
-              left:80,
+              left:40,
               bottom: 50,
               right:50
             },
@@ -120,6 +120,7 @@
         let vm =this
         let deviceId=vm.echartCrt.id
         let mtrId=Object.keys(vm.echartCrt.monitors)
+        let conf = vm.echartConf, opt = vm.echartOpt;
         for(let i in mtrId){
           //  console.log('--qq---', mtrId)
           (function(id){
@@ -130,14 +131,28 @@
                   gap:10
                 }
               }).then(data =>{
-                let conf = vm.echartConf, opt = vm.echartOpt;
                 opt.title.text=vm.echartTitleConf[id]
                   vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
-                  console.log('[00-=][]',  data)
+                 // console.log('[00-=][]',  data)
                 })  
                 .catch(e =>{
-                  vm.echartsArray.push(echarts.error)
-                  console.log("--=Oops, error=-=", e)}) 
+                  //TODO error 返回空数组
+                    let data={
+                      values:[],
+                      z:{
+                        data:[]
+                      },
+                      x:{
+                        data:[]
+                      }
+                    }
+                   vm.echartsArray.push(echarts.xparse(opt, data , conf));
+               /*    if(JSON.stringify(e)=='{}'){
+                  }else{
+                    vm.echartsArray.push(echarts.error)
+                  } */
+                  console.log("--=Oops, error=-=", JSON.stringify(e), e)
+                }) 
           })(mtrId[i])
         }
       },
@@ -151,8 +166,12 @@
 </script>
 
 <style scoped>
+.chart-padding{
+  padding: 1.5rem
+}
+
   .echarts {
-    width: 100vw;
-    height: 30vh;
+    width: 350px;
+    height: 200px;
   }
 </style>
