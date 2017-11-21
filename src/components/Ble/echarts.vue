@@ -10,7 +10,7 @@
     </div>
     <div class="layout-view">
       <div class="layout-padding chart-padding" v-if='echartsArray.length'  >
-                  <p class="caption"> {{echartCrt.name}} </p>
+        <p class="caption monitor-title"> {{echartCrt.name}} </p>
 
         <div class="echarts" v-for='(chart, index) in echartsArray' :key="index" >
           <IEcharts :option="chart"></IEcharts>
@@ -49,10 +49,9 @@
             },
             tooltip: {},
             grid:{
-              top:50,
+              top:40,
               left:40,
-              bottom: 50,
-              right:50
+              bottom: 30,
             },
             xAxis: {
               data:[],
@@ -166,12 +165,17 @@
 </script>
 
 <style scoped>
-.chart-padding{
-  padding: 1.5rem
-}
+  .monitor-title{
+    padding: 1.5rem .5rem;
+
+  }
+  .chart-padding{
+    padding: 0;
+  }
 
   .echarts {
-    width: 350px;
-    height: 200px;
+    padding:10px;
+    width: 100vw;
+    height: 30vh;
   }
 </style>
