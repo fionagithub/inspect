@@ -18,13 +18,13 @@
         </a>
         <q-pull-to-refresh class="d-pull" :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
-            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)" v-if='item.name'>
               <i class="item-primary item-icon">mail</i>
               <div class="item-content has-secondary list-content ">
                 <div>
                   {{item.name }}
                 </div>
-                <div class="list-desc">
+                <div class="list-desc" v-if='item.location'>
                   {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
               </div>
