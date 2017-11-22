@@ -18,16 +18,17 @@
         </a>
         <q-pull-to-refresh class="d-pull" :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
-            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)" v-if='item.name'>
-              <i class="item-primary item-icon">mail</i>
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " :key="index" @click="getDetail(item.id)">
+              <i class="item-primary item-icon fa-thermometer-three-quarters">mail</i>
               <div class="item-content has-secondary list-content ">
-                <div>
+                <div class='list-title' >
                   {{item.name }}
                 </div>
                 <div class="list-desc" v-if='item.location'>
-                  {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
+                  {{`${item.location.building} ${item.location.floor} ${item.location.room}`}}
                 </div>
               </div>
+                <div class='list-time' >{{item._modifyTime|date('H:m')}} </div>
               <i class="item-secondary item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
@@ -77,7 +78,7 @@
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
-        selectFld: ['location', 'name', 'id'],
+        selectFld: ['location','_modifyTime', 'name', 'id'],
         tips: null,
         isLoading: true,
         limit: 10,
@@ -240,7 +241,9 @@
   .q-popover .item-container {
     height: 38px;
   }
-  
+  .list-title{
+    padding-right: 60px;
+  }
   .list-time {
     position: absolute;
     top: 0;
