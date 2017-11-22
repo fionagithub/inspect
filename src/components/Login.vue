@@ -57,7 +57,7 @@
   export default {
     data() {
       return { 
-       /*  users: 'jkr3',
+       /*  users: 'shtower',
          pwd: 'laputa',  */ 
         users: '',
          pwd: '',
@@ -112,7 +112,7 @@
             self.flag = false
             self.progressBtn = 0
             Toast.create.negative({
-              html:error,
+              html:'登录出错，请稍后再试',
               timeout: 13000
             })
             console.error('Error [--authenticating!', error);
