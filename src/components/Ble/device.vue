@@ -103,8 +103,8 @@
     created() {},
     mounted() {
       this.$nextTick(() => {
-      this.echartTitleMatch()
-      this.setFilters() //请求初始数据
+       // this.echartTitleMatch()
+        this.setFilters() //请求初始数据
         feathers.io.emit('subscribe', {"channel":"devices"})
      /*   Win_devices_.on('patched', res => {
           this.getDv(res.id)
