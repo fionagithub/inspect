@@ -13,7 +13,7 @@
         <p class="caption monitor-title"> {{echartCrt.name}} </p>
 
         <div class="echarts" v-for='(chart, index) in echartsArray' :key="index" >
-          <IEcharts :option="chart"></IEcharts>
+          <IEcharts :option="chart" :loading="loading"></IEcharts>
         
           <!--<IEcharts :option="bar2" :theme="theme" @ready="onReady2"></IEcharts>-->
         </div>
@@ -41,22 +41,19 @@
           theme: 'dark',
           title: '历史曲线',
           loading: true,
+          envChartGap:10,
           echartsArray:[],
           echartOpt:{
-            title: {
-                text: ''
-            },
-            tooltip: {},
+            title: {},
             grid:{
               top:40,
               left:40,
               bottom: 30,
             },
             xAxis: {
-              data:[],
               axisLabel:{
                 formatter(value,index){
-                   var date = moment(value).format('h:mm')
+                   var date = moment(value).format('H:mm')
                     return date;
                 }
               }
@@ -77,13 +74,12 @@
       ...mapGetters('devices', {
         echartCrt: 'current',
       }),
-      ...mapState(['echartTitleConf'])
     },
     mounted(){
     },
     watch:{
-      echartCrt(val){
-        if(val){
+      echartCrt(val,oldVal){
+        if(typeof val=='object'){
           this.getEchartData()
         }
       }
@@ -105,20 +101,27 @@
         let conf = vm.echartConf, opt = vm.echartOpt;
         for(let i in mtrId){
           (function(id){
+           // opt.title.text=vm.echartTitleConf[id]
+            let mnt= vm.echartCrt.monitors[id]
+            let txt=mnt.name+`(${mnt.value + mnt.unit})`
+            console.log('---tt--', txt)
+            
             vm.find({
               query: {
                 deviceId: deviceId,
                   monitorId: id,
-                  gap:10
+                  gap:vm.envChartGap
                 }
               }).then(data =>{
-                opt.title.text=vm.echartTitleConf[id]
+                vm.loading=false
+                 opt.title.text=txt
+              //  opt.title.text=vm.echartTitleConf[id]
                   vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
-                   console.log('--qq---', opt.title)
-                 // console.log('[00-=][]',  data)
+                 //  console.log('--qq---', opt.title)
                 })  
                 .catch(e =>{
                   //TODO error 返回空数组
+                  vm.loading=false
                     let data={
                       values:[],
                       z:{
@@ -128,7 +131,8 @@
                         data:[]
                       }
                     }
-                  opt.title.text=vm.echartTitleConf[id]
+                   opt.title.text=txt
+                 // opt.title.text=vm.echartTitleConf[id]
                    vm.echartsArray.push(echarts.xparse(opt, data , conf));
                /*    if(JSON.stringify(e)=='{}'){
                   }else{
@@ -145,6 +149,9 @@
     components: {
       IEcharts
     },
+    destroyed(){
+      this.clear()
+    }
   }
 </script>
 
