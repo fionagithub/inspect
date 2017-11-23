@@ -93,9 +93,6 @@
       ...mapGetters('devices', {
         message: 'list',
       }),
-      ...mapGetters('monitors', {
-        mtrList: 'list',
-      }),
       surplus() {
         return this.total - this.message.length
       },
@@ -103,7 +100,6 @@
     created() {},
     mounted() {
       this.$nextTick(() => {
-       // this.echartTitleMatch()
         this.setFilters() //请求初始数据
         feathers.io.emit('subscribe', {"channel":"devices"})
      /*   Win_devices_.on('patched', res => {
@@ -119,22 +115,7 @@
       })
     },
     methods: {
-      ...mapActions('monitors', {
-        findMtrApi: 'find',
-      }),
-      ...mapActions(['setAddCount','setEchartConf', 'setError']),
-      echartTitleMatch() {
-        this.findMtrApi().then(()=>{
-          let echartTitleConf={}
-          for (var i in this.mtrList ){
-            let mtrStack= this.mtrList[i]
-            let mtrName =mtrStack.name||mtrStack.monitorUri
-            let mtrUnit=mtrStack.unit
-            echartTitleConf[mtrStack.id]=`${mtrName} (${mtrUnit||''}) ` 
-          }
-          this.setEchartConf(echartTitleConf)
-        })
-      },
+      ...mapActions(['setAddCount', 'setError']),
       ...mapActions('devices', {
         findMessages: 'find',
       }),

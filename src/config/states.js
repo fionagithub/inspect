@@ -9,15 +9,5 @@
     loginUri: null,
     tips: null,
   },
-  echartTitleConf:{},
   bleToggled:true,
-  priorityMax: 3,
-  confMenu:{
-    source: [],
-    system: [],
-    _system_: [],
-    priority: [],
-    state: [],
-    _state_: [],
-  }
 } 

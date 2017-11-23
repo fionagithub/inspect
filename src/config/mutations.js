@@ -4,7 +4,6 @@ import {
  GETGLBERR,
  SETCONFMENU,
  SETADDCOUNT,
- SETECHARTCONF,
  SETBLETOGGLED,
 } from './mutation-types'
 export const mutations = {
@@ -30,9 +29,6 @@ export const mutations = {
         state.confMenu[i]=obj[i]
       }
     }
-  },
-  [SETECHARTCONF](state, obj){
-    state.echartTitleConf = obj
   },
   [SETADDCOUNT](state, obj){
     for (let i in obj){

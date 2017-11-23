@@ -4,7 +4,6 @@ import {
  GETGLBERR,
  SETCONFMENU,
  SETADDCOUNT,
- SETECHARTCONF,
  SETBLETOGGLED,
 } from './mutation-types'
 
@@ -23,9 +22,6 @@ export const setConfMenu = ({commit}, obj) => {
 export const setAddCount = ({commit}, obj) => {
     commit(SETADDCOUNT, obj)
 } 
-export const setEchartConf = ({commit}, obj) => {
-    commit(SETECHARTCONF, obj)
-}
 export const setBleToggled = ({commit}, obj) => {
     commit(SETBLETOGGLED, obj)
 } 
