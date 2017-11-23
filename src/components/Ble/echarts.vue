@@ -51,12 +51,13 @@
               bottom: 30,
             },
             xAxis: {
+              type:'category',
               axisLabel:{
                 formatter(value,index){
-                   var date = moment(value).format('H:mm')
+                   var date = moment(parseInt(value)).format('H:mm')
                     return date;
                 }
-              }
+              },
             },
             yAxis: {},
             series: []
@@ -104,8 +105,6 @@
            // opt.title.text=vm.echartTitleConf[id]
             let mnt= vm.echartCrt.monitors[id]
             let txt=mnt.name+`(${mnt.value + mnt.unit})`
-            console.log('---tt--', txt)
-            
             vm.find({
               query: {
                 deviceId: deviceId,
@@ -115,7 +114,6 @@
               }).then(data =>{
                 vm.loading=false
                  opt.title.text=txt
-              //  opt.title.text=vm.echartTitleConf[id]
                   vm.echartsArray.push(echarts.xparse(opt, data[0] , conf));
                  //  console.log('--qq---', opt.title)
                 })  
@@ -132,7 +130,6 @@
                       }
                     }
                    opt.title.text=txt
-                 // opt.title.text=vm.echartTitleConf[id]
                    vm.echartsArray.push(echarts.xparse(opt, data , conf));
                /*    if(JSON.stringify(e)=='{}'){
                   }else{
