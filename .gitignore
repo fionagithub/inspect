@@ -6,11 +6,10 @@ selenium-debug.log
 test/unit/coverage
 test/e2e/reports
 dist
-Ticket
-Device
 package-lock.json
-Login.vue
 docker-image
+cordova/
+template/
 cordova/hooks
 cordova/www
 cordova/platforms
@@ -18,3 +17,4 @@ cordova/plugins
 thumbs.db
 !.gitkeep
 *.http
+src/components/Login.vue
