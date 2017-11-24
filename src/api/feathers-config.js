@@ -40,7 +40,8 @@ function feathersClient(uri) {
   //client.service('/metadata')
   client.service('/feedback')
   client.service('/smarttag')
-  client.service('/monitors')
+  // monitorid+deviceid匹配不同的图表title
+  // client.service('/monitors')
   client.service('/environment_chart')
 
   client.hooks({
