@@ -28,7 +28,7 @@
                   {{`${item.location.building} ${item.location.floor} ${item.location.room}`}}
                 </div>
               </div>
-                <div class='list-time' >{{item._modifyTime|date('H:m')}} </div>
+                <div class='list-time' >{{item._modifyTime|date('H:mm')}} </div>
               <i class="item-secondary item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
