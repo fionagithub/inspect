@@ -9,9 +9,9 @@
       </q-toolbar-title>
     </div>
     <div class="layout-view">
-      <div class="layout-padding chart-padding" v-if='echartCrt' >
+      <div class="layout-padding chart-padding" v-if='echartCrt'>
         <p class="caption monitor-title"> {{echartCrt.name}} </p>
-        <div class="echarts" v-for='(value, id, index) in echartMonitorData' :key="index" @click="resetEchartData(id)">
+        <div class="echarts" v-if="echartFlag" @click="resetEchartData(id)" v-for='(value, id, index) in echartMonitorData' :key="index">
             <IEcharts :option="value.chart" :loading="value.loading" @ready="getEchartData(id)"></IEcharts>  
           <!--     
         <IEcharts :option="bar2" :theme="theme"></IEcharts>-->
@@ -49,6 +49,7 @@
         theme: 'dark',
         title: '历史曲线',
         envChartGap:10,
+        echartFlag:false,
         echartMonitorData:{}, 
         echartOpt:{
           title: {},
@@ -85,6 +86,11 @@
       }),
     },
     mounted(){
+      const that = this
+      that.$nextTick(() => {
+      //  console.log('----sds')
+        that.echartFlag=true
+      });
     },
     watch:{
       echartCrt(val, oldVal){
