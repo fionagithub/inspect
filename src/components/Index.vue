@@ -45,6 +45,7 @@
   import feedBack from './Feedback/template'
   import setting from './Setting/template'
   import drawer from './layout/drawer.vue'
+  import pkg from '../../package'
   import Vue from 'vue'
   import {
     mapGetters,
@@ -59,7 +60,7 @@
     name: "index",
     data() {
       return {
-        verson: '0.4.16 071124',
+        verson: pkg.version,
         isSetting:false,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
