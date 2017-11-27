@@ -101,11 +101,6 @@
     mounted() {
       this.$nextTick(() => {
         this.setFilters() //请求初始数据
-        feathers.io.emit('subscribe', {"channel":"devices"})
-     /*   Win_devices_.on('patched', res => {
-          this.getDv(res.id)
-         // console.log('--!!!!!!!!!!==', res)
-        }) */
         Win_devices_.on('created', res => {
           this.dvCut += 1
           this.setAddCount({
@@ -193,9 +188,6 @@
       echarts
     },
     destroyed: function() {
-      feathers.io.emit('unsubscribe', {
-        "channel": "devices"
-      })
       this.tips = null
     },
   }
