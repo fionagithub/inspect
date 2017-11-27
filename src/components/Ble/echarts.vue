@@ -49,7 +49,6 @@
         theme: 'dark',
         title: '历史曲线',
         envChartGap:10,
-        echartFlag:false,
         echartMonitorData:{}, 
         echartOpt:{
           title: {},
@@ -84,13 +83,14 @@
       ...mapGetters('devices', {
         echartCrt: 'current',
       }),
+      echartFlag(){
+        return Object.keys(this.echartMonitorData).length?true:false
+      }
     },
     mounted(){
-      const that = this
+     /* const that = this
       that.$nextTick(() => {
-      //  console.log('----sds')
-        that.echartFlag=true
-      });
+      });*/
     },
     watch:{
       echartCrt(val, oldVal){
