@@ -21,14 +21,12 @@
           </div>
         </div>
       </div>
-        <ble :toggle='isBle'></ble>
 
     </div>
   </q-layout>
 </template>
 
 <script>
-import ble from './bles.vue'
   import {
     mapActions,
     mapState,
@@ -38,10 +36,7 @@ import ble from './bles.vue'
     Toast
   } from 'quasar'
   export default {
-    name: "new",
-    components: {
-ble,
-    },
+    name: "new", 
     data() {
       return {
         title:'设置',
