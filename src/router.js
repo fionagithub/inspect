@@ -42,7 +42,7 @@ const router = new VueRouter({
     },
     {
       path: '/device',
-      component: load('device/template')
+      component: load('Device/template')
     },
     {
       path: '/login',

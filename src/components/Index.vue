@@ -69,7 +69,7 @@
           uri: '/ble'
         }, {
           title: '曲线',
-          uri: '/line'
+          uri: '/device'
         }],
         items: [{
           title: '报障',
