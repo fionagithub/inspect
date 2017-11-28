@@ -5,13 +5,12 @@ if(!window.__tenantId__){
   window.location.replace('setting.html')
 }
 
-
 require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
-import store from './config/store'
-import  feathersClient from './api/feathers-config'
+import store from './config/vuex/store'
+import  feathersClient from './config/feathers-config'
 
 import './config/filters'
 import Vuelidate from 'vuelidate'
@@ -26,7 +25,6 @@ import {
 
 Vue.use(Vuelidate)
 Vue.use(Quasar) 
-
 window.feathers = feathersClient(window.__tenantId__)
 window.Win_devices_ = feathers.service('devices')
 Quasar.start(() => {
