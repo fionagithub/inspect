@@ -4,7 +4,7 @@
     <div class="login">
       <div class="card">
         <div class="card-media">
-          <img src="../assets/bj_logo.png">
+          <img src="../assets/img/bj_logo.png">
         </div>
         <div class="card-content user">
           <div class="item two-lines">

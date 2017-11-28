@@ -16,7 +16,7 @@
             </q-popover>
         </button>
       </div>
-    <img class="index-img" src="../assets/bj_logo.png">
+    <img class="index-img" src="../assets/img/bj_logo.png">
     </div>
   <div class="index-menu  text-center">
 

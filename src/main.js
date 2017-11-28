@@ -1,4 +1,4 @@
-import filtersStorage from './components/conf/storage'
+import filtersStorage from './config/storage'
 window.filtersStorage=filtersStorage
 window.__tenantId__ = filtersStorage('tenantid');
 if(!window.__tenantId__){

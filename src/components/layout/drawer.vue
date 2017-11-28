@@ -3,7 +3,7 @@
   <q-drawer ref="leftDrawer" class="drawer">
       <div class="toolbar">
         <div class="user">
-          <img src="../img/mountains.jpg">
+          <img src="../../assets/img/mountains.jpg">
           <div class="name" v-if='user' >
             {{user.name}}
           </div>
