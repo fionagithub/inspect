@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from './config/store'
-import { setError } from './config/actions'
+import store from './config/vuex/store'
+import { setError } from './config/vuex/actions'
 import {
   Toast
 } from 'quasar'
@@ -41,12 +41,8 @@ const router = new VueRouter({
       component: load('Ble/template')
     },
     {
-      path: '/echarts',
-      component: load('Ble/echarts')
-    },
-    {
-      path: '/line',
-      component: load('Ble/device')
+      path: '/device',
+      component: load('device/template')
     },
     {
       path: '/login',

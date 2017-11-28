@@ -5,13 +5,13 @@ import auth from 'feathers-authentication-client'
 import socketio from 'feathers-socketio'
 import io from 'socket.io-client'
 import feathersVuex from 'feathers-vuex'
-import store from '../config/store'
+import store from './vuex/store'
 import {
   setError
-} from '../config/actions'
+} from './vuex/actions'
 
 function feathersClient(uri) {
- // uri='http://192.168.123.189:3030'
+  // uri='https://192.168.123.189:3030'
   uri = 'https://shtower.laputacloud.com'
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
