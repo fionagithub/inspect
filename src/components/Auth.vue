@@ -56,9 +56,6 @@ export default {
     max-width :600px;
     padding :50px;
   }
-    i{
-      font-size: 5rem ;
-    }
     h5{
       color: black;
     }

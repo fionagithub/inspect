@@ -215,14 +215,14 @@
     height: 38px;
   }
   .list-title{
-    padding-right: 60px;
+    padding-right: 70px;
   }
   .list-time {
     position: absolute;
     top: 0;
     width: 150px;
     color: #666;
-    margin: 12px 35px;
+    margin: 12px 20px;
     right: 4px;
     line-height: 24px;
     font-size: 10px;
