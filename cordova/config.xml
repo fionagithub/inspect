@@ -78,6 +78,6 @@
     <plugin name="cordova-plugin-device" spec="^1.1.6" />
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
     <plugin name="jpush-phonegap-plugin" spec="^3.2.10">
-        <variable name="APP_KEY" value="584ef4e3a949dc63b1186817" />
+        <variable name="APP_KEY" value="1bf450aee89f84ad2a450584" />
     </plugin>
 </widget>
