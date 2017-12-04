@@ -2,8 +2,8 @@
   <q-layout>
     <div slot="header" class="toolbar">
       <button class="head_goback" @click="$router.go(-1)">
-          <i>arrow_back</i>
-        </button>
+        <i>arrow_back</i>
+      </button>
       <q-toolbar-title :padding="1">
         设备清单
       </q-toolbar-title>
@@ -14,28 +14,28 @@
     <div class="layout-view">
       <div class="layout-padding">
         <a class="animate-pop refresh-message" v-if="getCtCut.dvCut" @click='setFilters()'>
-          <span>+{{ getCtCut.dvCut }} </span>
+          <span>+{{ getCtCut.dvCut }} </span>  
         </a>
         <q-pull-to-refresh class="d-pull" :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
-            <div class="item item-link multiple-lines" v-for="(item,index) in message " :key="index" @click="getDetail(item.id)">
-              <i class="item-primary item-icon fa-thermometer-three-quarters">mail</i>
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+              <i class="item-primary item-icon">mail</i>
               <div class="item-content has-secondary list-content ">
-                <div class='list-title' >
+                <div>
                   {{item.name }}
                 </div>
-                <div class="list-desc" v-if='item.location'>
-                  {{`${item.location.building} ${item.location.floor} ${item.location.room}`}}
+                <div class="list-desc">
+                  {{item.location.building+"|"+item.location.floor+"|"+item.location.room}}
                 </div>
               </div>
-                <div class='list-time' >{{item._modifyTime|date('H:mm')}} </div>
               <i class="item-secondary item-arrow">keyboard_arrow_right</i>
             </div>
           </div>
           <div class="row justify-center " style="margin: 5px 0;">
-            <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()' class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
+            <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
+              class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
             <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
-              <span v-if='tips&& getGlbErr.isFlag==false'> {{tips}} </span>
+              <span v-if='tips'> {{tips}} </span>
               <err v-if='getGlbErr.isFlag' />
             </div>
           </div>
@@ -43,14 +43,16 @@
       </div>
     </div>
     <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-      <echarts v-if='isEdit' />
+      <dv-detail v-if='isEdit' />
     </q-modal>
   </q-layout>
 </template>
-
 <script>
   import Vue from 'vue'
- import echarts from './echarts'
+  import detail from './detail'
+  import {
+    _list
+  } from './data'
   import {
     mapGetters,
     mapMutations,
@@ -61,6 +63,7 @@
     Toast
   }
   from 'quasar'
+  Vue.component('dvDetail', detail);
   export default {
     name: 'device',
     data() {
@@ -78,15 +81,9 @@
         rfhmsg: '正在刷新',
         plmsg: '下拉刷新',
         rlsmsg: '松开刷新',
-        selectFld: ['location','_modifyTime', 'name', 'id'],
-        tips: null,
-        isLoading: true,
-        limit: 10,
-        skip: 0,
-        SearchLabel: '搜索...',
-
+        selectFld: ['location', 'name', 'id'],
       }
-      return _dt
+      return Object.assign(_dt, _list)
     },
     computed: {
       ...mapGetters(['getGlbErr', 'getCtCut']),
@@ -99,43 +96,50 @@
     },
     created() {},
     mounted() {
+      this.getApi() //请求初始数据 
       this.$nextTick(() => {
-        this.setFilters() //请求初始数据
+        Win_devices_.on('patched', res => {
+         // console.log('--!!!!!!!!!!==', res)
+          this.ptdDV(res)
+        })
         Win_devices_.on('created', res => {
           this.dvCut += 1
           this.setAddCount({
             dvCut: this.dvCut
           })
+          this.filterDV([res])
         });
       })
     },
     methods: {
-      ...mapActions(['setAddCount', 'setError']),
-      ...mapActions('devices', {
-        findMessages: 'find',
-      }),
-      ...mapActions('devices', {
-        getDv: 'get',
-      }),
-      setFilters(sus) {
-        this.dvCut = 0
-        this.setAddCount({
-          dvCut: 0
-        })
-        this.isFinished = false
-        this.progressBtn = 0
-        this.skip = 0
-        this.getApi(sus)
-      },
+      ...mapActions(['setError']),
       getMore() {
         this.skip = this.message.length
         this.getApi()
       },
-      loadMore(done) {
-        if (this.isLoading == false) {
-          //   console.log('-=loadMore=--')
-          this.setFilters(done)
-        }
+      ...mapMutations('devices', {
+        ptdDV: 'updateItem'
+      }),
+      ...mapMutations('devices', {
+        clear: 'clearAll',
+      }),
+      ...mapMutations('devices', {
+        clearCrt: 'clearCurrent'
+      }),
+      ...mapMutations('devices', {
+        filterDV: 'removeItems',
+      }),
+      ...mapActions('devices', {
+        findMessages: 'find',
+      }),
+      ...mapActions('devices', {
+        getTkt: 'get',
+      }),
+      notify() {
+        this.isEdit = false
+        this.setError()
+        this.$refs.layoutModal.close();
+        this.clearCrt()
       },
       getApi(done) {
         let _self = this
@@ -146,7 +150,8 @@
           $skip: _self.skip,
           $select: _self.selectFld
         }
-        //  console.log('--==-', _query)
+      //  console.log('--==-', _query)
+
         _self.findMessages({
           query: _query
         }).then((res) => {
@@ -161,7 +166,7 @@
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
             _self.tips = _model ? s_tips : n_tips
-            //  _self.progressBtn = 0
+            // _self.progressBtn = 100
           } else {
             if (_self.surplus == 0) {
               _self.tips = '没有更多数据了.'
@@ -170,38 +175,46 @@
           _self.isLoading = false
           _self.isFinished = res.data.length < _self.limit ? false : true
           done instanceof Function ? done() : '';
-       //   console.log('-=res--', _self.res)
+          //  console.log('-=res--', _self.tips, res.data)
         })
       },
-      notify() {
-        this.setError()
-        this.isEdit = false
-        this.$refs.layoutModal.close();
+      setFilters(sus) {
+        this.dvCut = 0
+        this.setAddCount({
+          dvCut: 0
+        })
+        this.clear()
+        this.isFinished = false
+        this.progressBtn = 0
+        this.skip = 0
+        this.getApi(sus)
+      },
+      loadMore(done) {
+        if (this.isLoading == false) {
+       //   console.log('-=loadMore=--')
+          this.setFilters(done)
+        }
       },
       getDetail(id) {
-        this.getDv(id)
+        this.getTkt(id)
         this.isEdit = true
         this.$refs.layoutModal.open()
       }
     },
-    components: {
-      echarts
-    },
-    destroyed: function() {
+    destroyed: function () {
       this.tips = null
     },
   }
-</script>
 
+</script>
 <style>
   .list-btn {
     width: 100%;
   }
-  
-  .d-pull {
+  .d-pull{
     margin-top: -20px;
   }
-  
+
   .list-desc {
     color: #999;
     padding-top: 10px;
@@ -210,32 +223,31 @@
     white-space: nowrap;
     overflow: hidden;
   }
-  
+
   .q-popover .item-container {
     height: 38px;
   }
-  .list-title{
-    padding-right: 70px;
-  }
+
   .list-time {
     position: absolute;
     top: 0;
     width: 150px;
     color: #666;
-    margin: 12px 20px;
+    margin: 12px 35px;
     right: 4px;
     line-height: 24px;
     font-size: 10px;
     text-align: right;
   }
-  
+
   .icon {
     margin: 16px 12px!important;
   }
-  
+
   .fix-add {
     right: 18px;
     bottom: 18px;
     z-index: 9;
   }
+
 </style>

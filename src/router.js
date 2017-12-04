@@ -37,8 +37,8 @@ const router = new VueRouter({
       component: load('Feedback/template')
     },
     {
-      path: '/ble',
-      component: load('Ble/template')
+      path: '/ticket',
+      component: load('Ticket/template')
     },
     {
       path: '/device',

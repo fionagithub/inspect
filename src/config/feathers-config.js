@@ -11,8 +11,8 @@ import {
 } from './vuex/actions'
 
 function feathersClient(uri) {
-  // uri='https://192.168.123.189:3030'
-  uri = 'https://shtower.laputacloud.com'
+   uri='https://192.168.123.189:3030'
+ // uri = 'https://shtower.laputacloud.com'
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     

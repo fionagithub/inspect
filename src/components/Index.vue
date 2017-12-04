@@ -16,37 +16,46 @@
             </q-popover>
         </button>
       </div>
-    <img class="index-img" src="../assets/img/bj_logo.png">
+    <img class="index-img" src="../assets/bj_logo.png">
     </div>
   <div class="index-menu  text-center">
-
     <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="menu in menus" >
-        <router-link :to="menu.uri">
-          <button class="teal circular big ">
-            {{menu.title}}
+      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
+        <router-link :to="item.uri">
+          <button class="teal circular big " :disabled="item.disabled">
+            {{item.title}}
+            <span class="floating circular label bg-dark bg-count" v-if='item.count' >{{ item.count}} </span>
           </button>
         </router-link>
       </div>
     </div>
+    <div class="row content-center text-center menu-row">
+      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
+        <router-link :to="item.uri">
+          <button class="teal circular big " :disabled="item.disabled">
+            {{item.title}}
+          </button>
+        </router-link>
+      </div>
+    </div>
+
   </div>
   <div slot="footer" class="ftCon" >
       {{verson}}
   </div>
-  <drawer></drawer>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <feed-back v-if='isFb' />
-    <setting v-if='isSetting' />
+    <feed-back v-if='isEdit' />
   </q-modal>
   </div>
 </template>
 
 <script>
+  import filtersStorage from './conf/storage'
+  import 'src/assets/css/index.css'
   import feedBack from './Feedback/template'
-  import setting from './Setting/template'
-  import drawer from './layout/drawer.vue'
-  import pkg from '../../package'
   import Vue from 'vue'
+
+  Vue.component('feedBack', feedBack);
   import {
     mapGetters,
     mapMutations,
@@ -60,17 +69,9 @@
     name: "index",
     data() {
       return {
-        verson: pkg.version,
-        isSetting:false,
-        isFb: false,
+        verson: '0.4.11 071018',
+        isEdit: false,
         tktCut: filtersStorage('tktCut') || null,
-        menus: [{
-          title: '巡检',
-          uri: '/ble'
-        }, {
-          title: '曲线',
-          uri: '/device'
-        }],
         items: [{
           title: '报障',
           uri: '/ticket',
@@ -91,8 +92,7 @@
     },
     computed: {
       leftDrawer() {
-        // console.log(this.$children)
-        return this.$children[3].$refs.leftDrawer
+        return this.$parent.$children[0].$refs.leftDrawer
       },
       _modal() {
         let _pa = this.$route.query
@@ -109,28 +109,54 @@
       }
     },
     mounted() {
+      if (!this.tktCut) {
+        this.getTktCunt()
+      } else {
+        this.setCut(this.tktCut)
+      }
       if (this.$route.query) {
         this.$router.push({
-          path: '/index',
+          path: '/',
           query: {}
         })
       }
     },
     methods: {
+      ...mapActions('tickets', {
+        findTkt: 'find',
+      }),
       ...mapActions(['setError']),
-      Setting(){
-        this.$refs.layoutModal.open()
-        this.isSetting=true
-      },
       getFd() {
-        this.isFb = true
+        this.isEdit = true
         this.$refs.layoutModal.open()
+      },
+      setCut(ttl) {
+        this.items.map(function (k, i) {
+          if (k.uri.indexOf('/ticket') == 0) {
+            k.count = ttl
+          }
+        })
       },
       notify() {
-        this.isSetting = false
-        this.isFb = false
+        this.isEdit = false
         this.setError()
         this.$refs.layoutModal.close();
+      },
+      getTktCunt() {
+        let self = this
+        this.findTkt({
+          query: {
+            $limit: 0,
+            state: "0"
+          }
+        }).then(res => {
+       //   console.log('--res---;', res)
+          filtersStorage({
+            value: res.total,
+            key: 'tktCut'
+          }, 'save')
+          self.setCut(res.total)
+        })
       },
       alert() {
         Dialog.create({
@@ -139,11 +165,6 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
-    },
-    components: {
-      setting,
-      feedBack,
-      drawer,
     },
   }
 
