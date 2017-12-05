@@ -10,6 +10,7 @@
     tips: null,
   },
   priorityMax: 3,
+  jpushData:{},
   confMenu:{
     source: [],
     system: [],

@@ -5,6 +5,7 @@ import {
  SETCONFMENU,
  SETADDCOUNT,
  SETBLETOGGLED,
+ SETJPUSHDATA,
 } from './mutation-types'
 
 export const setErr = ({commit}) => {
@@ -24,4 +25,8 @@ export const setAddCount = ({commit}, obj) => {
 } 
 export const setBleToggled = ({commit}, obj) => {
     commit(SETBLETOGGLED, obj)
+} 
+
+export const setJpushData = ({commit}, obj) => {
+    commit(SETJPUSHDATA, obj)
 } 

@@ -5,6 +5,7 @@ import {
  SETCONFMENU,
  SETADDCOUNT,
  SETBLETOGGLED,
+ SETJPUSHDATA,
 } from './mutation-types'
 export const mutations = {
   [SETERR](state){
@@ -38,5 +39,8 @@ export const mutations = {
   },
   [SETBLETOGGLED](state, obj){
     state.bleToggled=obj
+  },
+  [SETJPUSHDATA](state, obj){
+    state.jpushData=obj
   }
 }
