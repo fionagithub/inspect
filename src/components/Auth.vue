@@ -14,6 +14,47 @@
 </template>
 
 <script>
+  var onOpenNotification = function(event) {
+    try {
+      var alertContent;
+      if (device.platform == "Android") {
+        alertContent = event.alert;
+      } else {
+        alertContent = event.aps.alert;
+      }
+      console.log("open Notification::::" + alertContent);
+    } catch (exception) {
+      console.log("JPushPlugin:onOpenNotification" + exception);
+    } 
+  };
+
+  var onReceiveNotification = function(event) {
+    try {
+      var alertContent;
+      if (device.platform == "Android") {
+        alertContent = event.alert;
+      } else {
+        alertContent = event.aps.alert;
+      }
+      console.log('--nnn---rrrr-----', alertContent)
+    } catch (exception) {
+      console.log(exception)
+    }
+  };
+
+  var onReceiveMessage = function(event) {
+    try {
+      var message;
+      if (device.platform == "Android") {
+        message = event.message;
+      } else {
+        message = event.content;
+      }
+      console.log("JPushPlugin:onReceiveMessage-->" + message);
+    } catch (exception) {
+      console.log("JPushPlugin:onReceiveMessage-->" + exception);
+    }                                         
+  };
 import {
   mapActions,
   mapMutations,
@@ -32,9 +73,18 @@ export default {
       _self.authenticate().then((response) => {
         // console.log('--!!!:::exp--')
         _self.$router.push('/index')
+         //通知栏打开推送消息
+        document.addEventListener("jpush.openNotification", onOpenNotification, false);
+        //实时接收推送数据
+        document.addEventListener("jpush.receiveNotification", onReceiveNotification, false);
+        //
+        document.addEventListener("jpush.receiveMessage", onReceiveMessage, false);
       }).catch((error) => {
-        // console.log('--!!!aaaaa--', error)
-        _self.$router.push('/login')
+        //取消jpush消息
+        document.removeEventListener("jpush.openNotification", onOpenNotification, false);
+        document.removeEventListener("jpush.receiveMessage", onReceiveMessage, false);
+        document.removeEventListener("jpush.receiveNotification", onReceiveNotification, false);
+         _self.$router.push('/login')
       });
     },
   },
