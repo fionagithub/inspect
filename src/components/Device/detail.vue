@@ -22,7 +22,7 @@
         <div class="card" ref="tab-1">
           <div v-if="message">
             <div class="card-media">
-              <img src="../img/building.jpg">
+              <img src="../../assets/img/building.jpg">
               <button class="green circular d-status"><i>check</i></button>
             </div>
             <div class="card-title d-title">

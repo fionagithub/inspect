@@ -16,11 +16,11 @@
             </q-popover>
         </button>
       </div>
-    <img class="index-img" src="../assets/bj_logo.png">
+    <img class="index-img" src="../assets/img/bj_logo.png">
     </div>
   <div class="index-menu  text-center">
     <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
+      <div class="auto link-btn" v-for="(item, index) in items" :key="index" v-if="index-2<0">
         <router-link :to="item.uri">
           <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
+      <div class="auto link-btn" v-for="(item, index) in items" :key="index" v-if="index-2>=0">
         <router-link :to="item.uri">
           <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -43,19 +43,19 @@
   <div slot="footer" class="ftCon" >
       {{verson}}
   </div>
+  <drawer></drawer>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
-    <feed-back v-if='isEdit' />
+    <feed-back v-if='isFb' />
+    <setting v-if='isSetting' />
   </q-modal>
   </div>
 </template>
 
 <script>
-  import filtersStorage from './conf/storage'
-  import 'src/assets/css/index.css'
   import feedBack from './Feedback/template'
+  import setting from './Setting/template'
+  import drawer from './layout/drawer.vue'
   import Vue from 'vue'
-
-  Vue.component('feedBack', feedBack);
   import {
     mapGetters,
     mapMutations,
@@ -69,8 +69,9 @@
     name: "index",
     data() {
       return {
-        verson: '0.4.11 071018',
-        isEdit: false,
+        verson: '0.4.12 071025',
+        isSetting:false,
+        isFb: false,
         tktCut: filtersStorage('tktCut') || null,
         items: [{
           title: '报障',
@@ -92,7 +93,7 @@
     },
     computed: {
       leftDrawer() {
-        return this.$parent.$children[0].$refs.leftDrawer
+        return this.$children[5].$refs.leftDrawer
       },
       _modal() {
         let _pa = this.$route.query
@@ -114,20 +115,18 @@
       } else {
         this.setCut(this.tktCut)
       }
-      if (this.$route.query) {
-        this.$router.push({
-          path: '/',
-          query: {}
-        })
-      }
     },
     methods: {
       ...mapActions('tickets', {
         findTkt: 'find',
       }),
       ...mapActions(['setError']),
+      Setting(){
+        this.$refs.layoutModal.open()
+        this.isSetting=true
+      },
       getFd() {
-        this.isEdit = true
+        this.isFb = true
         this.$refs.layoutModal.open()
       },
       setCut(ttl) {
@@ -138,7 +137,8 @@
         })
       },
       notify() {
-        this.isEdit = false
+        this.isSetting = false
+        this.isFb = false
         this.setError()
         this.$refs.layoutModal.close();
       },
@@ -165,6 +165,11 @@
           message: '目前尚处于原型开发阶段，部分功能有待完善'
         })
       },
+    },
+    components: {
+      setting,
+      feedBack,
+      drawer,
     },
   }
 

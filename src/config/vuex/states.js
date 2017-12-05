@@ -9,5 +9,13 @@
     loginUri: null,
     tips: null,
   },
-  bleToggled:true,
+  priorityMax: 3,
+  confMenu:{
+    source: [],
+    system: [],
+    _system_: [],
+    priority: [],
+    state: [],
+    _state_: [],
+  }
 } 

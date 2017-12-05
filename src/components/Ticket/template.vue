@@ -44,7 +44,7 @@
           </div>
           <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
             <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
-              <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+              <div class="item item-link multiple-lines" v-for="(item,index) in message " :key="index" @click="getDetail(item.id)">
                 <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
                 <div class="item-content has-secondary list-content ">
                   <div>
@@ -55,7 +55,7 @@
                   </div>
                 </div>
                 <div class='list-time'>
-                  {{item.reportTime | date}}
+                  {{item.reportTime | date("H:mm")}}
                 </div>
                 <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
               </div>
@@ -96,7 +96,7 @@
             新增报障
           </q-toolbar-title>
         </div>
-        <new></new>
+        <dnew></dnew>
       </q-layout>
     </q-modal>
   </div>
@@ -118,11 +118,9 @@
   from 'quasar'
 
   import popover from '../layout/popover'
-  import detail from './detail'
-  import nnew from './new'
+  import tkDetail from './detail'
+  import dnew from './new'
   import Vue from 'vue'
-  Vue.component('new', nnew);
-  Vue.component('tkDetail', detail);
   let _moment = moment(0, "h"),
     timeMap = {
       NOW: _moment.toISOString(),
@@ -142,8 +140,8 @@
     value: 'ALL',
     label: '全部时间'
   }]
-  import filtersStorage from '../conf/storage'
   export default {
+    name: 'list',
     data() {
       let _dt = {
         items_time: _time,
@@ -178,7 +176,8 @@
       }
       return Object.assign(_dt, _list)
     },
-    name: 'list',
+    created(){
+    },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu', 'getCtCut']),
       surplus() {
@@ -194,23 +193,22 @@
     mounted() {
       let vm =this
       this.$nextTick(() => {
-        vm.getApi()
-        Win_tickets_.on('created', res => {
-          vm.tktCut += 1
-          vm.setAddCount({
-            tktCut: vm.tktCut
-          })
-          vm._fetchObject={}
-          vm._fetchObject=res
-          vm.filterTkt([res])
-        });
-        Win_tickets_.on('patched', res => {
-       //   console.log('--!!!!!patched!!!!!==', res)
-        })
+        vm.setFilters()
+          feathers.io.emit('subscribe', {"channel":"tickets"})
+         Win_tickets_.on('created', res => {
+           vm.tktCut += 1
+            vm.setAddCount({
+              tktCut: vm.tktCut
+            }) 
+            vm._fetchObject=res
+          //  console.log(' -=-=-=' ,res  )
+          });
       })
     },
     components: {
       popover,
+      tkDetail,
+       dnew
     },
     filters: {
       gettktIcon(obj) {
@@ -220,7 +218,6 @@
           2: 'assignment_turned_in'
         }
         return map[obj]
-
       },
       getPrtColo(obj, src) {
         if (src == 2) {
@@ -263,17 +260,17 @@
       },
     },
     methods: {
-      ...mapActions(['setAddCount','setError' ]),
       setFilters(sus) {
         this.tktCut = 0
         this.setAddCount({
           tktCut: 0
         })
-        this.clear()
         this.isFinished = false
         this.progressBtn = 0
+        this.clear()
         this.skip = 0
         this.getApi(sus)
+        this.search_dtl.selectSys=filtersStorage('selectSys') || 'ALL'
       },
       getNewMsg() {
         this.w_search_dtl.searchModel=null
@@ -318,14 +315,13 @@
         }).then((res) => {
           _self.total = res.total
           _self.isTipsHG = res.total ? false : true
-          let _perct = Math.floor(Math.pow(10, 2) / res.total)
           let msg = _self.message.length
-          _self.progressBtn = msg * _perct
+          let _perct = (msg / res.total)*100
+          _self.progressBtn = 0<_perct<1 ? 1:Math.floor(_perct)
           if (res.data.length == 0 && msg == 0) {
             let _model = _self.w_search_dtl.searchModel
             _self.isFinished = false
-            // _self.progressBtn = 100
-            // console.log('-=[sdf]')
+            // _self.progressBtn = 0
             let s_tips = '很抱歉，没有找到与\"' + _model + '\"相关的数据.'
             let n_tips = '＞﹏＜...空空如也.'
             _self.tipsMsg = _model ? s_tips : n_tips
@@ -346,12 +342,7 @@
           this.setFilters(done)
         }
       },
-      ...mapMutations('tickets', {
-        clear: 'clearAll',
-      }),
-      ...mapMutations('tickets', {
-        filterTkt: 'removeItems',
-      }),
+      ...mapActions(['setAddCount','setError' ]),
       ...mapActions('tickets', {
         findMessages: 'find',
       }),
@@ -359,14 +350,12 @@
         getTkt: 'get',
       }),
       ...mapMutations('tickets', {
-        clearCrt: 'clearCurrent'
+        clear: 'clearAll',
       }),
       notify() {
         this.isCreated = false
         this.isEdit = false
-        this.setError()
         this.$refs.layoutModal.close();
-        this.clearCrt()
       },
       getDetail(id) {
         this.getTkt(id)
@@ -386,6 +375,7 @@
       },
     },
     destroyed: function () {
+      feathers.io.emit('unsubscribe', {"channel":"tickets"})
       this.tipsMsg = null
     },
   }

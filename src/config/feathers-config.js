@@ -11,8 +11,8 @@ import {
 } from './vuex/actions'
 
 function feathersClient(uri) {
-   uri='https://192.168.123.189:3030'
- // uri = 'https://shtower.laputacloud.com'
+  // uri='https://192.168.123.189:3030'
+    uri = 'https://m.laputacloud.com'
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     
@@ -34,15 +34,12 @@ function feathersClient(uri) {
   socket.on('connect', function () {
     console.log('[]-im connected[]-=')
   })
+  client.service('/tickets')
   client.service('/devices')
-  //client.service('/system')
+  client.service('/system')
 
-  //client.service('/metadata')
+  client.service('/metadata')
   client.service('/feedback')
-  client.service('/smarttag')
-  // monitorid+deviceid匹配不同的图表title
-  // client.service('/monitors')
-  client.service('/environment_chart')
 
   client.hooks({
     error: function (hook) {
