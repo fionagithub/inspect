@@ -8,6 +8,9 @@ if(!window.__tenantId__){
 require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
+import {
+  Toast
+} from 'quasar'
 import router from './router'
 import store from './config/vuex/store'
 import  feathersClient from './config/feathers-config'
