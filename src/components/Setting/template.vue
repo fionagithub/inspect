@@ -21,6 +21,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </q-layout>
 </template>
@@ -35,7 +36,7 @@
     Toast
   } from 'quasar'
   export default {
-    name: "new",
+    name: "new", 
     data() {
       return {
         title:'设置',
@@ -44,9 +45,7 @@
     },
     methods: {
       goback() {
-        this.$router.push({
-          path: '/'
-        })
+        this.$router.go(-1)
       },
     },
     destroyed: function () {

@@ -22,7 +22,7 @@
         <div class="card" ref="tab-1">
           <div v-if="message">
             <div class="card-media">
-              <img src="../img/building.jpg">
+              <img src="../../assets/img/building.jpg">
               <button class="green circular d-status"><i>check</i></button>
             </div>
             <div class="card-title d-title">
@@ -185,14 +185,20 @@
         message: 'current',
       }),
     },
-    created() {
-      this.setError()
+    components: {
+      popover
     },
+    created() {},
     mounted() {
-     // this.getMessage()
+      this.getMessage()
     },
     methods: {
-      ...mapActions(['setError']),
+      ...mapMutations('devices', {
+        clear: 'clearCurrent'
+      }),
+      ...mapActions('devices', {
+        findMessages: 'get',
+      }),
       getRcd(){
       //  console.log('-rrr--id::::', this.message.tenantId )
 
@@ -205,15 +211,16 @@
       setTab(){
         this.tabNo='tab-3'
       //  console.log(this.setActiveTab)
+
       },
-      getMessage() {        
+      getMessage() {
+        let _self = this
+        const id = _self.$route.params.id
+        _self.findMessages(id)
       }
     },
-    components: {
-      popover
-    },
     destroyed: function () {
-      this.setError()
+      this.clear() // 置空ticket-vuex      
     //  console.log("已销毁");
     },
   }

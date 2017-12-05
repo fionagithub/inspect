@@ -4,6 +4,7 @@ import {
  GETGLBERR,
  SETCONFMENU,
  SETADDCOUNT,
+ SETBLETOGGLED,
 } from './mutation-types'
 export const mutations = {
   [SETERR](state){
@@ -34,5 +35,8 @@ export const mutations = {
     //  console.log('-=-', obj[i] )
       state.add_count[i]=obj[i]
     }
+  },
+  [SETBLETOGGLED](state, obj){
+    state.bleToggled=obj
   }
 }

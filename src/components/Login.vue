@@ -4,16 +4,17 @@
     <div class="login">
       <div class="card">
         <div class="card-media">
-          <img src="../assets/bj_logo.png">
+          <img src="../assets/img/bj_logo.png">
         </div>
         <div class="card-content user">
           <div class="item two-lines">
             <div class="item-content row items-center nowrap">
-              <div class="floating-label">
-                <input required class="full-width" v-model="tenant">
+              <div class="stacked-label">
+                <input disabled class="full-width" v-model="tenant">
                 <label> {{holderTitle.tenant}}</label>
               </div>
             </div>
+              <i class="item-primary conf-icon " @click="setTenant">edit</i>
           </div> 
           <div class="item two-lines">
             <div class="item-content row items-center nowrap">
@@ -31,7 +32,7 @@
                 <label> {{holderTitle.pwd}}</label>
               </div>
             </div>
-              <i class="item-primary show-psd " @click="changePwd">visibility</i>
+              <i class="item-primary conf-icon " @click="changePwd">visibility</i>
           </div>  
           <div class="login-btn">
             <q-progress-button :disabled="unAddBtn" :percentage="progressBtn" @click.native="login()" indeterminate class="teal circular big">
@@ -49,6 +50,7 @@
   import { Platform,Toast } from 'quasar'
   import {
     mapActions,
+    mapState
   } from 'vuex'
   export default {
     data() {
@@ -57,33 +59,22 @@
         /* users: 'jkr3',
          pwd: 'laputa',*/
         users: '',
-        pwd: '',
+         pwd: '',
         showPsd: true,
-        flag: false,
+        flag: false, 
         progressBtn: 0,
-        tenant: filtersStorage('tenant') || 'laputa',
-        tenant_uri: {
-          laputa: 'http://192.168.123.240:3030',
-          jk: 'https://m.laputacloud.com'
-        },
+        tenant: filtersStorage('tenantid'),
         holderTitle: {
-          tenant: '租户',
+          tenant: '企业',
           user: '用户名',
           pwd: '密码',
         }
       }
     },
-    created(){
-      if(!this.platform.mobile){
-        Toast.create({
-          html: '建议使用移动端浏览页面',
-          timeout: 5000
-        })
-        console.log(this.platform)
-      }
+    mounted() {
     },
     computed: {
-      unAddBtn() {
+      unAddBtn() { 
         return this.flag == true ? true : false
       }
     },
@@ -94,17 +85,12 @@
       changePwd() {
         this.showPsd = !this.showPsd
       },
+      setTenant(){
+        window.location.replace('setting.html')
+      },
       login() {
         let self = this
-        let io = feathers.io
-        io.io.uri = self.tenant_uri[self.tenant]
-        io.connect()
-        let _storage = {
-          key: 'tenant',
-          value: self.tenant
-        }
-        filtersStorage(_storage, "save")
-        // console.log('[]', io)
+     //    console.log('[]', self)
         let user = {
           strategy: 'local',
           loginId: self.users,
@@ -120,15 +106,15 @@
             timeout: 3000
           })
           //  console.log('response:::', response)
-          self.$router.push('/')
+          self.$router.push('/index')
         }).catch(function (error) {
-          self.flag = false
-          self.progressBtn = 0
-          Toast.create.negative({
-            html: '登录出错.',
-            timeout: 3000
-          })
-          console.error('Error [--authenticating!', error);
+            self.flag = false
+            self.progressBtn = 0
+            Toast.create.negative({
+              html:'登录出错，请稍后再试',
+              timeout: 13000
+            })
+            console.error('Error [--authenticating!', error);
         });
       }
     }
@@ -165,8 +151,9 @@
     display: flex;
     justify-content: center;
   }
-  .show-psd{
+  .conf-icon{
     right: 4px;
+    font-size: 1rem;
     left: auto!important;
   } 
 </style>

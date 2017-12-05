@@ -33,6 +33,11 @@ module.exports = merge(baseWebpackConfig, {
       template: 'src/index.html',
       inject: true
     }),
+    new HtmlWebpackPlugin({
+      filename: 'setting.html',
+      template: 'src/setting.html',
+      inject: false
+    }),
     new FriendlyErrorsPlugin({
       clearConsole: config.dev.clearConsoleOnRebuild
     })

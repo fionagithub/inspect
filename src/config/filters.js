@@ -18,17 +18,15 @@ Vue.filter('date', function (date, type) {
     let _Now = moment().format(fmt)
     let _date = moment(date).format(fmt)
     if (parseInt(_Now) == parseInt(_date)) {
-      _format = '[今天] HH:mm'
+      _format = type?type:'HH:mm:ss'
     } else {
       let num = Math.pow(10, 4)
       if (parseInt(_Now / num) == parseInt(_date / num)) {
-        _format = 'M月D日'
+        _format =`M月D日`
       } else {
-        _format = 'Y年M月D日'
+        _format = `Y年M月D日`
       }
-      if (type) {
-        _format += ' ' + type
-      }
+      _format+=`${type}`
     }
     // console.log('[]',date, _format)
     return moment(date).format(_format);

@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import store from './config/store'
-import { setError } from './config/actions'
+import store from './config/vuex/store'
+import { setError } from './config/vuex/actions'
 import {
   Toast
 } from 'quasar'
@@ -14,6 +14,9 @@ function load(component) {
 const router = new VueRouter({
   routes: [{
       path: '/',
+      component: load('Auth')
+    },{
+      path: '/index',
       meta: {
         requiresAuth: true
       },
@@ -34,22 +37,16 @@ const router = new VueRouter({
       component: load('Feedback/template')
     },
     {
-      path: '/login',
-      component: load('Login')
-    },
-    {
       path: '/ticket',
-      meta: {
-        requiresAuth: true
-      },
       component: load('Ticket/template')
     },
     {
       path: '/device',
-      meta: {
-        requiresAuth: true
-      },
       component: load('Device/template')
+    },
+    {
+      path: '/login',
+      component: load('Login')
     },
     {
       path: '*',
@@ -65,11 +62,9 @@ router.beforeEach(function(to, from, next){
     feathers.passport.verifyJWT(token).then(res => {
       next()
     }).catch(error => {
+      console.log('[]-rrr')
       next({
-        path: '/login',
-        query: {
-          redirect: to.fullPath
-        }
+        path: '/login'
       })
     })
   } else {

@@ -44,7 +44,7 @@
           </div>
           <q-pull-to-refresh :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
             <div class="list item-inset-delimiter no-border t-base" v-if="message.length">
-              <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+              <div class="item item-link multiple-lines" v-for="(item,index) in message " :key="index" @click="getDetail(item.id)">
                 <i :class="item.priority|getPrtColo(item.state[0].name )" class="item-primary item-icon">{{item.state[0].name|gettktIcon }}</i>
                 <div class="item-content has-secondary list-content ">
                   <div>
@@ -55,7 +55,7 @@
                   </div>
                 </div>
                 <div class='list-time'>
-                  {{item.reportTime | date}}
+                  {{item.reportTime | date("H:mm")}}
                 </div>
                 <i class="item-secondary icon item-arrow">keyboard_arrow_right</i>
               </div>

@@ -16,11 +16,11 @@
             </q-popover>
         </button>
       </div>
-    <img class="index-img" src="../assets/bj_logo.png">
+    <img class="index-img" src="../assets/img/bj_logo.png">
     </div>
   <div class="index-menu  text-center">
     <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2<0">
+      <div class="auto link-btn" v-for="(item, index) in items" :key="index" v-if="index-2<0">
         <router-link :to="item.uri">
           <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -30,7 +30,7 @@
       </div>
     </div>
     <div class="row content-center text-center menu-row">
-      <div class="auto link-btn" v-for="(item, index) in items" v-if="index-2>=0">
+      <div class="auto link-btn" v-for="(item, index) in items" :key="index" v-if="index-2>=0">
         <router-link :to="item.uri">
           <button class="teal circular big " :disabled="item.disabled">
             {{item.title}}
@@ -114,12 +114,6 @@
         this.getTktCunt()
       } else {
         this.setCut(this.tktCut)
-      }
-      if (this.$route.query) {
-        this.$router.push({
-          path: '/',
-          query: {}
-        })
       }
     },
     methods: {

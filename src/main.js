@@ -1,21 +1,23 @@
-// === DEFAULT / CUSTOM STYLE ===
-// WARNING! always comment out ONE of the two require() calls below.
-// 1. use next line to activate CUSTOM STYLE (./src/themes)
+import filtersStorage from './config/storage'
+window.filtersStorage=filtersStorage
+window.__tenantId__ = filtersStorage('tenantid');
+if(!window.__tenantId__){
+  window.location.replace('setting.html')
+}
+
 require(`./themes/app.${__THEME}.styl`)
-// 2. or, use next line to activate DEFAULT QUASAR STYLE
-// require(`quasar/dist/quasar.${__THEME}.css`)
-// ==============================
 import Vue from 'vue'
 import Quasar from 'quasar'
 import router from './router'
-import store from './config/store'
-import feathersClient from './api/feathers-config'
+import store from './config/vuex/store'
+import  feathersClient from './config/feathers-config'
+import moment from 'moment'
+
 import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
-import moment from 'moment'
 import err from './components/Error'
-import filtersStorage from './components/conf/storage'
+moment.locale('zh-cn');
 
 Vue.component('err', err);
 
@@ -24,30 +26,21 @@ import {
   mapMutations,
   mapState
 } from 'vuex'
-moment.locale('zh-cn');
-
 Vue.use(Vuelidate)
-Vue.use(Quasar) // Install Quasar Framework
-// window.screen.lockOrientation('portrait')
-// setInterval authenticate
-window.feathers = feathersClient
-window.filtersStorage=filtersStorage
-window.Win_tickets_ = feathers.service('tickets')
+Vue.use(Quasar) 
+window.feathers = feathersClient(window.__tenantId__)
 window.Win_devices_ = feathers.service('devices')
-import {
-  Toast
-} from 'quasar'
+window.Win_tickets_ = feathers.service('tickets')
 
 Quasar.start(() => {
-  /* eslint-disable no-new */
   new Vue({
-    el: '#q-app',
+    el: '#q-app', 
+    created() {
+      this.setAuth()
+    },
     computed: {
       ...mapState('auth', ['payload']),
       ...mapState(['_error']),
-    },
-    created() {
-      this.setAuth()
     },
     watch: {
       _error(error) {
@@ -66,6 +59,15 @@ Quasar.start(() => {
     },
     methods: {
       ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
+      ...mapActions('system', {
+        findSystemItems: 'find',
+      }),
+      ...mapActions('metadata', {
+        findStateItems: 'find',
+      }),
       handleError(obj) {
         let uri, tips, err = {
           isFlag: true
@@ -81,12 +83,6 @@ Quasar.start(() => {
           timeout: 5000
         })
       },
-      ...mapActions('system', {
-        findSystemItems: 'find',
-      }),
-      ...mapActions('metadata', {
-        findStateItems: 'find',
-      }),
       getConf() {
         let query = {
           query: {
@@ -132,15 +128,6 @@ Quasar.start(() => {
           this.setConfMenu(sum)
         })
       },
-      ...mapActions('auth', [
-        'authenticate'
-      ]),
-      setAuth(obj) {
-        let _self = this
-        _self.authenticate().then((response) => {}).catch((error) => {
-          //  _self.$router.push('/login')
-        });
-      },
       getAuth() {
         let _self = this
         let Exp_Date = _self.payload.exp;
@@ -152,6 +139,14 @@ Quasar.start(() => {
           //   console.log('--!!!import:::setAuth--')
           this.setAuth()
         }, time);
+      },
+      setAuth() {
+        let _self = this
+        _self.authenticate().then((response) => {
+           _self.$router.push('/index')
+        }).catch((error) => {
+           _self.$router.push('/login')
+        });
       },
     },
     router, //

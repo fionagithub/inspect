@@ -3,9 +3,9 @@
   <q-drawer ref="leftDrawer" class="drawer">
       <div class="toolbar">
         <div class="user">
-          <img src="../img/mountains.jpg">
-          <div class="name">
-            {{loguser}}
+          <img src="../../assets/img/mountains.jpg">
+          <div class="name" v-if='user' >
+            {{user.name}}
           </div>
         </div>
       </div>
@@ -14,13 +14,13 @@
         <q-drawer-link icon="tab" disabled to="/">
           我
         </q-drawer-link>
-        <q-drawer-link icon="compare_arrows" :to="{path: '/', query: { _modal: 'Setting' }}">
+        <q-drawer-link icon="compare_arrows" :to="{path: '/index', query: { _modal: 'Setting' }}">
            设置
         </q-drawer-link>
         <q-drawer-link icon="compare_arrows" disabled to="/">
            消息
         </q-drawer-link>
-        <q-drawer-link icon="build" :to="{path: '/', query: { _modal: 'getFd' }}"  >
+        <q-drawer-link icon="build" :to="{path: '/index', query: { _modal: 'getFd' }}"  >
         反馈
         </q-drawer-link>
       </div>
@@ -41,13 +41,7 @@
   export default {
     name: "drawer", 
     computed: {
-      ...mapState({
-        loguser(state) {
-          if (state.auth.user) {
-            return state.auth.user.name
-          }
-        }
-      }), 
+      ...mapState('auth', ['user']),
     }, 
     methods: {
       ...mapActions('auth', [
@@ -65,10 +59,16 @@
       },
       login_out() {
         this.logout().then(() => {
+          localStorage.clear()
           this.$router.push({
             path: '/login'
           })
-          feathers.io.disconnect()
+
+          let _storage = {
+            key: 'tenantid' ,
+            value: window.__tenantId__ 
+          }
+          filtersStorage(_storage, "save")
           this.$refs.leftDrawer.close()
         })
 
