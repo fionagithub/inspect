@@ -45,20 +45,19 @@
   </div>
 </template>
 
-<script>
-  
-  import {
-    Toast
-  } from 'quasar'
+
+<script> 
+  import { Platform,Toast } from 'quasar'
   import {
     mapActions,
     mapState
   } from 'vuex'
   export default {
     data() {
-      return { 
-       /*  users: 'shtower',
-         pwd: 'laputa',  */ 
+      return {
+        platform: this.$q.platform.is,        
+        /* users: 'jkr3',
+         pwd: 'laputa',*/
         users: '',
          pwd: '',
         showPsd: true,
