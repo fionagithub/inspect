@@ -2,7 +2,7 @@
   <div>
     <q-layout>
       <div slot="header" class="toolbar">
-        <button class="head_goback" @click="$router.go(-1)">
+        <button class="head_goback" @click="$router.push('/index')">
         <i>arrow_back</i>
       </button>
         <q-toolbar-title :padding="1">
@@ -74,11 +74,15 @@
       </div>
       <button class="absolute-bottom-right raised circular teal fix-add" @click="add()"><i>add</i>
     </button>
+
+        <!-- <router-view ></router-view>
+         -->
     </q-layout>
-    <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+  
+  <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
       <q-layout v-if='isEdit'>
         <div slot="header" class="toolbar">
-          <button class="head_goback" @click="$refs.layoutModal.close()">
+          <button class="head_goback" @click="notify()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
@@ -89,7 +93,7 @@
       </q-layout>
       <q-layout v-if='isCreated'>
         <div slot="header" class="toolbar">
-          <button class="head_goback" @click="$refs.layoutModal.close()">
+          <button class="head_goback" @click="notify()">
               <i>arrow_back</i>
           </button>
           <q-toolbar-title :padding="1">
@@ -173,10 +177,9 @@
         },
         selectFld: ['reportTime', 'system', 'state', 'priority', 'description', 'id'],
         _fetchObject:{},
+        jpushFlag:false,
       }
       return Object.assign(_dt, _list)
-    },
-    created(){
     },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu', 'getCtCut']),
@@ -188,13 +191,13 @@
       }),
       ...mapState('tickets', {
         tktCrt: 'copy',
-      })
+      }),
     },
     mounted() {
       let vm =this
-      this.$nextTick(() => {
+      console.log('---------', vm.$route)
+      vm.$nextTick(() => {
         vm.setFilters()
-          feathers.io.emit('subscribe', {"channel":"tickets"})
          Win_tickets_.on('created', res => {
            vm.tktCut += 1
             vm.setAddCount({
@@ -355,11 +358,15 @@
       notify() {
         this.isCreated = false
         this.isEdit = false
+        this.jpushFlag&&this.$router.push('/ticket')
+        this.jpushFlag=false
         this.$refs.layoutModal.close();
       },
       getDetail(id) {
         this.getTkt(id)
+        this.jpushFlag=true
         this.isEdit = true
+        window.jpushData=null
         this.$refs.layoutModal.open()
       },
       add() {
@@ -375,7 +382,6 @@
       },
     },
     destroyed: function () {
-      feathers.io.emit('unsubscribe', {"channel":"tickets"})
       this.tipsMsg = null
     },
   }

@@ -52,6 +52,7 @@
 </template>
 
 <script>
+
   import feedBack from './Feedback/template'
   import setting from './Setting/template'
   import drawer from './layout/drawer.vue'
@@ -71,11 +72,14 @@
       return {
         verson: '0.4.12 071025',
         isSetting:false,
+        jpushFlag:window.jpushFlag,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
+              jpushUri:window.jpushUri,
         items: [{
           title: '报障',
           uri: '/ticket',
+         // uri: '/ticket/dd82af15-fee2-46c9-a06c-4a28f293df4a',
           count:0
         }, {
           title: '抄表',
@@ -103,11 +107,11 @@
     },
     watch: {
       '$route' (to, from) {
-      //  console.log('[][', to, from)
+        console.log('[][', to, from)
         if (to.query._modal) {
           this[to.query._modal]()
         }
-      }
+      },
     },
     mounted() {
       if (!this.tktCut) {

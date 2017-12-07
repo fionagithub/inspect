@@ -12,9 +12,11 @@ function load(component) {
 }
 
 const router = new VueRouter({
-  routes: [{
+  routes: [
+    {
       path: '/',
-      component: load('Auth')
+      redirect:'/index',
+   //   component: load('Auth')
     },{
       path: '/index',
       meta: {
@@ -31,14 +33,26 @@ const router = new VueRouter({
     },
     {
       path: '/feedback',
-      meta: {
-        requiresAuth: true
-      },
       component: load('Feedback/template')
     },
     {
       path: '/ticket',
-      component: load('Ticket/template')
+      meta: {
+        requiresAuth: true
+      },
+      component: load('Ticket/template'),
+    /*   children:[{
+        name:'jpush',
+        path:':id',
+        component: load('Ticket/jpushDetail'),
+      }] */
+    },
+    {
+      path: '/jTicket/:id',
+      meta: {
+        requiresAuth: true
+      },
+      component: load('Ticket/jpushDetail'),
     },
     {
       path: '/device',
@@ -60,11 +74,13 @@ router.beforeEach(function(to, from, next){
   if (to.matched.some(record => record.meta.requiresAuth)) {
     let token = localStorage.getItem('feathers-jwt')
     feathers.passport.verifyJWT(token).then(res => {
+      console.log('---token---ok--')
       next()
     }).catch(error => {
-      console.log('[]-rrr')
+      console.log('======token==eree======',to)
       next({
-        path: '/login'
+        path: '/login',
+        query: {redirect: to.fullPath} 
       })
     })
   } else {

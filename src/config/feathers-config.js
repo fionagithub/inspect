@@ -32,7 +32,7 @@ function feathersClient(uri) {
       },
     }))
   socket.on('connect', function () {
-    console.log('[]-im connected[]-=')
+    console.log('----im connected[]-====')
   })
   client.service('/tickets')
   client.service('/devices')
@@ -44,7 +44,7 @@ function feathersClient(uri) {
   client.hooks({
     error: function (hook) {
       setError(this, hook)
-       console.log('--ff--hh--', hook)
+    //   console.log('--ff--hh--', hook)
     }.bind(store),
     before: function (hook) {
       setError(this)

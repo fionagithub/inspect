@@ -96,8 +96,8 @@
     },
     created() {},
     mounted() {
-      this.getApi() //请求初始数据 
       this.$nextTick(() => {
+      this.getApi() //请求初始数据 
         Win_devices_.on('patched', res => {
          // console.log('--!!!!!!!!!!==', res)
           this.ptdDV(res)

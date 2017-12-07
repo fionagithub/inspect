@@ -23,30 +23,40 @@ export default {
     ...mapState('auth', ['payload']),
     ...mapState(['_error']),
   },
+  mounted(){
+      this.setAuth()
+  },
   watch: {
-    _error(error) {
-      if (error) {
-        this.handleError(error)
-      } else {
-        this.setErr()
-      }
-    },
-    payload(obj) {
-      if (obj) {
-        this.getAuth()
-  //  this.getConf()
-      }
-    }
+     _error(error,oldVal) {
+        if(error){
+          this.handleError(error)
+        }
+    }, 
   },
   methods: {
-    ...mapActions('auth', [
-      'authenticate'
-    ]),
-    ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
+      ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
+      ...mapActions('system', {
+        findSystemItems: 'find',
+      }),
+      ...mapActions('metadata', {
+        findStateItems: 'find',
+      }),
     setAuth(obj) {
+      console.log('-----app!23----')
       let _self = this
       _self.authenticate().then((response) => {
+       // delete window.jpushUri
+        this.setErr()
+        this.getAuth()
+        this.getConf()
+        
       }).catch((error) => {
+        console.log('------app------', error, _self.$route)
+        let url={path:'/login'}
+        url.query= _self.$route.query
         _self.$router.push('/login')
       });
     },
@@ -77,6 +87,51 @@ export default {
         timeout: 5000
       })
     }, 
+    getConf() {
+      let query = {
+        query: {
+          id: {
+            $nin: ["system"]
+          }
+        }
+      }
+      this.findStateItems(query).then(res => {
+        let _array, sum = {}
+        for (var item in res) {
+          let data = res[item]
+          let _list = data['is']
+          sum[data['id']] = _list
+          if (data['id'] == 'state') {
+            _array = [{
+              value: 'ALL',
+              label: '全部状态'
+            }]
+            sum._state_ = _list.concat(_array)
+          } 
+        }
+      //get system api
+        this.setConfMenu(sum)
+      })
+      this.findSystemItems().then(ress=>{
+        // console.log('[]-=', ress)
+        let system = [], sum = {}
+        for (let s in ress) {
+          let _ress = ress[s],
+            _system = {}
+          for (let k in _ress) {
+            let key = k == 'name' ? 'label' : 'value'
+            _system[key] = _ress[k]
+          }
+          system.push(_system)
+        }
+        sum.system = system
+        sum._system_ = system.concat([{
+            value: 'ALL',
+            label: '全部系统'
+          }])
+        this.setConfMenu(sum)
+      })
+    },
   },
 }
 </script>

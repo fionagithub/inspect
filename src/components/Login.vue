@@ -55,11 +55,11 @@
   export default {
     data() {
       return {
-        platform: this.$q.platform.is,        
-        /* users: 'jkr3',
-         pwd: 'laputa',*/
-        users: '',
-         pwd: '',
+       // platform: this.$q.platform.is,        
+        users: 'jkr3',
+         pwd: 'laputa',
+       /*  users: '',
+         pwd: '', */
         showPsd: true,
         flag: false, 
         progressBtn: 0,
@@ -72,6 +72,7 @@
       }
     },
     mounted() {
+      console.log('-----------', this.$route)
     },
     computed: {
       unAddBtn() { 
@@ -106,7 +107,8 @@
             timeout: 3000
           })
           //  console.log('response:::', response)
-          self.$router.push('/index')
+          let url=this.$route.query.redirect||'/index'
+          self.$router.push(url)
         }).catch(function (error) {
             self.flag = false
             self.progressBtn = 0
