@@ -19,12 +19,20 @@ import {
 import moment from 'moment'
 moment.locale('zh-cn');
 export default {
+  data(){
+    return{
+      jpushFlag:true,
+
+    }
+
+  },
   computed: {
     ...mapState('auth', ['payload']),
     ...mapState(['_error']),
   },
   mounted(){
       this.setAuth()
+   //   window.InitJpush=window.jpushUri.path&&true;
   },
   watch: {
      _error(error,oldVal) {
@@ -45,14 +53,13 @@ export default {
         findStateItems: 'find',
       }),
     setAuth(obj) {
-      console.log('-----app!23----')
       let _self = this
       _self.authenticate().then((response) => {
        // delete window.jpushUri
-        this.setErr()
-        this.getAuth()
-        this.getConf()
-        
+       _self.getConf()
+        _self.setErr()
+        _self.getAuth()
+      
       }).catch((error) => {
         console.log('------app------', error, _self.$route)
         let url={path:'/login'}
@@ -131,6 +138,14 @@ export default {
           }])
         this.setConfMenu(sum)
       })
+       
+        if(window.InitJpush){
+          if(window.jpushUri.path){
+            // alert('------menu-----')
+             this.$router.push(window.jpushUri.path)
+          }
+          window.InitJpush=false
+        }
     },
   },
 }

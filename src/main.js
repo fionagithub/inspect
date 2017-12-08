@@ -33,6 +33,9 @@ window.feathers = feathersClient(window.__tenantId__)
 window.Win_devices_ = feathers.service('devices')
 window.Win_tickets_ = feathers.service('tickets')
 
+
+window.jpushFlag={changeUri:false}
+
 var onOpenNotification=function(event) {
   try {
     let content;
@@ -43,6 +46,7 @@ var onOpenNotification=function(event) {
     }
     let url='/'+content.type+'/'+content.id
     window.jpushUri.path=url
+  //  window.jpushFlag.changeUri=true
     
   } catch (exception) {
     console.log("JPushPlugin:onOpenNotification==============" + exception);
@@ -55,7 +59,7 @@ Quasar.start(() => {
   new Vue({
     el: '#q-app', 
     created() {
-      // test jpush url
+      window.InitJpush=true
     },
     data:{
       jpushUri:window.jpushUri,
@@ -63,13 +67,14 @@ Quasar.start(() => {
     watch:{
       jpushUri: {
         handler(val, oldVal) {
-          if(val.path){
-           // window.jpushFlag.changeUri=true
-           let that = this
-           setTimeout(function(){
-            console.log('-------', val)
+          if(val.path&& window.InitJpush==false ){
+            /* let that = this
+            setTimeout(function(){
               that.$router.push(window.jpushUri.path)
-            }, 1000)
+            }, 1000) */
+           // alert('---www----', val)
+            console.log('---www----', val)
+            this.$router.push(window.jpushUri.path)
           }
         },
         deep: true

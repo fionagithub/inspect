@@ -119,18 +119,17 @@
       }
     },
     watch:{
+      $route(to, from){
+        console.log('--jjj--', to)
+        to&&to.params&&to.params.id&&this.getJpushData(to.params.id)
+        
+      }
 
     },
     mounted(){
       this.$nextTick(() => {
-        if(window.jpushUri &&  window.jpushUri.path){
-          window.jpushUri.path =null
-
-        } 
-        this.setError()
         this.getJpushData()
-          console.log('=======',this.$route)
-           Win_tickets_.on('patched', pes => {
+        Win_tickets_.on('patched', pes => {
           this.getTkt(pes.id)
         })
 
@@ -171,8 +170,15 @@
       },
     },
     methods: {
-      getJpushData(){
-        let id=this.$route.params.id
+      getJpushData(id){
+         id=id||this.$route.params.id
+        if(window.jpushUri.path){
+          window.jpushUri.path =null
+          console.log('-----------', window.InitJpush)
+       //   window.InitJpush=false
+
+        } 
+        this.setError()
         this.getTkt(id).then(res=>{
           this.tktDtl=res
         // this.$refs.layoutModal.open()

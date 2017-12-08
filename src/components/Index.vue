@@ -72,10 +72,10 @@
       return {
         verson: '0.4.12 071025',
         isSetting:false,
-        jpushFlag:window.jpushFlag,
+       // jpushFlag:window.jpushFlag,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
-              jpushUri:window.jpushUri,
+        jpushFlag:window.jpushFlag,
         items: [{
           title: '报障',
           uri: '/ticket',
@@ -106,6 +106,19 @@
       },
     },
     watch: {
+      /* jpushFlag: {
+        handler(val, oldVal) {
+          if(val.changeUri){
+           let that = this
+           setTimeout(function(){
+             }, 1000)
+             console.log('-------', val)
+
+             this.$router.push(window.jpushUri.path)
+          }
+        },
+        deep: true
+      }, */
       '$route' (to, from) {
         console.log('[][', to, from)
         if (to.query._modal) {
