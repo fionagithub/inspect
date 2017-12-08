@@ -177,6 +177,13 @@
 
 </script>
 <style>
+body.cordova.mobile .index-img{
+ margin-top: -70px;
+}
+  body.cordova.mobile .banner{
+  padding-top: 20px;
+}  
+
   .index-menu {
     padding-top:1rem;
     width: 80vw;

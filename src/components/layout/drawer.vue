@@ -86,6 +86,12 @@
   .list .item-link {
     background: 0;
   }
+   body.cordova.mobile  .drawer .toolbar{
+  padding-top: 20px;
+  top: -20px;
+  min-height: 170px;
+}
+
 
   .drawer .toolbar {
     display: flex;
