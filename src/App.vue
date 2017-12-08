@@ -19,20 +19,12 @@ import {
 import moment from 'moment'
 moment.locale('zh-cn');
 export default {
-  data(){
-    return{
-      jpushFlag:true,
-
-    }
-
-  },
   computed: {
     ...mapState('auth', ['payload']),
     ...mapState(['_error']),
   },
   mounted(){
       this.setAuth()
-   //   window.InitJpush=window.jpushUri.path&&true;
   },
   watch: {
      _error(error,oldVal) {
@@ -55,7 +47,6 @@ export default {
     setAuth(obj) {
       let _self = this
       _self.authenticate().then((response) => {
-       // delete window.jpushUri
        _self.getConf()
         _self.setErr()
         _self.getAuth()
@@ -138,7 +129,7 @@ export default {
           }])
         this.setConfMenu(sum)
       })
-       
+       //打开通知栏消息，启动应用，跳转jpush页面
         if(window.InitJpush){
           if(window.jpushUri.path){
             // alert('------menu-----')

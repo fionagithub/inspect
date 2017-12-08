@@ -122,9 +122,7 @@
       $route(to, from){
         console.log('--jjj--', to)
         to&&to.params&&to.params.id&&this.getJpushData(to.params.id)
-        
       }
-
     },
     mounted(){
       this.$nextTick(() => {
@@ -132,9 +130,7 @@
         Win_tickets_.on('patched', pes => {
           this.getTkt(pes.id)
         })
-
       })
-
     },
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu']),
@@ -174,15 +170,11 @@
          id=id||this.$route.params.id
         if(window.jpushUri.path){
           window.jpushUri.path =null
-          console.log('-----------', window.InitJpush)
-       //   window.InitJpush=false
-
         } 
         this.setError()
         this.getTkt(id).then(res=>{
           this.tktDtl=res
-        // this.$refs.layoutModal.open()
-        console.log('--!!!!!!!!!!==',res, id)
+          console.log('--!!!!!!!!!!==',res, id)
         })
 
       },
