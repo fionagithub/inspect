@@ -110,6 +110,9 @@
           this[to.query._modal]()
         }
       },
+     /*  //window.issueCount...
+        this.getTktCunt()
+     */
     },
     mounted() {
       if (!this.tktCut) {

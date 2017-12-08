@@ -13,7 +13,7 @@ import router from './router'
 import store from './config/vuex/store'
 import  feathersClient from './config/feathers-config'
 import moment from 'moment'
-
+import './jpush'
 import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
@@ -35,23 +35,6 @@ window.Win_tickets_ = feathers.service('tickets')
 
 //app初始化完成打开通知栏消息
 window.InitJpush=true
-var onOpenNotification=function(event) {
-  try {
-    let content;
-    if (window.Platform == "android") {
-      content = JSON.parse(event.alert);
-    } else {
-      content = JSON.parse(event.aps.alert);
-    }
-    let url='/jpush/'+content.type+'/'+content.id
-    window.jpushUri.path=url
-    
-  } catch (exception) {
-    console.log("JPushPlugin:onOpenNotification==============" + exception);
-  } 
-};
-
-document.addEventListener("jpush.openNotification", onOpenNotification, false);
 
 Quasar.start(() => {
   new Vue({
