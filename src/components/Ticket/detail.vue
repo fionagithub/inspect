@@ -55,7 +55,7 @@
           </q-progress-button>
           <p class="caption">处理记录:</p>
           <div class="timeline">
-            <div class="timeline-item" v-for="n in tktDtl.state">
+            <div class="timeline-item" v-for="(n, index) in tktDtl.state" :key="index" >
               <div class="timeline-badge">
                 <i>alarm</i>
               </div>
@@ -122,9 +122,7 @@
       }),
       ...mapState(['priorityMax']),
       prty() {
-        if (this.tktDtl) {
-          return parseInt(this.tktDtl.priority)
-        }
+        return parseInt(this.tktDtl.priority)
       },
       unAddBtn() {
         let _disabled

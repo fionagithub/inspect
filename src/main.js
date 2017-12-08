@@ -43,7 +43,7 @@ var onOpenNotification=function(event) {
     } else {
       content = JSON.parse(event.aps.alert);
     }
-    let url='/'+content.type+'/'+content.id
+    let url='/jpush/'+content.type+'/'+content.id
     window.jpushUri.path=url
     
   } catch (exception) {

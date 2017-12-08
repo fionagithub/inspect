@@ -41,18 +41,20 @@ const router = new VueRouter({
         requiresAuth: true
       },
       component: load('Ticket/template'),
-    /*   children:[{
-        name:'jpush',
-        path:':id',
-        component: load('Ticket/jpushDetail'),
-      }] */
     },
     {
-      path: '/jTicket/:id',
+      path: '/jpush/ticket/:id',
       meta: {
         requiresAuth: true
       },
       component: load('Ticket/jpushDetail'),
+    },
+    {
+      path: '/jpush/device/:id',
+      meta: {
+        requiresAuth: true
+      },
+      component: load('Device/jpushDetail'),
     },
     {
       path: '/device',

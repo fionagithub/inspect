@@ -1,6 +1,5 @@
 <template>
 <q-layout>
-
     <div slot="header" class="toolbar">
       <button class="head_goback" @click="$router.push('/')">
         <i>arrow_back</i>
@@ -115,12 +114,11 @@
         stateDesc: '',
         flag: false,
         status: '',
-        tktDtl:null
       }
     },
     watch:{
       $route(to, from){
-        console.log('--jjj--', to)
+      //  console.log('--jjj--', to)
         to&&to.params&&to.params.id&&this.getJpushData(to.params.id)
       }
     },
@@ -135,10 +133,11 @@
     computed: {
       ...mapGetters(['getGlbErr', 'getConfMenu']),
       ...mapState(['priorityMax']),
+      ...mapGetters('tickets', {
+        tktDtl: 'current',
+      }),
       prty() {
-        if (this.tktDtl) {
-          return parseInt(this.tktDtl.priority)
-        }
+        return parseInt(this.tktDtl.priority)
       },
       unAddBtn() {
         let _disabled
@@ -154,11 +153,6 @@
         }
         return _disabled
       },
-      jpushId(){
-        let id= this.$route.params.id
-        console.log('[[[[[[[[[[', id)
-        return id
-      }
     },
     filters: {
       priortity(data) {
@@ -172,11 +166,7 @@
           window.jpushUri.path =null
         } 
         this.setError()
-        this.getTkt(id).then(res=>{
-          this.tktDtl=res
-          console.log('--!!!!!!!!!!==',res, id)
-        })
-
+        this.getTkt(id)
       },
       ...mapActions(['setError']),
      ...mapActions('tickets', {
