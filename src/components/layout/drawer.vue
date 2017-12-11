@@ -58,6 +58,7 @@
        // console.log('---dre')
       },
       login_out() {
+        let userName=this.user.loginId
         this.logout().then(() => {
           localStorage.clear()
           this.$router.push({
@@ -68,6 +69,11 @@
             key: 'tenantid' ,
             value: window.__tenantId__ 
           }
+          let user = {
+            key: 'user' ,
+            value: userName
+          }
+          filtersStorage(user, "save")
           filtersStorage(_storage, "save")
           this.$refs.leftDrawer.close()
         })
