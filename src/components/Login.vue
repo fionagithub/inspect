@@ -55,8 +55,7 @@
   export default {
     data() {
       return {
-       // platform: this.$q.platform.is,        
-        users: 'jkr3',
+        users:filtersStorage('user'), 
          pwd: 'laputa',
        /*  users: '',
          pwd: '', */
@@ -106,7 +105,12 @@
             html: '登录成功.',
             timeout: 3000
           })
+          let _storage = {
+            key: 'user' ,
+            value: self.users
+          }
           //  console.log('response:::', response)
+          filtersStorage(_storage, 'save')
           let url=this.$route.query.redirect||'/index'
           self.$router.push(url)
         }).catch(function (error) {

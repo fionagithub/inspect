@@ -9,11 +9,14 @@ import store from './vuex/store'
 import {
   setError
 } from './vuex/actions'
+let uriMap={
+  m:'https://m.laputacloud.com'
+}
 
 function feathersClient(uri) {
   // uri='https://192.168.123.189:3030'
-    uri = 'https://m.laputacloud.com'
-  const socket = io(uri || window.location.origin, {
+   // uri = 'https://m.laputacloud.com'
+  const socket = io(uriMap[uri] || window.location.origin, {
     transports: ['websocket']
     
   })

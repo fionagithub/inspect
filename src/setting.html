@@ -112,7 +112,13 @@
       font-size: .8rem;
       margin: 4px;
     }
+.dropdown{
+  position: relative;
+    width: 100px;
+    margin: 0 auto;
+    padding: 5px;
 
+}
   </style>
 </head>
 
@@ -120,7 +126,11 @@
   <div class="card">
     <div class="floating-label">
       <label> 企业 </label>
-      <input id='tenantid' class="full-width" type="text">
+  
+<select id='tenantid' class="dropdown" >
+  <option value="m">m</option>
+</select>
+     <!--  <input id='tenantid' class="full-width" type="text"> -->
     </div>
     <div id='error'> </div>
 
@@ -137,13 +147,12 @@
     // setting 1. store tenatid to localstorage 2. replace to index.html
     let tnt = window.localStorage.getItem('tenantid')
     document.getElementById("cancel").style.display = tnt ? 'block' : 'none';
-
     function step() {
       let tt = document.getElementById("tenantid").value
       if (tt) {
         let tenantid = JSON.stringify(tt)
        // console.log('[][', tenantid)
-        window.localStorage.setItem('tenantid', tenantid)
+        window.localStorage.setItem('tenantid',tenantid)
         window.location.replace('index.html')
       } else {
         document.getElementById("error").innerHTML = '*请输入企业名称';

@@ -33,6 +33,7 @@ window.feathers = feathersClient(window.__tenantId__)
 window.Win_devices_ = feathers.service('devices')
 window.Win_tickets_ = feathers.service('tickets')
 
+window.jpushUri={path:null}
 //app初始化完成打开通知栏消息
 window.InitJpush=true
 
