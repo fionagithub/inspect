@@ -141,11 +141,12 @@ moment.locale('zh-cn');
        _self.getConf()
         _self.setErr()
         _self.getAuth()
-      if (!this.tktCut) {
-         this.getTktCunt()
+     /*  if (!_self.tktCut) {
+         _self.getTktCunt()
       } else {
-        this.setCut(this.tktCut)
-      }
+        _self.setCut(_self.tktCut)
+      } */
+         _self.getTktCunt()
       
       }).catch((error) => {
         console.log('------app------', error, _self.$route)
