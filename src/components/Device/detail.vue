@@ -12,10 +12,6 @@
     <q-tabs slot="navigation" :refs="$refs" v-model="tabNo">
       <q-tab name="tab-1">概览
       </q-tab>
-      <q-tab name="tab-2" @selected="getMft()">台帐
-      </q-tab>
-      <q-tab name="tab-3" @selected="getRcd()">维修记录
-      </q-tab>
     </q-tabs>
     <div class="layout-view">
       <div class="layout-padding">
@@ -46,7 +42,7 @@
                 <div class="item-content row items-center">
                   <div class="item-label dd-label"> 指标读数</div>
                   <div class="item-title dd-title">
-                    <div v-for='mtr in message.monitors'  >
+                    <div v-for='(mtr, index) in message.monitors' :key="index" >
                     {{mtr.name+':'+ mtr.value+mtr.unit }}
                     </div>
                   </div>
@@ -59,14 +55,14 @@
                 </div>
                 <div class="item-content row items-center">
                   <div class="item-label dd-label">维修记录</div>
-                  <a class="item-title dd-title"  @click="setTab()">
+                  <a class="item-title dd-title" >
 
                     {{'8次' }}</a>
                 </div>
               </div>
             </div>
             <div class="card-actions card-no-top-padding">
-              <div class="text-line" v-for='item in message.tags'>
+              <div class="text-line" v-for='(item,_index) in message.tags' :key="_index" >
                 {{item}}
               </div>
             </div>
@@ -75,87 +71,8 @@
             </div>
              </div>
         </div>
-        <div class="card" ref="tab-2" >
-          <div v-if="message">
-            <div class="card-title">
-              <div>{{message.name}} </div>
-            </div>
-            <div class="card-content list no-border highlight">
-              <div class="item multiple-lines d-lines content">
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label">生产商</div>
-                  <div class="item-title dd-title">
-                    {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label">设备品牌</div>
-                  <div class="item-title dd-title">
-                    {{'正常' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label"> 规格型号</div>
-                  <div class="item-title dd-title">
-                    {{' A:999 B:888 C:333' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label">设备重量</div>
-                  <div class="item-title dd-title">
-                    {{'正常' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label"> 设计寿命</div>
-                  <div class="item-title dd-title">
-                    {{' A:999 B:888 C:333' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label">出厂日期</div>
-                  <div class="item-title dd-title">
-                    {{'正常' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label"> 供应商</div>
-                  <div class="item-title dd-title">
-                    {{' A:999 B:888 C:333' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label"> 安装单位</div>
-                  <div class="item-title dd-title">
-                    {{' A:999 B:888 C:333' }}
-                  </div>
-                </div>
-                <div class="item-content row items-center">
-                  <div class="item-label dd-label">安装时间</div>
-                  <div class="item-title dd-title">
-                    {{message._modifyTime |date('HH:mm:ss') }}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="card" ref="tab-3">
-          <div class="list item-inset-delimiter no-border">
-            <div class="item item-link multiple-lines" v-for="index in 8 ">
-              <i class="item-primary">mail</i>
-              <div class="item-content has-secondary">
-                <div>
-                  Nothing...
-                </div>
-              </div>
-              <i class="item-secondary icon">keyboard_arrow_right</i>
-            </div>
-          </div>
-
-        </div>
       </div>
-    <div class="row justify-center" style="margin-bottom: 50px;">
+       <div class="row justify-center" style="margin-bottom: 50px;">
         <err v-if="getGlbErr.isFlag"/>
       </div>
     </div>
@@ -199,20 +116,6 @@
       ...mapActions('devices', {
         findMessages: 'get',
       }),
-      getRcd(){
-      //  console.log('-rrr--id::::', this.message.tenantId )
-
-      },
-      getMft(){
-     //   console.log('---id::::', this.message.manufacturerId )
-      },
-      goTicket(){
-      },
-      setTab(){
-        this.tabNo='tab-3'
-      //  console.log(this.setActiveTab)
-
-      },
       getMessage() {
         let _self = this
         const id = _self.$route.params.id

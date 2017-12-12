@@ -8,9 +8,6 @@
         设备清单
       </q-toolbar-title>
     </div>
-    <div slot="header" class="toolbar">
-      <q-search class="full-width" disable v-model="w_search_dtl.searchModel" @enter='setFilters()' placeholder="搜索..."></q-search>
-    </div>
     <div class="layout-view">
       <div class="layout-padding">
         <a class="animate-pop refresh-message" v-if="getCtCut.dvCut" @click='setFilters()'>
@@ -18,7 +15,7 @@
         </a>
         <q-pull-to-refresh class="d-pull" :handler="loadMore" :release-message='rlsmsg' :pull-message='plmsg' :refresh-message='rfhmsg'>
           <div class="list item-inset-delimiter no-border t-base ">
-            <div class="item item-link multiple-lines" v-for="(item,index) in message " @click="getDetail(item.id)">
+            <div class="item item-link multiple-lines" v-for="(item,index) in message " :key="index" @click="getDetail(item.id)">
               <i class="item-primary item-icon">mail</i>
               <div class="item-content has-secondary list-content ">
                 <div>
