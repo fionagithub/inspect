@@ -69,10 +69,15 @@
             key: 'tenantid' ,
             value: window.__tenantId__ 
           }
+          let uri={
+            key:'apiServer',
+            value:window.apiServer
+          }
           let user = {
             key: 'user' ,
             value: userName
           }
+          filtersStorage(uri, "save")
           filtersStorage(user, "save")
           filtersStorage(_storage, "save")
           this.$refs.leftDrawer.close()
