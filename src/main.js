@@ -1,6 +1,7 @@
 import filtersStorage from './config/storage'
 window.filtersStorage=filtersStorage
 window.__tenantId__ = filtersStorage('tenantid');
+window.apiServer = filtersStorage('apiServer');
 if(!window.__tenantId__){
   window.location.replace('setting.html')
 }
@@ -29,7 +30,7 @@ import {
 } from 'vuex'
 Vue.use(Vuelidate)
 Vue.use(Quasar) 
-window.feathers = feathersClient(window.__tenantId__)
+window.feathers = feathersClient(window.__tenantId__, window.apiServer)
 window.Win_devices_ = feathers.service('devices')
 window.Win_tickets_ = feathers.service('tickets')
 

@@ -16,15 +16,11 @@ import {
 import {
   Toast
 } from 'quasar'
-import moment from 'moment'
-moment.locale('zh-cn');
 export default {
   computed: {
-    ...mapState('auth', ['payload']),
     ...mapState(['_error']),
   },
   mounted(){
-      this.setAuth()
   },
   watch: {
      _error(error,oldVal) {
@@ -35,41 +31,6 @@ export default {
   },
   methods: {
       ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
-      ...mapActions('auth', [
-        'authenticate'
-      ]),
-      ...mapActions('system', {
-        findSystemItems: 'find',
-      }),
-      ...mapActions('metadata', {
-        findStateItems: 'find',
-      }),
-    setAuth(obj) {
-      let _self = this
-      _self.authenticate().then((response) => {
-       _self.getConf()
-        _self.setErr()
-        _self.getAuth()
-      
-      }).catch((error) => {
-        console.log('------app------', error, _self.$route)
-        let url={path:'/login'}
-        url.query= _self.$route.query
-        _self.$router.push('/login')
-      });
-    },
-    getAuth() {
-      let _self = this
-      let Exp_Date = _self.payload.exp;
-      let Exp_DAY = moment(parseInt(Exp_Date + '000')).subtract('minutes', 5)
-      // let Exp_DAY = moment().add('seconds', 5)
-      let time = Exp_DAY - moment()
-      //  console.log('--!!!import:::exp--', time)
-      setTimeout(() => {
-        //   console.log('--!!!import:::setAuth--')
-        this.setAuth()
-      }, time);
-    },
     handleError(obj) {
       let uri, tips, err = {
         isFlag: true
@@ -85,59 +46,6 @@ export default {
         timeout: 5000
       })
     }, 
-    getConf() {
-      let query = {
-        query: {
-          id: {
-            $nin: ["system"]
-          }
-        }
-      }
-      this.findStateItems(query).then(res => {
-        let _array, sum = {}
-        for (var item in res) {
-          let data = res[item]
-          let _list = data['is']
-          sum[data['id']] = _list
-          if (data['id'] == 'state') {
-            _array = [{
-              value: 'ALL',
-              label: '全部状态'
-            }]
-            sum._state_ = _list.concat(_array)
-          } 
-        }
-      //get system api
-        this.setConfMenu(sum)
-      })
-      this.findSystemItems().then(ress=>{
-        // console.log('[]-=', ress)
-        let system = [], sum = {}
-        for (let s in ress) {
-          let _ress = ress[s],
-            _system = {}
-          for (let k in _ress) {
-            let key = k == 'name' ? 'label' : 'value'
-            _system[key] = _ress[k]
-          }
-          system.push(_system)
-        }
-        sum.system = system
-        sum._system_ = system.concat([{
-            value: 'ALL',
-            label: '全部系统'
-          }])
-        this.setConfMenu(sum)
-      })
-       //打开通知栏消息，启动应用，跳转jpush页面
-        if(window.InitJpush){
-          if(window.jpushUri.path){
-            // alert('------menu-----')
-             this.$router.push(window.jpushUri.path)
-          }
-          window.InitJpush=false
-        }
-    },
   },
 }
 </script>
