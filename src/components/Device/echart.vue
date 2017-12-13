@@ -16,7 +16,7 @@
                   <div class="meta-time" > {{monitorData._updateTime|date('H:mm')}} </div>
                 </div>
                 <div class="row monitor-nav" >
-                    <div v-for="(value, key, index) in echartCrt.monitors" :class="value.unit|filterClr" :key="index" @click="getChart(key)" class="monitor-items column ">
+                    <div v-for="(value, key, index) in echartCrt.monitors" :key="index" @click="getChart(key)" class="monitor-items column ">
                       <div class="monitor-item">
                         <div class="meta-value">{{value.value}}
                           <span class="meta-unit">  {{value.unit }} </span>
@@ -70,6 +70,9 @@
             bottom: 30,
             right: 20,
           },
+          tooltip: {
+              trigger: 'axis',
+          },
           xAxis: {
             type:'category',
             axisLabel:{
@@ -110,7 +113,7 @@
       ...mapGetters('devices', {
         echartCrt: 'current',
       }),
-      ...mapGetters('environment_chart', {
+      ...mapGetters('history_chart', {
         chartData: 'list',
       }),
       title(){
@@ -145,10 +148,10 @@
               that.echartMonitorData = Object.assign({}, that.echartMonitorData, chart)
             }) 
       },
-      ...mapActions('environment_chart', {
+      ...mapActions('history_chart', {
         find: 'find',
       }),
-      ...mapMutations('environment_chart', {
+      ...mapMutations('history_chart', {
         clearChartList: 'clearAll',
       }),
     },
@@ -175,9 +178,8 @@
   }
   .monitor-meta .meta-unit{
     font-size: 1.5rem;
-  }
-  .chart-padding .meta-unit{
-    color:#ddd;
+    color: #3ca59a;
+    
   }
   .monitor-meta .meta-time{
     font-size: 6px;
@@ -205,43 +207,25 @@
 
   .monitor-items {
     padding: 5px;
+    color:#f58099;
     font-size: 8px;
+    background: #f9f9e970;
+    border: 2px solid #61626366;
     border-radius: 4px 4px 0 0;
     margin: 5px;
+  }
+  .monitor-items  .meta-unit{
+    color:#f58099;
   }
 
   .monitor-nav {
     border: 1px solid #eaeaea;
-    background: #fff;
     padding: 10px 0;
     color: white;
     overflow: auto;
     margin: 0 -10px;
   }
 
-  .temp-red {
-    background: #bf1d67;
-  }
-
-  .temp-orange {
-    background: #ed7e20;
-  }
-
-  .pct-blue {
-    background: #8ac53f;
-  }
-
-  .m3-orange {
-    background: #d4b573;
-  }
-
-  .mg-green {
-    background: #05b988;
-  }
-
-  .ppm-origin {
-    background: #7f1bbd;
-  }
   .monitor-item{
     padding: 20px 0;
     width: 100px;
