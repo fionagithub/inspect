@@ -136,7 +136,7 @@
         this.$refs.chartModal.open()
       },
       //only find
-      ...mapActions('environment_chart', {
+      ...mapActions('history_chart', {
         find: 'find',
       }),
     },

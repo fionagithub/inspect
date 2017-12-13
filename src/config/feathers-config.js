@@ -9,8 +9,9 @@ import store from './vuex/store'
 import {
   setError
 } from './vuex/actions'
-function feathersClient(tantenid, uri) {
-   uri ='http://'+tantenid+'.'+uri+'.com'
+function feathersClient(tantenid, uri, protocol) {
+  let protocolType= protocol?'https':'http';
+   uri =protocolType + '://'+tantenid+'.'+uri
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     
@@ -38,7 +39,8 @@ function feathersClient(tantenid, uri) {
 
   client.service('/metadata')
   client.service('/feedback')
-  client.service('/environment_chart')
+  client.service('/history_chart')
+
 
   client.hooks({
     error: function (hook) {
