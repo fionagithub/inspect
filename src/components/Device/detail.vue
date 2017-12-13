@@ -7,29 +7,27 @@
       <q-toolbar-title :padding="1">
         设备详情
       </q-toolbar-title>
-      <popover></popover>
     </div>
     <q-tabs slot="navigation" :refs="$refs" v-model="tabNo">
       <q-tab name="tab-1">概览
       </q-tab>
     </q-tabs>
     <div class="layout-view">
-      <div class="layout-padding">
+      <div class="layout-padding" v-if="echartCrt">
         <div class="card" ref="tab-1">
-          <div v-if="message">
             <div class="card-media">
               <img src="../../assets/img/building.jpg">
               <button class="green circular d-status"><i>check</i></button>
             </div>
             <div class="card-title d-title">
-              <div>{{message.name}} </div>
+              <div>{{echartCrt.name}} </div>
             </div>
             <div class="card-content list no-border highlight">
               <div class="item multiple-lines d-lines ">
                 <div class="item-content row items-center">
                   <div class="item-label dd-label">安装位置</div>
                   <div class="item-title dd-title">
-                    {{message.location.building+"|"+message.location.floor+"|"+message.location.room}}
+                    {{echartCrt.location.building+"|"+echartCrt.location.floor+"|"+echartCrt.location.room}}
 
                   </div>
                 </div>
@@ -40,17 +38,9 @@
                   </div>
                 </div>
                 <div class="item-content row items-center">
-                  <div class="item-label dd-label"> 指标读数</div>
-                  <div class="item-title dd-title">
-                    <div v-for='(mtr, index) in message.monitors' :key="index" >
-                    {{mtr.name+':'+ mtr.value+mtr.unit }}
-                    </div>
-                  </div>
-                </div>
-                <div class="item-content row items-center">
                   <div class="item-label dd-label">更新时间</div>
                   <div class="item-title dd-title">
-                    {{message._modifyTime |date('HH:mm:ss') }}
+                    {{echartCrt._modifyTime |date('HH:mm:ss') }}
                   </div>
                 </div>
                 <div class="item-content row items-center">
@@ -62,24 +52,36 @@
               </div>
             </div>
             <div class="card-actions card-no-top-padding">
-              <div class="text-line" v-for='(item,_index) in message.tags' :key="_index" >
+              <div class="text-line" v-for='(item,_index) in echartCrt.tags' :key="_index" >
                 {{item}}
               </div>
             </div>
             <div class="go-ticket card-actions card-no-top-padding" >
-           <button class="primary clear small" @click='goTicket()' ><i class="on-left">directions</i> 我要报障</button>
+              <button class="primary clear small" @click='goTicket()' ><i class="on-left">directions</i> 我要报障</button>
             </div>
-             </div>
-        </div>
+          </div>
+          <div class="chart-padding">
+            <div v-for="(value, key, index) in echartCrt.monitors" :key="index" @click="getChart(key)" class="patch">
+              <div class="monitor-name">{{value.name}} </div>
+              <div class="monitor-item">
+                <div class="meta-value">{{value.value}} <span class="meta-unit">     {{value.unit }} </span> </div>
+              </div>
+            </div>  
+          </div>
       </div>
+
        <div class="row justify-center" style="margin-bottom: 50px;">
         <err v-if="getGlbErr.isFlag"/>
       </div>
     </div>
+     <q-modal ref="chartModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+      <echart v-if='echartFlag' />
+    </q-modal>
   </q-layout>
 </template>
 
 <script>
+  import echart from './echart'
   import popover from '../layout/popover'
   import {
     mapGetters,
@@ -93,13 +95,15 @@
     name: "detail",
     data() {
       return {
-        tabNo:'tab-1'
+          envChartGap:10,
+         tabNo:'tab-1',
+        echartFlag:false,
       }
     },
     computed: {
      ...mapGetters(['getGlbErr']),
       ...mapGetters('devices', {
-        message: 'current',
+        echartCrt: 'current',
       }),
     },
     components: {
@@ -107,7 +111,6 @@
     },
     created() {},
     mounted() {
-      this.getMessage()
     },
     methods: {
       ...mapMutations('devices', {
@@ -116,11 +119,29 @@
       ...mapActions('devices', {
         findMessages: 'get',
       }),
-      getMessage() {
-        let _self = this
-        const id = _self.$route.params.id
-        _self.findMessages(id)
-      }
+      notify() {
+        this.echartFlag = false
+        this.$refs.chartModal.close();
+      },
+      getChart(id) {
+        this.echartFlag = true
+        this.find({
+          query: {
+            deviceId: this.echartCrt.id ,
+              monitorId: id,
+              $$start:Date.now() - 3600000,
+             // gap:this.envChartGap
+            }
+          })
+        this.$refs.chartModal.open()
+      },
+      //only find
+      ...mapActions('environment_chart', {
+        find: 'find',
+      }),
+    },
+    components: {
+      echart
     },
     destroyed: function () {
       this.clear() // 置空ticket-vuex      
@@ -160,4 +181,46 @@
   flex-direction: column;
   align-items: flex-end;
 }
+
+
+
+  .chart-padding {
+    margin: 0 10px;
+    padding: 0;
+  }
+
+  .patch {
+    display: flex;
+    background-color: #fff;
+    border: 1px solid #eaeaea;
+    padding: 12px 16px;
+    overflow: hidden;
+    margin-bottom: -1px;
+    border-radius: 4px 4px 0 0;
+  }
+
+  .monitor-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+  }
+
+  .monitor-name {
+    padding: 10px 0;
+    font-size: 20px;
+    flex: 1;
+  }
+ .meta-value{
+    font-size: 28px;
+  }
+  .meta-unit{
+    font-size: 18px;
+    color: #4c4c4c;
+  }
+  .echarts {
+    padding: 10px;
+    width: 100vw;
+    height: 30vh;
+  }
 </style>

@@ -10,7 +10,7 @@ import {
   setError
 } from './vuex/actions'
 function feathersClient(tantenid, uri) {
-   uri ='https://'+tantenid+'.'+uri+'.com'
+   uri ='http://'+tantenid+'.'+uri+'.com'
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     
@@ -38,6 +38,7 @@ function feathersClient(tantenid, uri) {
 
   client.service('/metadata')
   client.service('/feedback')
+  client.service('/environment_chart')
 
   client.hooks({
     error: function (hook) {
