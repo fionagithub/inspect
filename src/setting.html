@@ -118,9 +118,6 @@
 
 <body class="window-height window-width column items-center justify-center setting">
   <div class="card">
-  <p><input type="checkbox" checked="checked" id='protocolId' /> 
-    HTTPS
-  </p>
     <div class="floating-label">
       <label> 租户编号 </label>
       <input id='tenantid' class="full-width" type="text">
@@ -130,6 +127,9 @@
       <label> 服务器地址 </label>
       <input id='apiServer' class="full-width" type="text"> 
     </div>
+    <p><input type="checkbox" checked="checked" id='protocolId' /> 
+      HTTPS
+    </p>
     <div id='error'> </div>
 
     <div class="login-btn">
@@ -157,7 +157,7 @@
          window.localStorage.setItem('apiServer',JSON.stringify(uri))
          window.location.replace('index.html')
        } else {
-         document.getElementById("error").innerHTML = '*请输入企业名称';
+         document.getElementById("error").innerHTML = '*请输入服务器地址';
        }
      }
      function cancel(){
