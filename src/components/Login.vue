@@ -56,7 +56,7 @@
     data() {
       return {
         users:filtersStorage('user'), 
-         pwd: 'laputa',
+        pwd:filtersStorage('password'), 
        /*  users: '',
          pwd: '', */
         showPsd: true,
@@ -109,8 +109,13 @@
             key: 'user' ,
             value: self.users
           }
+          let _storagePsd = {
+            key: 'password' ,
+            value: self.pwd
+          }
           //  console.log('response:::', response)
           filtersStorage(_storage, 'save')
+          filtersStorage(_storagePsd, 'save')
           let url=this.$route.query.redirect||'/index'
           self.$router.push(url)
         }).catch(function (error) {
