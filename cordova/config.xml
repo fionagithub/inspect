@@ -75,9 +75,9 @@
     <plugin name="cordova-plugin-ble-central" spec="^1.1.4">
         <variable name="BLUETOOTH_USAGE_DESCRIPTION" value=" " />
     </plugin>
-    <plugin name="cordova-plugin-device" spec="^1.1.6" />
+    <plugin name="cordova-plugin-device" spec="^1.1.7" />
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.1" />
-    <plugin name="jpush-phonegap-plugin" spec="^3.2.10">
+    <plugin name="jpush-phonegap-plugin" spec="^3.2.12">
         <variable name="APP_KEY" value="1bf450aee89f84ad2a450584" />
     </plugin>
 </widget>
