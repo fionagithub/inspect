@@ -79,7 +79,6 @@ moment.locale('zh-cn');
         items: [{
           title: '报障',
           uri: '/ticket',
-         // uri: '/ticket/dd82af15-fee2-46c9-a06c-4a28f293df4a',
           count:0
         }, {
           title: '抄表',
@@ -102,13 +101,11 @@ moment.locale('zh-cn');
       },
       _modal() {
         let _pa = this.$route.query
-      // console.log('---mm', _pa)
         return _pa
       },
     },
     watch: {
       '$route' (to, from) {
-        // console.log('[][', to, from)
         if (to.query._modal) {
           this[to.query._modal]()
         }
@@ -140,7 +137,7 @@ moment.locale('zh-cn');
       _self.authenticate().then((response) => {
        _self.getConf()
         _self.setErr()
-        _self.getAuth()
+     _self.getAuth()
          _self.getTktCunt()
       }).catch((error) => {
         let url={path:'/login'}

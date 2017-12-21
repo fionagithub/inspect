@@ -22,6 +22,12 @@
         </div>
         <div class="item multiple-lines">
           <div class="item-content">
+            <div class="item-label">转发报障:</div>
+            <q-select class="full-width" type="checkbox" v-model="RoleSlt" :options="getConfRolers"></q-select>
+          </div>
+        </div>
+        <div class="item multiple-lines">
+          <div class="item-content">
             <div class="item-label">报障描述:</div>
             <textarea class="full-width new-desc" v-model="description"> </textarea>
             <div class="form-group--error" v-if="!$v.description.minLength">至少{{ $v.description.$params.minLength.min }}位...</div>
@@ -38,7 +44,10 @@
     </div>
 </template>
 <script>
+  const Rolers= [{label:"管理员", value: 'admin'},{label:"巡检人员", value: 'manager'},{label:"维修人员", value: 'worker'}, ]
   import moment from 'moment'
+  import Vue from 'vue'
+  var selectTran = Vue.filter('tran')
   import {
     required,
     sameAs,
@@ -63,6 +72,8 @@
         flag:false,
         progressBtn:0,
         stateTime: moment().format(),
+        RoleSlt:["admin"],
+        getConfRolers:Rolers,
       }
       return Object.assign(_dt, _new)
     },
@@ -103,17 +114,30 @@
       add() {
         this.flag=true
         this.progressBtn=1
+        let RolersLabel=[]
+        RolersLabel= this.RoleSlt.map((value,index)=>{
+          return selectTran(value, this.getConfRolers);
+        })
+        console.log(RolersLabel)
         let data = {
           "priority": parseInt(this.pty),
           "system": this.systemSlt,
           "reportTime": this.stateTime,
           "description": this.description,
-        }
+          "tags":RolersLabel,
+        };
         this.createMessages(data)
           .then(res => {
             this.flag=false
             this.progressBtn=0
             this.filterTkt(res)
+            window.isMobile && window.JPush.deleteTags({ sequence: 1, tags: this.RoleSlt },
+              (result) => {
+                var sequence = result.sequence
+              }, (error) => {
+                var sequence = error.sequence
+                var errorCode = error.code
+              })
             Toast.create('提交成功.')
              this.$router.go(-1)
           // console.log('-=-=', res)
