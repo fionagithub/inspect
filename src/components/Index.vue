@@ -141,30 +141,8 @@ moment.locale('zh-cn');
        _self.getConf()
         _self.setErr()
         _self.getAuth()
-     /*  if (!_self.tktCut) {
          _self.getTktCunt()
-      } else {
-        _self.setCut(_self.tktCut)
-      } */
-         _self.getTktCunt()
-       window.JPush.addTags({ sequence: 1, tags: ['admin'] },
-          (result) => {
-            var sequence = result.sequence
-            var tags = result.tags  // 数组类型
-            console.log('----addTags---', result)
-          }, (error) => {
-            var sequence = error.sequence
-            var errorCode = error.code
-        })
       }).catch((error) => {
-        window.JPush.deleteTags({ sequence: 1, tags: [ 'admin'] },
-          (result) => {
-            var sequence = result.sequence
-          }, (error) => {
-            var sequence = error.sequence
-            var errorCode = error.code
-          })
-        console.log('------app------', error, _self.$route)
         let url={path:'/login'}
         url.query= _self.$route.query
         _self.$router.push('/login')
