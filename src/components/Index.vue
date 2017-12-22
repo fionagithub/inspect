@@ -109,6 +109,11 @@ moment.locale('zh-cn');
           this[to.query._modal]()
         }
       },
+      payload(val, oldVal){
+        if(val){
+          window.isIndex &&  this.getAuth()
+        }
+      },
      /*  //window.issueCount...
         this.getTktCunt()
      */
@@ -128,12 +133,9 @@ moment.locale('zh-cn');
         findStateItems: 'find',
       }),
       getConf(){
-        if(window.isIndex){
-          this.getAuth()
-          this.getConfMenu()
-        }
-          this.setErr()
-          this.getTktCunt()
+        window.isIndex && this.getConfMenu()
+        this.setErr()
+        this.getTktCunt()
       },
       getAuth() {
         let _self = this
