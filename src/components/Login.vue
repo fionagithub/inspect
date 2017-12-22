@@ -71,7 +71,7 @@
       }
     },
     mounted() {
-      console.log('-----------', this.$route)
+     window.isIndex=true
     },
     computed: {
       unAddBtn() { 

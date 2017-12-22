@@ -21,6 +21,7 @@ export default {
     ...mapState(['_error']),
   },
   mounted(){
+      this.setAuth()
   },
   watch: {
      _error(error,oldVal) {
@@ -31,6 +32,17 @@ export default {
   },
   methods: {
       ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
+    setAuth(obj) {
+      this.authenticate().then((response) => {
+      }).catch((error) => {
+        let url={path:'/login'}
+        url.query= this.$route.query
+        this.$router.push('/login')
+      });
+    },
     handleError(obj) {
       let uri, tips, err = {
         isFlag: true

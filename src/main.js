@@ -25,6 +25,7 @@ moment.locale('zh-cn');
 
 Vue.component('err', err);
 window.Platform=Platform.is;
+window.isIndex=true
 import {
   mapActions,
   mapMutations,
