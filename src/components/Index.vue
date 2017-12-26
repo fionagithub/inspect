@@ -71,7 +71,7 @@ moment.locale('zh-cn');
     name: "index",
     data() {
       return {
-        verson: '0.4.12 071025',
+        verson: '0.5.0 jpush',
         isSetting:false,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
