@@ -10,8 +10,7 @@ import {
   setError
 } from './vuex/actions'
 function feathersClient(tantenid, uri, protocol) {
-  let protocolType= protocol?'https':'http';
-   uri =protocolType + '://'+tantenid+'.'+uri
+   uri =protocol + '://'+tantenid+'.'+uri
   const socket = io(uri || window.location.origin, {
     transports: ['websocket']
     
