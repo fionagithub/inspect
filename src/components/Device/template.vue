@@ -32,7 +32,7 @@
             <q-progress-button v-if="(isFinished&&surplus)&&getGlbErr.isFlag==false" :success-icon='pgmsg' @click.native='getMore()'
               class="light text-black full-width load " :percentage="progressBtn" dark-filler> 加载更多(剩余{{surplus}}条) </q-progress-button>
             <div :class="isTipsHG||message.length==0? 'tips-height':''" class='row justify-center tips text-grey'>
-              <span v-if='tips'> {{tips}} </span>
+              <span v-if='tips&&getGlbErr.isFlag==false'> {{tips}} </span>
               <err v-if='getGlbErr.isFlag' />
             </div>
           </div>
