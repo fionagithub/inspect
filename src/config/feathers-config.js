@@ -39,9 +39,8 @@ function feathersClient(tantenid, uri, protocol) {
 
   client.service('/metadata')
   client.service('/feedback')
+  client.service('/roles')
   client.service('/history_chart')
-
-
   client.hooks({
     error: function (hook) {
       setError(this, hook)

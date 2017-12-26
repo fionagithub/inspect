@@ -44,7 +44,6 @@
     </div>
 </template>
 <script>
-  const Rolers= [{label:"管理员", value: 'admin'},{label:"巡检人员", value: 'manager'},{label:"维修人员", value: 'worker'}, ]
   import moment from 'moment'
   import Vue from 'vue'
   var selectTran = Vue.filter('tran')
@@ -72,8 +71,6 @@
         flag:false,
         progressBtn:0,
         stateTime: moment().format(),
-        RoleSlt:["admin"],
-        getConfRolers:Rolers,
       }
       return Object.assign(_dt, _new)
     },
@@ -84,7 +81,20 @@
     },
     computed:{
       ...mapState(['priorityMax']),
+      ...mapState('auth', ['user']),
+      ...mapState('roles', ['ids']),
       ...mapGetters(['getConfMenu','getGlbErr' ]),
+      RoleSlt(){
+        return this.user.roles
+      },
+      getConfRolers(){
+       let getConfRolers=[]
+         this.ids.map((res, index)=>{
+          let role={label:res,value:res}
+          getConfRolers.push(role)
+        })
+        return getConfRolers
+      },
       unAddBtn(){
         let _disabled
         if (this.getGlbErr.isFlag==false){
@@ -114,30 +124,18 @@
       add() {
         this.flag=true
         this.progressBtn=1
-        let RolersLabel=[]
-        RolersLabel= this.RoleSlt.map((value,index)=>{
-          return selectTran(value, this.getConfRolers);
-        })
-        console.log(RolersLabel)
         let data = {
           "priority": parseInt(this.pty),
           "system": this.systemSlt,
           "reportTime": this.stateTime,
           "description": this.description,
-          "tags":RolersLabel,
+          "tags": this.RoleSlt,
         };
         this.createMessages(data)
           .then(res => {
             this.flag=false
             this.progressBtn=0
             this.filterTkt(res)
-            window.isMobile && window.JPush.deleteTags({ sequence: 1, tags: this.RoleSlt },
-              (result) => {
-                var sequence = result.sequence
-              }, (error) => {
-                var sequence = error.sequence
-                var errorCode = error.code
-              })
             Toast.create('提交成功.')
              this.$router.go(-1)
           // console.log('-=-=', res)

@@ -94,7 +94,7 @@ moment.locale('zh-cn');
       }
     },
     computed: {
-      ...mapState('auth', ['payload']),
+      ...mapState('auth', ['payload', 'user' ]),
       leftDrawer() {
         return this.$children[5].$refs.leftDrawer
       },
@@ -132,9 +132,24 @@ moment.locale('zh-cn');
       ...mapActions('metadata', {
         findStateItems: 'find',
       }),
+      ...mapActions('roles', {
+        findRoles: 'find',
+      }),
       getConf(){
         window.isIndex && this.getConfMenu()
+        let tags=['publishtest']
+        tags.concat(this.user.roles)
+        //为消息推送添加用户角色
+        window.isMobile && window.JPush.addTags({ sequence: 1, tags: tags},
+          (result) => {
+            var sequence = result.sequence
+            var tags = result.tags  // 数组类型
+          }, (error) => {
+            var sequence = error.sequence
+            var errorCode = error.code
+          })
         this.setErr()
+        this.findRoles()
         this.getTktCunt()
       },
       getAuth() {

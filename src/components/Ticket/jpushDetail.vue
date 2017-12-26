@@ -41,6 +41,12 @@
               {{ tktDtl.reportTime |date('HH:mm') }}
             </div>
           </div>
+          <div class="item multiple-lines d-base">
+            <div class="d-label">转发报障:</div>
+            <div class="d-val" v-for="(item, index) in  tktDtl.tags " :key="index" >
+              <span class="chip label bg-grey-4"> {{item }} </span>
+            </div>
+          </div>
         </div>
       </div>
       <div class="card">
