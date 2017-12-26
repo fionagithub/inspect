@@ -69,6 +69,10 @@
             key: 'tenantid' ,
             value: window.__tenantId__ 
           }
+          let _storageProcol = {
+            key: 'protocolId' ,
+            value: window.protocolId 
+          }
           let uri={
             key:'apiServer',
             value:window.apiServer
@@ -79,6 +83,7 @@
           }
           filtersStorage(uri, "save")
           filtersStorage(user, "save")
+          filtersStorage(_storageProcol, "save")
           filtersStorage(_storage, "save")
           this.$refs.leftDrawer.close()
         })

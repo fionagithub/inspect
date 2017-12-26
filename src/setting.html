@@ -143,16 +143,25 @@
   </div>
   <script>
      // setting 1. store tenatid to localstorage 2. replace to index.html
-     
      let tnt = window.localStorage.getItem('tenantid') 
+     let _protocol_ = window.localStorage.getItem('protocolId') 
      let apiServer = window.localStorage.getItem('apiServer') 
+     window.onload=function(){ 
+        document.getElementById("tenantid").value=JSON.parse(tnt);
+        document.getElementById("apiServer").value=JSON.parse(apiServer);
+        document.getElementById("protocolId").checked=JSON.parse(_protocol_)=="https"?true:false;
+      }
      document.getElementById("cancel").style.display = tnt&&apiServer ? 'block' : 'none';
      function step() {
+       let HttpsMap={
+         true:"https",
+         false:"http"
+       }
        let tt = document.getElementById("tenantid").value;
-       let protocolId = document.getElementById("protocolId");
-       let uri=document.getElementById("apiServer").value
+       let uri=document.getElementById("apiServer").value 
        if (tt&& uri) {
-         window.localStorage.setItem('protocolId', protocolId.checked)
+       let protocolId = document.getElementById("protocolId");
+         window.localStorage.setItem('protocolId', JSON.stringify(HttpsMap[protocolId.checked] ))
          window.localStorage.setItem('tenantid',JSON.stringify(tt))
          window.localStorage.setItem('apiServer',JSON.stringify(uri))
          window.location.replace('index.html')
