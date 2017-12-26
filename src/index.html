@@ -49,12 +49,6 @@ var initiateUI = function () {
       window.JPush.setDebugMode(true);
       window.JPush.setStatisticsOpen(true);
     }
-    window.JPush.setTags({ sequence: 1, tags: [ "system" ] },
-      (result) => {
-        console.log(result.tags)
-      }, (error) => {
-        alert(error.code)
-      })
   } catch (exception) {
     console.log(exception);
   }
