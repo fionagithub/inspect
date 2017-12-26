@@ -1,4 +1,4 @@
-<template>
+ <template>
   <div class="index-page window-height window-width column items-center">
     <div class="banner">
       <div class="toolbar tb-btn">
@@ -94,7 +94,7 @@ moment.locale('zh-cn');
       }
     },
     computed: {
-      ...mapState('auth', ['payload', 'user' ]),
+       ...mapState('auth', ['payload', 'user']),
       leftDrawer() {
         return this.$children[5].$refs.leftDrawer
       },
@@ -102,6 +102,9 @@ moment.locale('zh-cn');
         let _pa = this.$route.query
         return _pa
       },
+      jpushTags(){
+        return this.user.roles.concat([window.__tenantId__])
+      }
     },
     watch: {
       '$route' (to, from) {
@@ -113,13 +116,14 @@ moment.locale('zh-cn');
         if(val){
           window.isIndex &&  this.getAuth()
         }
-      },
+      }, 
      /*  //window.issueCount...
         this.getTktCunt()
      */
     },
     mounted() {
       this.getConf()
+      this.setJpushTag() 
     },
     methods: {
       ...mapActions('tickets', {
@@ -136,18 +140,7 @@ moment.locale('zh-cn');
         findRoles: 'find',
       }),
       getConf(){
-        window.isIndex && this.getConfMenu()
-        let tags=['publishtest']
-        tags.concat(this.user.roles)
-        //为消息推送添加用户角色
-        window.isMobile && window.JPush.addTags({ sequence: 1, tags: tags},
-          (result) => {
-            var sequence = result.sequence
-            var tags = result.tags  // 数组类型
-          }, (error) => {
-            var sequence = error.sequence
-            var errorCode = error.code
-          })
+        window.isIndex && this.setConfig()
         this.setErr()
         this.findRoles()
         this.getTktCunt()
@@ -163,6 +156,22 @@ moment.locale('zh-cn');
             console.log('--!!!import:::setAuth--')
           this.setAuth()
         }, time);
+      },
+      setConfig(){
+     //  window.isMobile && this.setJpushTag() 
+        this.getConfMenu()
+      },
+      setJpushTag(){
+        //为消息推送添加用户角色，使用setTags可以覆盖并重新定义的tag
+       //  console.log('-=[]', this.jpushTags)
+        window.isMobile && window.JPush.setTags({ sequence: 2, tags: this.jpushTags},
+          (result) => {
+            var sequence = result.sequence
+            var tags = result.tags  // 数组类型
+          }, (error) => {
+            var sequence = error.sequence
+            var errorCode = error.code
+          })
       },
       getConfMenu() {
         let query = {
