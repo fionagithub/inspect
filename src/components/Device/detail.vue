@@ -107,7 +107,8 @@
       }),
     },
     components: {
-      popover
+      popover,
+      echart
     },
     created() {},
     mounted() {
@@ -139,9 +140,6 @@
       ...mapActions('history_chart', {
         find: 'find',
       }),
-    },
-    components: {
-      echart
     },
     destroyed: function () {
       this.clear() // 置空ticket-vuex      
