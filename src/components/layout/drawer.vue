@@ -11,13 +11,13 @@
       </div>
 
       <div class="list no-border platform-delimiter">
-        <q-drawer-link icon="tab" disabled to="/">
+        <q-drawer-link icon="tab" disabled to="/index">
           我
         </q-drawer-link>
         <q-drawer-link icon="compare_arrows" :to="{path: '/index', query: { _modal: 'Setting' }}">
            设置
         </q-drawer-link>
-        <q-drawer-link icon="compare_arrows" disabled to="/">
+        <q-drawer-link icon="compare_arrows" disabled to="/index">
            消息
         </q-drawer-link>
         <q-drawer-link icon="build" :to="{path: '/index', query: { _modal: 'getFd' }}"  >

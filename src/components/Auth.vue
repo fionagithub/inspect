@@ -14,40 +14,14 @@
 </template>
 
 <script>
-
- 
-    import { Platform,Toast } from 'quasar'
-
+import { Platform,Toast } from 'quasar'
 import {
   mapActions,
   mapMutations,
   mapState
 } from 'vuex'
-export default {
-  created(){
-    this.setAuth()
-  },
-  methods: {
-    ...mapActions('auth', [
-      'authenticate'
-    ]),
-    ...mapActions([ 'setJpushData' ]),
-    setAuth(obj) {
-      let _self = this, uriQuery= this.$route.query
-         console.log('-----AUTH----', _self.$route)
-      _self.authenticate().then((response) => {
-          let url=uriQuery.redirect||'/index'
-         _self.$router.push(url)
-      }).catch((error) => {
-        let url={path:'/login'}
-        url.query= uriQuery
-         _self.$router.push(url)
-      });
-    },
-  },
-}
-</script>
 
+</script>
 <style lang="stylus">
  .error-code{
     height :50vh;
