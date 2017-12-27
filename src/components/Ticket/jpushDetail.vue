@@ -1,7 +1,7 @@
 <template>
 <q-layout>
     <div slot="header" class="toolbar">
-      <button class="head_goback" @click="$router.push('/')">
+      <button class="head_goback" @click="$router.push('/index')">
         <i>arrow_back</i>
       </button>
       <q-toolbar-title :padding="1">

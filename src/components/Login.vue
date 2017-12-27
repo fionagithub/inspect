@@ -52,6 +52,15 @@
     mapActions,
     mapState
   } from 'vuex'
+  if(window.isMobile){
+    window.JPush.cleanTags({ sequence: 1 },
+      (result) => {
+        var sequence = result.sequence
+      }, (error) => {
+        var sequence = error.sequence
+        var errorCode = error.code
+      })
+  }
   export default {
     data() {
       return {
