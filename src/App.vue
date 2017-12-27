@@ -37,9 +37,9 @@ export default {
       ]),
     setAuth(obj) {
       this.authenticate().then((response) => {
+        let url={path:'/index', query: this.$route.query }
+        this.$router.push(url)
       }).catch((error) => {
-        let url={path:'/login'}
-        url.query= this.$route.query
         this.$router.push('/login')
       });
     },

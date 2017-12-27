@@ -15,7 +15,7 @@ const router = new VueRouter({
   routes: [
     {
       path: '/',
-      redirect:'/index',
+     // redirect:'/index',
    //   component: load('Auth')
     },{
       path: '/index',
