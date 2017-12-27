@@ -80,4 +80,5 @@
     <plugin name="jpush-phonegap-plugin" spec="^3.2.12">
         <variable name="APP_KEY" value="1bf450aee89f84ad2a450584" />
     </plugin>
+    <plugin name="cordova-plugin-backbutton" spec="^0.3.0" />
 </widget>
