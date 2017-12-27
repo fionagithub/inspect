@@ -123,6 +123,7 @@ moment.locale('zh-cn');
      */
     },
     mounted() {
+      this.$route.query._modal && this.$router.push('/index')
       this.getConf()
     },
     methods: {
