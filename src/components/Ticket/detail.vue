@@ -35,9 +35,8 @@
           </div>
           <div class="item multiple-lines d-base">
             <div class="d-label">转发报障:</div>
-            <div class="d-val" v-for="(item, index) in  tktDtl.tags " :key="index" >
-              <span class="chip label bg-grey-4"> {{item }} </span>
-            </div>
+              <span class="chip label bg-grey-4" v-for="(item, index) in  tktDtl.tags " :key="index" > {{item }} </span>
+           
           </div>
         </div>
       </div>
@@ -192,7 +191,7 @@
   .d-label {
     color: #A6A6A6;
     font-size: 12px;
-    flex: 1;
+    width: 82px;
   }
 
   .d-prty {
@@ -204,6 +203,8 @@
     font-size: 16px;
     font-weight: 400;
     color: #606060;
+    width:230px;
+    word-wrap: break-word;
     line-height: 20px;
     flex: 3;
   }
