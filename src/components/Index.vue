@@ -41,7 +41,8 @@
 
   </div>
   <div slot="footer" class="ftCon" >
-      {{verson}}
+    {{verson}}
+      <span> {{getToken}} </span>
   </div>
   <drawer></drawer>
   <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
@@ -91,6 +92,7 @@ moment.locale('zh-cn');
           disabled: true,
           uri: '/device'
         }],
+        jpushInfo:[]
       }
     },
     computed: {
@@ -102,6 +104,10 @@ moment.locale('zh-cn');
         let _pa = this.$route.query
         return _pa
       },
+      getToken(){
+        //设置定时器，在token过期前，重新获取token
+       return this.payload&&this.getAuth(this.payload.exp)
+      }, 
       jpushTags(){
         return this.user.roles.concat([window.__tenantId__])
       }
@@ -112,18 +118,12 @@ moment.locale('zh-cn');
           this[to.query._modal]()
         }
       },
-      payload(val, oldVal){
-        if(val){
-          window.isIndex &&  this.getAuth()
-        }
-      }, 
      /*  //window.issueCount...
         this.getTktCunt()
      */
     },
     mounted() {
       this.getConf()
-      this.setJpushTag() 
     },
     methods: {
       ...mapActions('tickets', {
@@ -142,32 +142,30 @@ moment.locale('zh-cn');
       getConf(){
         window.isIndex && this.setConfig()
         this.setErr()
-        this.findRoles()
         this.getTktCunt()
       },
-      getAuth() {
-        let _self = this
-        let Exp_Date = _self.payload.exp;
-        let Exp_DAY = moment(parseInt(Exp_Date + '000')).subtract('minutes', 5)
-          //  console.log('--!!!import:::setAuth 1111--')
+      setConfig(){
+        this.findRoles()
+        window.isMobile && this.setJpushTag() 
+        this.getConfMenu()
+      },
+      getAuth(date) { 
+        let Exp_DAY = moment(parseInt(date + '000')).subtract('minutes', 5)
         // let Exp_DAY = moment().add('seconds', 5)
         let time = Exp_DAY - moment()
         setTimeout(() => {
-            console.log('--!!!import:::setAuth--')
+          // console.log('--!!!import:::setAuth--')
           this.setAuth()
         }, time);
-      },
-      setConfig(){
-     //  window.isMobile && this.setJpushTag() 
-        this.getConfMenu()
       },
       setJpushTag(){
         //为消息推送添加用户角色，使用setTags可以覆盖并重新定义的tag
        //  console.log('-=[]', this.jpushTags)
-        window.isMobile && window.JPush.setTags({ sequence: 2, tags: this.jpushTags},
+        window.JPush.setTags({ sequence: 2, tags: this.jpushTags},
           (result) => {
             var sequence = result.sequence
             var tags = result.tags  // 数组类型
+            this.jpushInfo=tags;
           }, (error) => {
             var sequence = error.sequence
             var errorCode = error.code
