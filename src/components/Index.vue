@@ -45,7 +45,7 @@
       <span> {{getToken}} </span>
   </div>
   <drawer></drawer>
-  <q-modal ref="layoutModal" @close="notify('close')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
+  <q-modal ref="layoutModal" @close="$router.push('/index')" :content-css="{minWidth: '80vw', minHeight: '80vh'}">
     <feed-back v-if='isFb' />
     <setting v-if='isSetting' />
   </q-modal>
@@ -242,12 +242,6 @@ moment.locale('zh-cn');
             k.count = ttl
           }
         })
-      },
-      notify() {
-        this.isSetting = false
-        this.isFb = false
-        this.setError()
-        this.$refs.layoutModal.close();
       },
       getTktCunt() {
         let self = this
