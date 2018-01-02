@@ -45,6 +45,7 @@
   };
 
   import IEcharts from 'vue-echarts-v3/src/full.vue'
+  import formatUtil from 'echarts/lib/util/format'
   import dark from 'echarts/theme/dark'
   import moment from 'moment'
   import echarts from '../../config/echarts'
@@ -71,7 +72,12 @@
             right: 20,
           },
           tooltip: {
-              trigger: 'axis',
+            trigger: 'axis',
+            formatter: function (params, ticket, callback){
+              let time= parseInt(params[0].name), 
+              tipLabel= formatUtil.formatTime('hh:mm', time) +" : "+params[0].value
+              return tipLabel;
+            } 
           },
           xAxis: {
             type:'category',
