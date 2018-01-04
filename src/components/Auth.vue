@@ -13,15 +13,6 @@
   </div>
 </template>
 
-<script>
-import { Platform,Toast } from 'quasar'
-import {
-  mapActions,
-  mapMutations,
-  mapState
-} from 'vuex'
-
-</script>
 <style lang="stylus">
  .error-code{
     height :50vh;

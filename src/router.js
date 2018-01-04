@@ -20,7 +20,7 @@ const router = new VueRouter({
     {
       path: '/',
      // redirect:'/index',
-   //   component: load('Auth')
+      component: load('Auth')
     },{
       path: '/index',
       meta: {
