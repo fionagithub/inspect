@@ -53,8 +53,7 @@
 </template>
 
 <script>
-import moment from 'moment'
-moment.locale('zh-cn');
+  import moment from 'moment'
   import feedBack from './Feedback/template'
   import setting from './Setting/template'
   import drawer from './layout/drawer.vue'
@@ -68,6 +67,9 @@ moment.locale('zh-cn');
   import {
     Dialog
   } from 'quasar'
+  moment.locale('zh-cn');
+  window.Win_devices_ = feathers.service('devices')
+  window.Win_tickets_ = feathers.service('tickets')
   export default {
     name: "index",
     data() {
@@ -109,7 +111,8 @@ moment.locale('zh-cn');
        return this.payload&&this.getAuth(this.payload.exp)
       }, 
       jpushTags(){
-        return this.user.roles.concat([window.__tenantId__])
+        let tenantid = filtersStorage('tenantid')
+        return this.user.roles.concat([tenantid])
       }
     },
     watch: {

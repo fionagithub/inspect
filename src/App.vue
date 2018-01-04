@@ -17,8 +17,15 @@ import {
   Toast
 } from 'quasar'
 export default {
+  data(){
+    return{
+      tenantid: filtersStorage('tenantid'),
+      protocolId: filtersStorage('protocolId'),
+      apiServer: filtersStorage('apiServer'),
+    }
+  },
   computed: {
-    ...mapState(['_error']),
+      ...mapState(['HttpsMap', '_error']),
   },
   mounted(){
       this.setAuth()
@@ -36,12 +43,17 @@ export default {
         'authenticate'
       ]),
     setAuth(obj) {
-      this.authenticate().then((response) => {
-        let url={path:'/index', query: this.$route.query }
-        this.$router.push(url)
-      }).catch((error) => {
-        this.$router.push('/login')
-      });
+      if(this.tenantid && this.apiServer&&this.protocolId ){
+        window.feathers = feathersClient(this.tenantid, this.apiServer, this.protocolId)
+         this.authenticate().then((response) => {
+          let url={path:'/index', query: this.$route.query }
+          this.$router.push(url)
+        }).catch((error) => {
+          this.$router.push('/login')
+        });
+      }else{
+          this.$router.push('/config')
+      }
     },
     handleError(obj) {
       let uri, tips, err = {

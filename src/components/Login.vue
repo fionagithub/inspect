@@ -95,7 +95,7 @@
         this.showPsd = !this.showPsd
       },
       setTenant(){
-        window.location.replace('setting.html')
+        this.$router.push('/config')
       },
       login() {
         let self = this

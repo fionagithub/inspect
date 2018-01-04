@@ -40,6 +40,13 @@
   } from 'quasar'
   export default {
     name: "drawer", 
+    data(){
+      return{
+        tenantid: filtersStorage('tenantid'),
+        protocolId: filtersStorage('protocolId'),
+        apiServer: filtersStorage('apiServer'),
+      }
+    },
     computed: {
       ...mapState('auth', ['user']),
     }, 
@@ -64,18 +71,17 @@
           this.$router.push({
             path: '/login'
           })
-
           let _storage = {
             key: 'tenantid' ,
-            value: window.__tenantId__ 
+            value: this.tenantid 
           }
           let _storageProcol = {
             key: 'protocolId' ,
-            value: window.protocolId 
+            value: this.protocolId 
           }
           let uri={
             key:'apiServer',
-            value:window.apiServer
+            value: this.apiServer
           }
           let user = {
             key: 'user' ,

@@ -1,4 +1,8 @@
  export const state = {
+  HttpsMap:{
+        true:"https",
+        false:"http"
+  },
   add_count: {
     tktCut: 0,
     dvCut: 0,

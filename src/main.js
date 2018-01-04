@@ -3,11 +3,10 @@ var onDeviceReady = function () {
   window.isMobile = true // cordova 成功运行在移动端时，设置移动端的初始值
   initiateUI();
   document.addEventListener("backbutton", function (e) {
-    if (location.hash == '#/index'||location.hash == '#/login'||location.pathname=="/setting.html") {
+    if (location.hash == '#/index'||location.hash == '#/login' ||location.hash == '#/config' ) {
       e.preventDefault();
       navigator.app.exitApp();
-    }
-    else {
+    }else {
       navigator.app.backHistory()
     }
   }, false);
@@ -47,34 +46,25 @@ var initiateUI = function () {
 //通知栏打开推送消息
 document.addEventListener("deviceready", onDeviceReady, false);
 
-import filtersStorage from './config/storage'
-window.filtersStorage=filtersStorage
-
-window.__tenantId__ = filtersStorage('tenantid');
-window.protocolId = filtersStorage('protocolId');
-window.apiServer = filtersStorage('apiServer');
-if(!window.__tenantId__){
-  window.location.replace('setting.html')
-}
-
 require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
 import { Platform,Toast } from 'quasar'
 import router from './router'
 import store from './config/vuex/store'
-import  feathersClient from './config/feathers-config'
-import moment from 'moment'
 import './jpush'
 import './config/filters'
 import Vuelidate from 'vuelidate'
 import './assets/css/index.css'
 import err from './components/Error'
-moment.locale('zh-cn');
+import feathersClient from './config/feathers-config'
+import filtersStorage from './config/storage'
 
+window.filtersStorage = filtersStorage
+window.feathersClient = feathersClient
 Vue.component('err', err);
-window.Platform=Platform.is;
-window.isIndex=true
+window.Platform = Platform.is;
+window.isIndex = true
 import {
   mapActions,
   mapMutations,
@@ -82,13 +72,10 @@ import {
 } from 'vuex'
 Vue.use(Vuelidate)
 Vue.use(Quasar) 
-window.feathers = feathersClient(window.__tenantId__, window.apiServer, window.protocolId)
-window.Win_devices_ = feathers.service('devices')
-window.Win_tickets_ = feathers.service('tickets')
 
-window.jpushUri={path:null}
+window.jpushUri = {path:null}
 //app初始化完成打开通知栏消息
-window.InitJpush=true
+window.InitJpush = true
 
 Quasar.start(() => {
   new Vue({

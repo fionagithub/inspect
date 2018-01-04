@@ -14,6 +14,10 @@ function load(component) {
 const router = new VueRouter({
   routes: [
     {
+      path: '/config',
+      component: load('Config')
+    },
+    {
       path: '/',
      // redirect:'/index',
    //   component: load('Auth')
