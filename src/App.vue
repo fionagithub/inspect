@@ -26,6 +26,9 @@ export default {
   },
   computed: {
       ...mapState(['HttpsMap', '_error']),
+      ...mapState('auth', [
+        'accessToken'
+      ]),
   },
   mounted(){
       this.setAuth()
@@ -42,18 +45,16 @@ export default {
       ...mapActions('auth', [
         'authenticate'
       ]),
-    setAuth(obj) {
-      if(this.tenantid && this.apiServer&&this.protocolId ){
-        window.feathers = feathersClient(this.tenantid, this.apiServer, this.protocolId)
-         this.authenticate().then((response) => {
-          let url={path:'/index', query: this.$route.query }
-          this.$router.push(url)
-        }).catch((error) => {
-          this.$router.push('/login')
-        });
-      }else{
-          this.$router.push('/config')
-      }
+    setAuth() {
+      this.authenticate().then((response) => {
+        let url={
+          path:'/index', 
+          query: this.$route.query 
+        }
+        this.$router.push(url)
+      }).catch((error) => {
+        this.$router.push('/login')
+      });
     },
     handleError(obj) {
       let uri, tips, err = {

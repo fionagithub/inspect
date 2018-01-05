@@ -133,6 +133,9 @@
       ...mapActions('tickets', {
         findTkt: 'find',
       }),
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
       ...mapActions(['setConfMenu','setError', 'setErr', 'getGlbErr']),
       ...mapActions('system', {
         findSystemItems: 'find',
@@ -159,7 +162,7 @@
         let time = Exp_DAY - moment()
         setTimeout(() => {
           // console.log('--!!!import:::setAuth--')
-          this.setAuth()
+          this.authenticate()
         }, time);
       },
       setJpushTag(){

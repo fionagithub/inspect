@@ -1,4 +1,3 @@
-
 require(`./themes/app.${__THEME}.styl`)
 import Vue from 'vue'
 import Quasar from 'quasar'
@@ -29,7 +28,14 @@ Vue.use(Quasar)
 window.jpushUri = {path:null}
 //app初始化完成打开通知栏消息
 window.InitJpush = true
-
+let tenantid= filtersStorage('tenantid'),
+  protocolId= filtersStorage('protocolId'),
+  apiServer= filtersStorage('apiServer')
+  if(tenantid && apiServer && protocolId){
+    window.feathers = feathersClient(tenantid, apiServer, protocolId)
+  }else{
+    location.replace('#/config')
+  }
 Quasar.start(() => {
   new Vue({
     el: '#q-app', 
