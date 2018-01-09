@@ -74,7 +74,7 @@
     name: "index",
     data() {
       return {
-        verson: '0.5.0 jpush',
+        verson: '0.5.3',
         isSetting:false,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
