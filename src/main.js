@@ -16,31 +16,28 @@ window.filtersStorage = filtersStorage
 window.feathersClient = feathersClient
 Vue.component('err', err);
 window.Platform = Platform.is;
-window.isIndex = true
-import {
-  mapActions,
-  mapMutations,
-  mapState
-} from 'vuex'
+window.isIndex = true 
 Vue.use(Vuelidate)
 Vue.use(Quasar) 
 
 window.jpushUri = {path:null}
 //app初始化完成打开通知栏消息
 window.InitJpush = true
-let tenantid= filtersStorage('tenantid'),
-  protocolId= filtersStorage('protocolId'),
-  apiServer= filtersStorage('apiServer')
-  if(tenantid && apiServer && protocolId){
-    window.feathers = feathersClient(tenantid, apiServer, protocolId)
-  }else{
-    location.replace('#/config')
-  }
+window.tenantid= filtersStorage('tenantid'),
+window.protocolId= filtersStorage('protocolId'),
+window.apiServer= filtersStorage('apiServer')
 Quasar.start(() => {
   new Vue({
     el: '#q-app', 
     data:{
       jpushUri:window.jpushUri,
+    },
+    created(){
+      if( window.tenantid && window.apiServer && window.protocolId){
+        this.$router.push('/')
+      }else{
+         this.$router.push('/config')
+      }
     },
     watch:{
       //app处于启动中，处理打开通知栏消息的方法

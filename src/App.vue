@@ -6,56 +6,27 @@
     </transition>
   </div>
 </template>
-
 <script>
 import {
   mapActions,
-  mapMutations,
   mapState
 } from 'vuex'
 import {
   Toast
 } from 'quasar'
 export default {
-  data(){
-    return{
-      tenantid: filtersStorage('tenantid'),
-      protocolId: filtersStorage('protocolId'),
-      apiServer: filtersStorage('apiServer'),
-    }
-  },
   computed: {
-      ...mapState(['HttpsMap', '_error']),
-      ...mapState('auth', [
-        'accessToken'
-      ]),
+    ...mapState(['_error']),
   },
-  mounted(){
-      this.setAuth()
+  watch:{
+      _error(error,oldVal) {
+          if(error){
+            this.handleError(error)
+          }
+      }, 
   },
-  watch: {
-     _error(error,oldVal) {
-        if(error){
-          this.handleError(error)
-        }
-    }, 
-  },
-  methods: {
-      ...mapActions(['setConfMenu', 'setErr', 'getGlbErr']),
-      ...mapActions('auth', [
-        'authenticate'
-      ]),
-    setAuth() {
-      this.authenticate().then((response) => {
-        let url={
-          path:'/index', 
-          query: this.$route.query 
-        }
-        this.$router.push(url)
-      }).catch((error) => {
-        this.$router.push('/login')
-      });
-    },
+  methods:{
+    ...mapActions(['getGlbErr']),
     handleError(obj) {
       let uri, tips, err = {
         isFlag: true
@@ -70,9 +41,8 @@ export default {
         html: tips || uri,
         timeout: 5000
       })
-    }, 
-  },
-}
+    },  
+  }   
+}   
 </script>
-
 <style></style>
