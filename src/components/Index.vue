@@ -72,7 +72,7 @@
     name: "index",
     data() {
       return {
-        verson: '0.5.3',
+        verson: '0.5.4',
         isSetting:false,
         isFb: false,
         tktCut: filtersStorage('tktCut') || null,
