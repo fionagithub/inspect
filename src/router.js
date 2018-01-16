@@ -12,16 +12,17 @@ function load(component) {
 }
 
 const router = new VueRouter({
-  routes: [
+  routes: [ 
+    {
+      path: '/',
+      redirect:'/config',
+    //  component: load('Auth')
+    },
     {
       path: '/config',
       component: load('Config')
     },
-    {
-      path: '/',
-     // redirect:'/index',
-      component: load('Auth')
-    },{
+  {
       path: '/index',
       meta: {
         requiresAuth: true
@@ -77,7 +78,8 @@ const router = new VueRouter({
 
 router.beforeEach(function(to, from, next){
   setError(this)
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+    let feathers =window.clientInfo.feathers
+  if (to.matched.some(record => record.meta.requiresAuth)&&feathers) {
     let token = localStorage.getItem('feathers-jwt')
     feathers.passport.verifyJWT(token).then(res => {
       console.log('---token---ok--')

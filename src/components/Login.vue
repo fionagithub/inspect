@@ -95,6 +95,7 @@
         this.showPsd = !this.showPsd
       },
       setTenant(){
+        window.clientInfo.feathers =false
         this.$router.push('/config')
       },
       login() {
@@ -122,19 +123,25 @@
             key: 'password' ,
             value: self.pwd
           }
-          //  console.log('response:::', response)
-          filtersStorage(_storage, 'save')
+            console.log('response:::', response)
+         filtersStorage(_storage, 'save')
           filtersStorage(_storagePsd, 'save')
           let url=this.$route.query.redirect||'/index'
           self.$router.push(url)
         }).catch(function (error) {
+          let msg
+          if(String(error)=="Error: Socket connection timed out"){
+             msg="服务连接错误"
+          }else{
+            msg= '登录出错，请稍后再试'
+          }
             self.flag = false
             self.progressBtn = 0
             Toast.create.negative({
-              html:'登录出错，请稍后再试',
+              html: msg,
               timeout: 13000
             })
-            console.error('Error [--authenticating!', error);
+            console.error('-----',error);
         });
       }
     }

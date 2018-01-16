@@ -68,8 +68,8 @@
     Dialog
   } from 'quasar'
   moment.locale('zh-cn');
-  window.Win_devices_ = feathers.service('devices')
-  window.Win_tickets_ = feathers.service('tickets')
+  window.Win_devices_ =window.clientif.feathers.service('devices')
+  window.Win_tickets_ =window.clientif.feathers.service('tickets')
   export default {
     name: "index",
     data() {

@@ -25,14 +25,11 @@
             HTTPS
           </div>
         </div> 
-      </div>   
-      <div v-model='error'> </div>
+      </div>    
+      <div class="red">{{connectError}}</div>
       <div class="login-btn" v-if="isConfiged" >
         <button @click="step()" class="outline big step">
                 下一步
-        </button>
-        <button @click="cancel()" class="cancel" v-if="cancelEdit"  >
-            返回
         </button>
       </div>
     </div>
@@ -46,56 +43,48 @@ import {
   mapState
 } from 'vuex'
 let  protocolMap = {
-         http:false,
-         https:true
-       };
+    http:false,
+    https:true
+  };
  export default {
-   data(){
-     return{
-      tenantid: filtersStorage('tenantid'),
-       apiServer: filtersStorage('apiServer'),
-       protocolId:protocolMap[filtersStorage('protocolId')||'http'],
-       error:'', 
-     }
-   },
+    data() {
+      return {
+        tenantid: filtersStorage('tenantid'),
+        apiServer: filtersStorage('apiServer'),
+        protocolId: protocolMap[filtersStorage('protocolId') || 'http'],
+        connectError: '',
+        client: window.clientInfo,
+      }
+    },
    computed:{
      ...mapState(['HttpsMap']),
      isConfiged(){
        let flag = this.tenantid && this.apiServer 
        return flag
      },
-     cancelEdit(){
-       let tenantid = filtersStorage('tenantid')
-       return tenantid
-     }
    },
-   methods:{
+   watch:{
+      client: {
+        handler(val) { 
+          if(val.feathers==null){
+            this.connectError="服务器连接错误，请重试"
+          }
+          if(val.feathers){
+            this.connectError="服务器连接成功"
+            this.$router.push('/login')
+          }
+        },
+        deep: true
+      },
+   },
+   methods:{ 
      step(){
-      let tenantid = this.tenantid
-      let protocolId =this.HttpsMap[this.protocolId]
-      let apiServer = this.apiServer
-      let Tenant = {
-        key: 'tenantid',
-        value: tenantid
-      }
-      let Procol = {
-        key: 'protocolId' ,
-        value: protocolId 
-      }
-      let Server ={
-        key:'apiServer',
-        value: apiServer
-      }
-      filtersStorage(Tenant, 'save')
-      filtersStorage(Procol, 'save')
-      filtersStorage(Server, 'save')
-
-      window.feathers = feathersClient(tenantid, apiServer, protocolId)
-      this.$router.push('/login')
+       window.socket && window.socket.close()
+       this.connectError = "连接中，请等待..."
+       window.clientInfo.feathers = false
+       let protocolId = this.HttpsMap[this.protocolId]
+       feathersClient(this.tenantid, this.apiServer, protocolId)
      },
-     cancel(){
-        this.$router.push('/login')
-     }
    }
  }
 
