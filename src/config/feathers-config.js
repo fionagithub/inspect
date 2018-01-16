@@ -65,13 +65,13 @@ function feathersClient(tantenid, domain, protocol) {
       after(hook) {
       }
     }) 
-    window.clientInfo.feathers = client
+    store.state.feathersServer = client
  })
 
   socket.on('connect_error', (error) => {
    // socket.close()
     console.log('connect_error---');
-    window.clientInfo.feathers = null
+    store.state.feathersServer = null
  });
 
 socket.on('reconnection', function() {

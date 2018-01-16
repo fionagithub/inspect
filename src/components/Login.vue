@@ -91,11 +91,12 @@
       ...mapActions('auth', [
         'authenticate'
       ]),
+      ...mapActions(['setFeathersData']),
       changePwd() {
         this.showPsd = !this.showPsd
       },
       setTenant(){
-        window.clientInfo.feathers =false
+        this.setFeathersData(false)
         this.$router.push('/config')
       },
       login() {

@@ -15,8 +15,8 @@ const router = new VueRouter({
   routes: [ 
     {
       path: '/',
-      redirect:'/config',
-    //  component: load('Auth')
+     // redirect:'/config',
+      component: load('Auth')
     },
     {
       path: '/config',
@@ -78,14 +78,12 @@ const router = new VueRouter({
 
 router.beforeEach(function(to, from, next){
   setError(this)
-    let feathers =window.clientInfo.feathers
-  if (to.matched.some(record => record.meta.requiresAuth)&&feathers) {
+  let feathers = this.state.feathersServer
+  if (feathers && to.matched.some(record => record.meta.requiresAuth)) {
     let token = localStorage.getItem('feathers-jwt')
     feathers.passport.verifyJWT(token).then(res => {
-      console.log('---token---ok--')
       next()
     }).catch(error => {
-      console.log('======token==eree======',to)
       next({
         path: '/login',
         query: {redirect: to.fullPath} 

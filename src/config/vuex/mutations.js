@@ -6,6 +6,7 @@ import {
  SETADDCOUNT,
  SETBLETOGGLED,
  SETJPUSHDATA,
+ SETFEATHERS,
 } from './mutation-types'
 export const mutations = {
   [SETERR](state){
@@ -42,5 +43,8 @@ export const mutations = {
   },
   [SETJPUSHDATA](state, obj){
     state.jpushData=obj
+  },
+  [SETFEATHERS](state, obj){
+    state.feathersServer = obj
   }
 }

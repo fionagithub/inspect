@@ -11,7 +11,9 @@ import './assets/css/index.css'
 import err from './components/Error'
 import feathersClient from './config/feathers-config'
 import filtersStorage from './config/storage'
-
+import {
+ mapActions,
+} from 'vuex'
 window.filtersStorage = filtersStorage
 window.feathersClient = feathersClient
 Vue.component('err', err);
@@ -21,7 +23,6 @@ Vue.use(Vuelidate)
 Vue.use(Quasar) 
 
 window.jpushUri = {path:null}
-window.clientInfo = {feathers:false}
 //app初始化完成打开通知栏消
 window.InitJpush = true
 window.tenantid= filtersStorage('tenantid'),
@@ -33,20 +34,56 @@ Quasar.start(() => {
     data:{
         jpushUri:window.jpushUri,
     },
-    mounted(){
-      this.$router.push('/config')
+    computed: {
+      feathers () {
+        return store.state.feathersServer
+      },
     },
-   watch:{
-      //app处于启动中，处理打开通知栏消息的方法
-      jpushUri: {
-        handler(val, oldVal) {
-          if(val.path&& window.InitJpush==false ){
-            this.$router.push(window.jpushUri.path)
+    mounted(){
+      if(tenantid && protocolId && apiServer){
+          feathersClient(tenantid, apiServer, protocolId)
+      }else{
+         this.$router.push('/config')
+      }
+    },
+    watch:{
+      feathers (val, oldVal) {
+        let connectError
+        if(val==null){
+          connectError="服务器连接错误，请重试"
+        }
+        if(val){
+          connectError="服务器连接成功"
+           this.setAuth()
+        }
+        console.log(`We have ${connectError} now, yaay!`)
+      },
+        //app处于启动中，处理打开通知栏消息的方法
+        jpushUri: {
+          handler(val, oldVal) {
+            if(val.path&& window.InitJpush==false ){
+              this.$router.push(window.jpushUri.path)
+            }
+          },
+          deep: true
+        }, 
+    },
+    methods:{
+      ...mapActions('auth', [
+        'authenticate'
+      ]),
+      setAuth() {
+        this.authenticate().then((response) => {
+          let url={
+            path:'/index', 
+            query: this.$route.query 
           }
-        },
-        deep: true
+          this.$router.push(url)
+        }).catch((error) => {
+          this.$router.push('/login')
+        });
       }, 
-   },
+    },
     router, //
     store,
     render: h => h(require('./App'))

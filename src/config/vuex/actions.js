@@ -6,6 +6,7 @@ import {
  SETADDCOUNT,
  SETBLETOGGLED,
  SETJPUSHDATA,
+ SETFEATHERS,
 } from './mutation-types'
 
 export const setErr = ({commit}) => {
@@ -29,4 +30,7 @@ export const setBleToggled = ({commit}, obj) => {
 
 export const setJpushData = ({commit}, obj) => {
     commit(SETJPUSHDATA, obj)
+} 
+export const setFeathersData = ({commit}, obj) => {
+    commit(SETFEATHERS, obj)
 } 

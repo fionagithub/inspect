@@ -1,8 +1,9 @@
  export const state = {
   HttpsMap:{
-        true:"https",
-        false:"http"
+    true:"https",
+    false:"http"
   },
+  feathersServer:false,
   add_count: {
     tktCut: 0,
     dvCut: 0,

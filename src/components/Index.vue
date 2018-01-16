@@ -68,8 +68,6 @@
     Dialog
   } from 'quasar'
   moment.locale('zh-cn');
-  window.Win_devices_ =window.clientif.feathers.service('devices')
-  window.Win_tickets_ =window.clientif.feathers.service('tickets')
   export default {
     name: "index",
     data() {
@@ -99,6 +97,7 @@
     },
     computed: {
        ...mapState('auth', ['payload', 'user']),
+       ...mapState(['feathersServer']),
       leftDrawer() {
         return this.$children[5].$refs.leftDrawer
       },
@@ -128,6 +127,8 @@
     mounted() {
       this.$route.query._modal && this.$router.push('/index')
       this.getConf()
+      window.Win_devices_ =this.feathersServer.service('devices')
+      window.Win_tickets_ =this.feathersServer.service('tickets')
     },
     methods: {
       ...mapActions('tickets', {

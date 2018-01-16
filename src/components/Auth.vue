@@ -12,36 +12,7 @@
     </div>
   </div>
 </template>
-<script>
-import {
- mapActions,
-} from 'vuex'
-import {
-  Toast
-} from 'quasar'
-export default {
-  mounted(){
-    window.feathers = feathersClient( window.tenantid, window.apiServer, window.protocolId)
-    this.setAuth()
-  }, 
-  methods:{
-    ...mapActions('auth', [
-      'authenticate'
-    ]),
-    setAuth() {
-      this.authenticate().then((response) => {
-        let url={
-          path:'/index', 
-          query: this.$route.query 
-        }
-        this.$router.push(url)
-      }).catch((error) => {
-        this.$router.push('/login')
-      });
-    }, 
-  }   
-}   
-</script>
+
 <style lang="stylus">
  .error-code{
     height :50vh;

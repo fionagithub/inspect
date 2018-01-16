@@ -53,7 +53,6 @@ let  protocolMap = {
         apiServer: filtersStorage('apiServer'),
         protocolId: protocolMap[filtersStorage('protocolId') || 'http'],
         connectError: '',
-        client: window.clientInfo,
       }
     },
    computed:{
@@ -63,25 +62,12 @@ let  protocolMap = {
        return flag
      },
    },
-   watch:{
-      client: {
-        handler(val) { 
-          if(val.feathers==null){
-            this.connectError="服务器连接错误，请重试"
-          }
-          if(val.feathers){
-            this.connectError="服务器连接成功"
-            this.$router.push('/login')
-          }
-        },
-        deep: true
-      },
-   },
    methods:{ 
+      ...mapActions(['setFeathersData']),
      step(){
        window.socket && window.socket.close()
        this.connectError = "连接中，请等待..."
-       window.clientInfo.feathers = false
+       this.setFeathersData(false)
        let protocolId = this.HttpsMap[this.protocolId]
        feathersClient(this.tenantid, this.apiServer, protocolId)
      },
